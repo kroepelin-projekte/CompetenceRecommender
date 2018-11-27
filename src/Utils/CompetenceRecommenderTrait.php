@@ -14,7 +14,6 @@ use feldbusl\Plugins\CompetenceRecommender\Access\Ilias;
  *
  * @package feldbusl\Plugins\CompetenceRecommender\Utils
  *
- * @author  studer + raimann ag - Team Custom 1 <support-custom1@studer-raimann.ch>
  * @author  Leonie Feldbusch <feldbusl@informatik.uni-freiburg.de>
  */
 trait CompetenceRecommenderTrait {
