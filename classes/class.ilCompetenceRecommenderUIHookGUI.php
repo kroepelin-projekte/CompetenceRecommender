@@ -20,12 +20,57 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 	use CompetenceRecommenderTrait;
 	const PLUGIN_CLASS_NAME = ilCompetenceRecommenderPlugin::class;
 
+	/**
+	 * @var ilCtrl
+	 */
+	protected $ctrl;
+
+	/**
+	 * @var ilLanguage
+	 */
+	protected $lng;
+
+	/**
+	 * @var ilTabsGUI
+	 */
+	protected $tabs;
+
+	/**
+	 * @var ilTemplate
+	 */
+	protected $tpl;
+
+	/**
+	 * @var ilHelpGUI
+	 */
+	protected $help;
+
+	/**
+	 * @var ilToolbarGUI
+	 */
+	protected $toolbar;
+
+	/**
+	 * @var ilAccessHandler
+	 */
+	var $access;
+
 
 	/**
 	 * ilCompetenceRecommenderUIHookGUI constructor
 	 */
 	public function __construct() {
+		global $DIC;
 
+		$this->ctrl = $DIC->ctrl();
+		$this->lng = $DIC->language();
+		//$this->tabs = $DIC->tabs();
+		//$this->tpl = $DIC["tpl"];
+		//$this->help = $DIC["ilHelp"];
+		//$this->toolbar = $DIC->toolbar();
+		$this->access = $DIC->access();
+		$this->pl = ilCompetenceRecommenderPlugin::getInstance();
+// übernehme aus Skill
 	}
 
 
@@ -39,14 +84,12 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 	public function getHTML(/*string*/
 		$a_comp, /*string*/
 		$a_part, /*array*/
-		$a_par = []): array {
-		/*self::dic()->ctrl()->getLinkTargetByClass([
-			ilUIPluginRouterGUI::class,
-			CompetenceRecommenderGUI::class
-		], CompetenceRecommenderGUI::CMD_SOME);*/
+		$a_par = []): array 
+	{
+		global $DIC;
 		
 		if ($a_comp == "Services/PersonalDesktop" && $a_part == "center_column") {
-			return [ "mode" => ilUIHookPluginGUI::PREPEND, "html" => $this->getDiv() ];
+			return [ "mode" => ilUIHookPluginGUI::PREPEND, "html" => $this->pdTemplate() ];
 		}
 		return [ "mode" => ilUIHookPluginGUI::KEEP, "html" => "" ];
 	}
@@ -56,11 +99,17 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 	*
 	* @return string HTML of div
 	*/
-	function getDiv()
+	function pdTemplate()
 	{
+		global $DIC;
+
 		$pl = $this->getPluginObject();	
 		$btpl = $pl->getTemplate("tpl.comprecDesktop.html");	
 		$btpl->setVariable("MESSAGE", "Hallo Welt");
+		$button = $DIC->ui()->renderer()->render($DIC->ui()->factory()->button()->standard("weiter", $this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class, CompetenceRecommenderGUI::class], 'newPageTemplate')));
+		$btpl->setVariable("BUTTON", $button);
 		return $btpl->get();
 	}
+
+
 }
