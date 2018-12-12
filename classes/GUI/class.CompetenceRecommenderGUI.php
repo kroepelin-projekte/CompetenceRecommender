@@ -75,10 +75,16 @@ class CompetenceRecommenderGUI {
 
     	protected function newPageTemplate()
     	{
-        	global $tpl;
-        	$tpl->setTitle("Testtitel");
+        	global $tpl, $DIC;
+        	$tpl->setTitle("Meine Lernempfehlungen");
         	$tpl->getStandardTemplate();
-		$tpl->setContent("Hallo neue Welt");
+		$result = $DIC->database()->query("SELECT * FROM usr_data");
+		$n = $DIC->database()->numRows($result);
+		$stringResult = "";
+		while ($record = $DIC->database()->fetchAssoc($result)) {
+			$stringResult = $stringResult .$record["firstname"] ." ";
+		}
+		$tpl->setContent("Hallo neue Welt" ."<br/>" ."Daten: " .$stringResult .$n);
         	$tpl->show();
         	return;
     	}
