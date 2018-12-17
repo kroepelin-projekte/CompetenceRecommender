@@ -64,13 +64,8 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 
 		$this->ctrl = $DIC->ctrl();
 		$this->lng = $DIC->language();
-		//$this->tabs = $DIC->tabs();
-		//$this->tpl = $DIC["tpl"];
-		//$this->help = $DIC["ilHelp"];
-		//$this->toolbar = $DIC->toolbar();
 		$this->access = $DIC->access();
 		$this->pl = ilCompetenceRecommenderPlugin::getInstance();
-// übernehme aus Skill
 	}
 
 
@@ -89,27 +84,113 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 		global $DIC;
 		
 		if ($a_comp == "Services/PersonalDesktop" && $a_part == "center_column") {
-			return [ "mode" => ilUIHookPluginGUI::PREPEND, "html" => $this->pdTemplate() ];
+			return [ "mode" => ilUIHookPluginGUI::PREPEND, "html" => $this->pdRecommendation() ];
+		}
+		if ($this->ctrl->getCmdClass() == "ilobjcoursegui" && $a_comp == "Services/Container" && $a_part == "right_column") {
+			return [ "mode" => ilUIHookPluginGUI::APPEND, "html" => $this->crsRecommendation() ];
 		}
 		return [ "mode" => ilUIHookPluginGUI::KEEP, "html" => "" ];
 	}
 
+	function modifyGUI($a_comp, $a_part, $a_par = array())
+	{
+		if ($a_part == "tabs" && $this->ctrl->getCmdClass() == "ilpersonalskillsgui")
+		{
+			// addTab(id, text, link, frame)
+			$a_par["tabs"]->addTab("comprec_tab", "Lernempfehlungen", 
+					$this->ctrl->getLinkTargetByClass(
+					[ilUIPluginRouterGUI::class,
+					CompetenceRecommenderGUI::class], 						'compRecSettings'));
+		}
+		if ($a_part == "tabs" && $_GET['baseClass'] == "ilRepositoryGUI")
+		{
+			$this->ctrl->setParameterByClass("CompetenceRecommenderGUI", "obj_ref_id", $_GET['ref_id']);
+			// addTab(id, text, link, frame)
+			$a_par["tabs"]->addTab("comprec_tab", "Lernempfehlungen", 
+					$this->ctrl->getLinkTargetByClass(
+					[ilUIPluginRouterGUI::class,
+					CompetenceRecommenderGUI::class], 						'compRecOverview'));
+		}
+	}
+
 	/**
-	* write on desktop
+	* write on course container
 	*
 	* @return string HTML of div
 	*/
-	function pdTemplate()
+	function crsRecommendation()
 	{
-		global $DIC;
+		global $DIC, $ilUser;
 
-		$pl = $this->getPluginObject();	
-		$btpl = $pl->getTemplate("tpl.comprecDesktop.html");	
-		$btpl->setVariable("MESSAGE", "Hallo Welt");
-		$button = $DIC->ui()->renderer()->render($DIC->ui()->factory()->button()->standard("weiter", $this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class, CompetenceRecommenderGUI::class], 'newPageTemplate')));
-		$btpl->setVariable("BUTTON", $button);
-		return $btpl->get();
+		$user_id = $ilUser->getId();
+		$renderer = $DIC->ui()->renderer();
+		$factory = $DIC->ui()->factory();
+
+		$this->ctrl->setParameterByClass("CompetenceRecommenderGUI", "obj_ref_id", $_GET['ref_id']);
+		// render button for course overview
+		$button = $renderer->render(
+				$factory->button()
+				->standard("Lernempfehlungen anzeigen",
+				$this->ctrl->getLinkTargetByClass(
+				[ilUIPluginRouterGUI::class,
+				CompetenceRecommenderGUI::class], 					'compRecOverview')));
+		$items = $renderer->render($factory->image()->standard("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/BildKlein.png", "Platzhalter Item"));
+		$items = $items ."<br/>". $renderer->render($factory->image()->standard("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/BildKlein.png", "Platzhalter Item"));
+		$items = $items ."<br/>". $renderer->render($factory->image()->standard("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/BildKlein.png", "Platzhalter Item"));
+		return $button."<br/>" . $items;
 	}
 
+	/**
+	* write on personal desktop
+	*
+	* @return string HTML of div
+	*/
+	function pdRecommendation()
+	{
+		global $DIC, $ilUser, $ilUtil;
 
+		$user_id = $ilUser->getId();
+		$renderer = $DIC->ui()->renderer();
+		$factory = $DIC->ui()->factory();
+
+		// find the courses the user is in
+		$result = $DIC->database()->query("SELECT * FROM object_reference 
+				    JOIN obj_members WHERE 
+				    object_reference.obj_id = obj_members.obj_id 
+				    AND obj_members.usr_id = " .$user_id);
+		$courses = array(); $i=0;
+		while ($record = $DIC->database()->fetchAssoc($result)) {
+			$courses[$i] = $record["ref_id"];
+			$i++;
+		}
+		
+		// if the user is not in a course, do not show recommendations
+		if ($i==0) {return "";}
+
+		// if the user is in courses, show recommendations
+		$pl = $this->getPluginObject();	
+		$btpl = $pl->getTemplate("tpl.comprecDesktop.html");	
+		$btpl->setVariable("TITLE", "Meine Lernempfehlungen");
+		$compRecRow = "";
+
+		for ($course=0; $course<$i; $course++) {
+			// set items of the course
+			$items = $renderer->render($factory->image()->standard("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/BildKlein.png", "Platzhalter Item"));
+			$items = $items ."<br/>". $renderer->render($factory->image()->standard("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/BildKlein.png", "Platzhalter Item"));
+			$items = $items ."<br/>". $renderer->render($factory->image()->standard("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/BildKlein.png", "Platzhalter Item"));
+			// set course reference id
+			$this->ctrl->setParameterByClass("CompetenceRecommenderGUI", "obj_ref_id", $courses[$course]);
+			// render button for course overview
+			$button = $renderer->render(
+					$factory->button()
+					->standard("mehr Details",
+					$this->ctrl->getLinkTargetByClass(
+					[ilUIPluginRouterGUI::class,
+					CompetenceRecommenderGUI::class], 						'compRecOverview')));
+			// append html with a new line
+			$compRecRow = $compRecRow . "<div class=\"ilObjRow\">" . $items . "<div class=\"ilFloatRight\">" .$button . "</div> <hr /> </div>";
+		}
+		$btpl->setVariable("COMPRECROW", $compRecRow);
+		return $btpl->get();
+	}
 }

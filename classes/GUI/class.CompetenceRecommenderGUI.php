@@ -21,7 +21,6 @@ class CompetenceRecommenderGUI {
 	use DICTrait;
 	use CompetenceRecommenderTrait;
 	const PLUGIN_CLASS_NAME = ilCompetenceRecommenderPlugin::class;
-	const CMD_SOME = "some";
     /** @var  ilCtrl */
     protected $ctrl;
 
@@ -69,23 +68,42 @@ class CompetenceRecommenderGUI {
 	 *
 	 */
 	protected function performCommand($cmd)/*: void*/ {
-		$this->newPageTemplate();
+		global $tpl, $DIC;
+		switch($cmd) {
+			case 'compRecSettings':
+				$tpl->getStandardTemplate();
+				$tpl->setContent("Hier sollen die Kurse, die die Empfehlungen verwenden sollen, festgelegt werden können");
+				$tpl->show();
+				break;
+			case 'compRecOverview':
+			default:
+				$this->overviewTemplate();
+				break;
+		}
 	}
 
 
-    	protected function newPageTemplate()
+    	protected function overviewTemplate()
     	{
         	global $tpl, $DIC;
-        	$tpl->setTitle("Meine Lernempfehlungen");
+
+		$renderer = $DIC->ui()->renderer();
+		$factory = $DIC->ui()->factory();
+
+		// Extrahiere Reference ID
+		$this->obj_ref_id = $_GET['obj_ref_id'];
+
+		$result = $DIC->database()->query("SELECT * FROM object_data JOIN object_reference WHERE object_data.obj_id = object_reference.obj_id AND object_reference.ref_id = " .$this->obj_ref_id);
+
         	$tpl->getStandardTemplate();
-		$result = $DIC->database()->query("SELECT * FROM usr_data");
-		$n = $DIC->database()->numRows($result);
-		$stringResult = "";
-		while ($record = $DIC->database()->fetchAssoc($result)) {
-			$stringResult = $stringResult .$record["firstname"] ." ";
-		}
-		$tpl->setContent("Hallo neue Welt" ."<br/>" ."Daten: " .$stringResult .$n);
-        	$tpl->show();
+		$tpl->setTitle("Meine Lernempfehlungen für " . $DIC->database()->fetchAssoc($result)["title"]);
+
+		$items = $renderer->render($factory->image()->standard("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/BildMittel.png", "Platzhalter Item"));
+		$items = $items ."<br/>". $renderer->render($factory->image()->standard("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/BildMittel.png", "Platzhalter Item"));
+		$items = $items ."<br/>". $renderer->render($factory->image()->standard("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/BildMittel.png", "Platzhalter Item"));
+
+        	$tpl->setContent("Hier sollen die konkreten Lernempfehlungen des Kurses erscheinen"."<br/>". $items);
+		$tpl->show();
         	return;
     	}
 }
