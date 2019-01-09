@@ -94,6 +94,8 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 
 	function modifyGUI($a_comp, $a_part, $a_par = array())
 	{
+		global $DIC;
+
 		if ($a_part == "tabs" && $this->ctrl->getCmdClass() == "ilpersonalskillsgui")
 		{
 			// addTab(id, text, link, frame)
@@ -104,12 +106,16 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 		}
 		if ($a_part == "tabs" && $_GET['baseClass'] == "ilRepositoryGUI")
 		{
-			$this->ctrl->setParameterByClass("CompetenceRecommenderGUI", "obj_ref_id", $_GET['ref_id']);
-			// addTab(id, text, link, frame)
-			$a_par["tabs"]->addTab("comprec_tab", "Lernempfehlungen", 
+			$ref_id = $_GET['ref_id'];
+			$result = $DIC->database()->query("SELECT * FROM object_data JOIN object_reference WHERE object_data.obj_id = object_reference.obj_id AND object_reference.ref_id = " .$ref_id);
+			if ($DIC->database()->fetchAssoc($result)["type"] == "crs") {
+				$this->ctrl->setParameterByClass("CompetenceRecommenderGUI", "obj_ref_id", $ref_id);
+				// addTab(id, text, link, frame)
+				$a_par["tabs"]->addTab("comprec_tab", "Lernempfehlungen", 
 					$this->ctrl->getLinkTargetByClass(
 					[ilUIPluginRouterGUI::class,
 					CompetenceRecommenderGUI::class], 						'compRecOverview'));
+			}
 		}
 	}
 
