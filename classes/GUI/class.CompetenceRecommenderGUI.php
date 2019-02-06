@@ -33,14 +33,22 @@ class CompetenceRecommenderGUI {
 	/** @var  ilCompetenceRecommenderPlugin */
     public $pl;
 
+	/** @var  ilUIFramework */
+	public $ui;
+
+	/** @var  ilDB */
+	public $db;
+
 	/**
 	 * CompetenceRecommenderGUI constructor
 	 */
 	public function __construct() {
-        	global $ilCtrl, $ilTabs, $tpl;
-        	$this->ctrl = $ilCtrl;
-        	$this->tabs = $ilTabs;
-        	$this->tpl = $tpl;
+		global $ilCtrl, $ilTabs, $tpl, $DIC;
+        $this->ctrl = $ilCtrl;
+        $this->tabs = $ilTabs;
+        $this->tpl = $tpl;
+		$this->ui = $DIC->ui();
+		$this->db = $DIC->database();
 		$this->pl = ilCompetenceRecommenderPlugin::getInstance();
 	}
 
@@ -65,16 +73,10 @@ class CompetenceRecommenderGUI {
 
 
 	/**
-	 *
+	 * @param $cmd
 	 */
 	protected function performCommand($cmd)/*: void*/ {
-		global $tpl, $DIC;
 		switch($cmd) {
-			case 'compRecSettings':
-				$tpl->getStandardTemplate();
-				$tpl->setContent("Hier sollen die Kurse, die die Empfehlungen verwenden sollen, festgelegt werden können");
-				$tpl->show();
-				break;
 			case 'compRecOverview':
 			default:
 				$this->overviewTemplate();
@@ -85,25 +87,23 @@ class CompetenceRecommenderGUI {
 
     	protected function overviewTemplate()
     	{
-        	global $tpl, $DIC;
+			$renderer = $this->ui->renderer();
+			$factory = $this->ui->factory();
 
-		$renderer = $DIC->ui()->renderer();
-		$factory = $DIC->ui()->factory();
+			// Extrahiere Reference ID
+			//$obj_ref_id = $_GET['obj_ref_id'];
 
-		// Extrahiere Reference ID
-		$this->obj_ref_id = $_GET['obj_ref_id'];
+			// $result = $this->db->query("SELECT * FROM object_data JOIN object_reference WHERE object_data.obj_id = object_reference.obj_id AND object_reference.ref_id = " .$obj_ref_id);
 
-		$result = $DIC->database()->query("SELECT * FROM object_data JOIN object_reference WHERE object_data.obj_id = object_reference.obj_id AND object_reference.ref_id = " .$this->obj_ref_id);
+			$this->tpl->getStandardTemplate();
+			$this->tpl->setTitle("Meine Lernempfehlungen");
 
-        	$tpl->getStandardTemplate();
-		$tpl->setTitle("Meine Lernempfehlungen für " . $DIC->database()->fetchAssoc($result)["title"]);
+			$items = $renderer->render($factory->image()->standard("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/BildMittel.png", "Platzhalter Item"));
+			$items = $items ."<br/>". $renderer->render($factory->image()->standard("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/BildMittel.png", "Platzhalter Item"));
+			$items = $items ."<br/>". $renderer->render($factory->image()->standard("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/BildMittel.png", "Platzhalter Item"));
 
-		$items = $renderer->render($factory->image()->standard("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/BildMittel.png", "Platzhalter Item"));
-		$items = $items ."<br/>". $renderer->render($factory->image()->standard("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/BildMittel.png", "Platzhalter Item"));
-		$items = $items ."<br/>". $renderer->render($factory->image()->standard("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/BildMittel.png", "Platzhalter Item"));
-
-        	$tpl->setContent("Hier sollen die konkreten Lernempfehlungen des Kurses erscheinen"."<br/>". $items);
-		$tpl->show();
+			$this->tpl->setContent("Hier sollen die konkreten Lernempfehlungen des Kurses erscheinen"."<br/>". $items);
+			$this->tpl->show();
         	return;
     	}
 }
