@@ -135,7 +135,8 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 
 		// render button for dashboard on extra page
 		$button = $renderer->render($factory->button()
-				->standard("mehr Details", $this->ctrl->getLinkTargetByClass('ilCompetenceRecommenderGUI', 'show')));
+				->standard("mehr Details", $this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class,
+					ilCompetenceRecommenderGUI::class], 'show')));
 
 		// append html with a new line
 		$compRecRow = $compRecRow . "<div class=\"ilObjRow\">" . $items . "<div class=\"ilFloatRight\">" .$button . "</div> <hr /> </div>";

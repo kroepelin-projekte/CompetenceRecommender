@@ -63,6 +63,5 @@ class ilCompetenceRecommenderActivitiesGUI
 	protected function showDashboard()
 	{
 		$this->tpl->setContent("Dashboard");
-		$this->tpl->show();
 	}
 }

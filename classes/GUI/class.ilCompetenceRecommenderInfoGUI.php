@@ -63,6 +63,5 @@ class ilCompetenceRecommenderInfoGUI
 	protected function showInfo()
 	{
 		$this->tpl->setContent("Info");
-		$this->tpl->show();
 	}
 }

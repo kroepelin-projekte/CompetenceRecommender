@@ -63,6 +63,5 @@ class ilCompetenceRecommenderAllGUI
 	protected function showAll()
 	{
 		$this->tpl->setContent("All");
-		$this->tpl->show();
 	}
 }

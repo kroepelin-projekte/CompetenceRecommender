@@ -20,7 +20,7 @@ include_once("class.ilCompetenceRecommenderInfoGUI.php");
  * @ilCtrl_isCalledBy ilCompetenceRecommenderGUI: ilCompetenceRecommenderUIHookGUI, ilUIPluginRouterGUI
  * @ilCtrl_Calls ilCompetenceRecommenderGUI: ilCompetenceRecommenderActivitiesGUI, ilCompetenceRecommenderAllGUI, ilCompetenceRecommenderInfoGUI
  */
-class ilCompetenceRecommenderGUI extends ilUIPluginRouterGUI{
+class ilCompetenceRecommenderGUI extends ilUIHookPluginGUI {
 
 	//use DICTrait;
 	//use CompetenceRecommenderTrait;
@@ -69,7 +69,6 @@ class ilCompetenceRecommenderGUI extends ilUIPluginRouterGUI{
 			ilUtil::redirect('index.php');
 		}
 		$cmd = ($this->ctrl->getCmd()) ? $this->ctrl->getCmd() : $this->getStandardCommand();
-		$this->setTabs();
 
 		$next_class = $this->ctrl->getNextClass();
 
@@ -141,11 +140,10 @@ class ilCompetenceRecommenderGUI extends ilUIPluginRouterGUI{
 	{
 		// Tabs
 		$this->tabs->setBack2Target("Back to PD", $this->ctrl->getLinkTargetByClass("ilPersonalDesktopGUI"));
-		$this->tabs->addTab("Dummy", "Dummy", $this->ctrl->getLinkTargetByClass("ilPersonalDesktopGUI"));
-		//$this->tabs->addTab('show', "Aktivitäten", $this->ctrl->getLinkTargetByClass(ilCompetenceRecommenderActivitiesGUI::class));
-		//$this->tabs->addTab('all', "Alle Empfehlungen", $this->ctrl->getLinkTargetByClass(ilCompetenceRecommenderAllGUI::class));
-		//$this->tabs->addTab('info', "Info", $this->ctrl->getLinkTargetByClass(ilCompetenceRecommenderInfoGUI::class));
-		$this->tabs->activateTab('Dummy');
+		$this->tabs->addTab('show', "Aktivitäten", $this->ctrl->getLinkTargetByClass(ilCompetenceRecommenderActivitiesGUI::class));
+		$this->tabs->addTab('all', "Alle Empfehlungen", $this->ctrl->getLinkTargetByClass(ilCompetenceRecommenderAllGUI::class));
+		$this->tabs->addTab('info', "Info", $this->ctrl->getLinkTargetByClass(ilCompetenceRecommenderInfoGUI::class));
+		$this->tabs->activateTab('show');
 	}
 
 
