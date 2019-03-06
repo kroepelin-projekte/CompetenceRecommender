@@ -23,6 +23,9 @@ class ilCompetenceRecommenderInfoGUI
 	 */
 	protected $lng;
 
+	/** @var  ilUIFramework */
+	protected $ui;
+
 	/**
 	 * Constructor of the class ilDistributorTrainingsLanguagesGUI.
 	 *
@@ -34,6 +37,7 @@ class ilCompetenceRecommenderInfoGUI
 		$this->tpl = $DIC['tpl'];
 		$this->lng = $DIC['lng'];
 		$this->ctrl = $DIC['ilCtrl'];
+		$this->ui = $DIC->ui();
 	}
 
 	/**
@@ -62,6 +66,11 @@ class ilCompetenceRecommenderInfoGUI
 	 */
 	protected function showInfo()
 	{
-		$this->tpl->setContent("Info");
+		$this->tpl->getStandardTemplate();
+		$this->tpl->setTitle("Meine Lernempfehlungen");
+
+		$this->tpl->setContent("Hier erscheint Information zum Recommender");
+		$this->tpl->show();
+		return;
 	}
 }

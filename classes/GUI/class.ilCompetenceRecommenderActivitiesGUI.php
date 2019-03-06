@@ -23,6 +23,9 @@ class ilCompetenceRecommenderActivitiesGUI
 	 */
 	protected $lng;
 
+	/** @var  ilUIFramework */
+	protected $ui;
+
 	/**
 	 * Constructor of the class ilDistributorTrainingsLanguagesGUI.
 	 *
@@ -34,6 +37,7 @@ class ilCompetenceRecommenderActivitiesGUI
 		$this->tpl = $DIC['tpl'];
 		$this->lng = $DIC['lng'];
 		$this->ctrl = $DIC['ilCtrl'];
+		$this->ui = $DIC->ui();
 	}
 
 	/**
@@ -62,6 +66,18 @@ class ilCompetenceRecommenderActivitiesGUI
 	 */
 	protected function showDashboard()
 	{
-		$this->tpl->setContent("Dashboard");
+		$renderer = $this->ui->renderer();
+		$factory = $this->ui->factory();
+
+		$this->tpl->getStandardTemplate();
+		$this->tpl->setTitle("Meine Lernempfehlungen");
+
+		$items = $renderer->render($factory->image()->standard("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/BildMittel.png", "Platzhalter Item"));
+		$items = $items ."<br/>". $renderer->render($factory->image()->standard("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/BildMittel.png", "Platzhalter Item"));
+		$items = $items ."<br/>". $renderer->render($factory->image()->standard("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/BildMittel.png", "Platzhalter Item"));
+
+		$this->tpl->setContent("Hier sollen die konkreten Lernempfehlungen des Kurses erscheinen"."<br/>". $items);
+		$this->tpl->show();
+		return;
 	}
 }

@@ -7,9 +7,6 @@ include_once("class.ilCompetenceRecommenderActivitiesGUI.php");
 include_once("class.ilCompetenceRecommenderAllGUI.php");
 include_once("class.ilCompetenceRecommenderInfoGUI.php");
 
-//use feldbusl\Plugins\CompetenceRecommender\Utils\CompetenceRecommenderTrait;
-//use srag\DIC\CompetenceRecommender\DICTrait;
-
 /**
  * Class ilCompetenceRecommenderGUI
  *
@@ -20,10 +17,7 @@ include_once("class.ilCompetenceRecommenderInfoGUI.php");
  * @ilCtrl_isCalledBy ilCompetenceRecommenderGUI: ilCompetenceRecommenderUIHookGUI, ilUIPluginRouterGUI
  * @ilCtrl_Calls ilCompetenceRecommenderGUI: ilCompetenceRecommenderActivitiesGUI, ilCompetenceRecommenderAllGUI, ilCompetenceRecommenderInfoGUI
  */
-class ilCompetenceRecommenderGUI extends ilUIHookPluginGUI {
-
-	//use DICTrait;
-	//use CompetenceRecommenderTrait;
+class ilCompetenceRecommenderGUI {
 
 	const PLUGIN_CLASS_NAME = ilCompetenceRecommenderPlugin::class;
 	const CMD_COMPREC_STD = "dashboard";
@@ -69,7 +63,7 @@ class ilCompetenceRecommenderGUI extends ilUIHookPluginGUI {
 			ilUtil::redirect('index.php');
 		}
 		$cmd = ($this->ctrl->getCmd()) ? $this->ctrl->getCmd() : $this->getStandardCommand();
-
+		$this->setTabs();
 		$next_class = $this->ctrl->getNextClass();
 
 		switch ($next_class) {
@@ -83,8 +77,15 @@ class ilCompetenceRecommenderGUI extends ilUIHookPluginGUI {
 				$this->forwardInfo();
 				break;
 			default:
-				$this->overviewTemplate();
-				break;
+				switch ($cmd) {
+					case self::CMD_COMPREC_STD:
+					case 'show':
+						$this->forwardShow();
+						break;
+					default:
+						throw new Exception("ilCompetenceRecommenderGUI: Unknown command: ".$cmd);
+						break;
+				}
 		}
 
 		return true;
@@ -144,28 +145,5 @@ class ilCompetenceRecommenderGUI extends ilUIHookPluginGUI {
 		$this->tabs->addTab('all', "Alle Empfehlungen", $this->ctrl->getLinkTargetByClass(ilCompetenceRecommenderAllGUI::class));
 		$this->tabs->addTab('info', "Info", $this->ctrl->getLinkTargetByClass(ilCompetenceRecommenderInfoGUI::class));
 		$this->tabs->activateTab('show');
-	}
-
-
-	protected function overviewTemplate()
-	{
-		$renderer = $this->ui->renderer();
-		$factory = $this->ui->factory();
-
-		// Extrahiere Reference ID
-		//$obj_ref_id = $_GET['obj_ref_id'];
-
-		// $result = $this->db->query("SELECT * FROM object_data JOIN object_reference WHERE object_data.obj_id = object_reference.obj_id AND object_reference.ref_id = " .$obj_ref_id);
-
-		$this->tpl->getStandardTemplate();
-		$this->tpl->setTitle("Meine Lernempfehlungen");
-
-		$items = $renderer->render($factory->image()->standard("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/BildMittel.png", "Platzhalter Item"));
-		$items = $items ."<br/>". $renderer->render($factory->image()->standard("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/BildMittel.png", "Platzhalter Item"));
-		$items = $items ."<br/>". $renderer->render($factory->image()->standard("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/BildMittel.png", "Platzhalter Item"));
-
-		$this->tpl->setContent("Hier sollen die konkreten Lernempfehlungen des Kurses erscheinen"."<br/>". $items);
-		$this->tpl->show();
-		return;
 	}
 }
