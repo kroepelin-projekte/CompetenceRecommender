@@ -71,12 +71,37 @@ class ilCompetenceRecommenderActivitiesGUI
 
 		$this->tpl->getStandardTemplate();
 		$this->tpl->setTitle("Meine Lernempfehlungen");
+		$html = "<br />";
 
-		$items = $renderer->render($factory->image()->standard("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/BildMittel.png", "Platzhalter Item"));
-		$items = $items ."<br/>". $renderer->render($factory->image()->standard("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/BildMittel.png", "Platzhalter Item"));
-		$items = $items ."<br/>". $renderer->render($factory->image()->standard("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/BildMittel.png", "Platzhalter Item"));
+		$competences = ilCompetenceRecommenderAlgorithm::getNCompetencesOfUserProfile(5);
+		foreach ($competences as $competence) {
+			$barwidth = $competence["score"]/$competence["scale"]*100;
+			$goalwidthmax = $competence["goal"]/$competence["scale"]*100+1;
+			$goalwidthmin = $competence["goal"]/$competence["scale"]*100-1;
+			$html .= "<br />".$competence["title"]."<br />";
+			$html .= "<svg id=\"statSvg\" width=\"421\" height=\"151\">
+					<rect x=\"50\" y=\"32\" width=\"".$goalwidthmax."%\" 
+					height=\"26\" rx=\"3\" ry=\"3\" fill=\"#000000\" />
+					<rect x=\"50\" y=\"30\" width=\"".$goalwidthmin."%\" 
+					height=\"30\" rx=\"3\" ry=\"3\" fill=\"#FFFFFF\" />
+					<rect x=\"50\" y=\"35\" width=\"".$barwidth."%\" 
+					height=\"20\" rx=\"3\" ry=\"3\" fill=\"#2A7BB4\" />
+					</svg>";
+			$resourcearray = array();
+			foreach ($competence["resources"] as $resource) {
+				$obj_id = ilObject::_lookupObjectId($resource["id"]);
+				$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($obj_id)));
+				$image = $factory->image()->standard(ilObject::_getIcon($obj_id), "Icon");
+				$card = $factory->card($link, $image);
+				array_push($resourcearray, $card);
+			};
+			if ($resourcearray != []) {
+				$deck = $factory->deck($resourcearray);
+				$html .= "<br />" . $renderer->render($deck);
+			}
+		}
 
-		$this->tpl->setContent("Hier sollen die konkreten Lernempfehlungen des Kurses erscheinen"."<br/>". $items);
+		$this->tpl->setContent("Hier soll das Dashboard erscheinen". $html);
 		$this->tpl->show();
 		return;
 	}

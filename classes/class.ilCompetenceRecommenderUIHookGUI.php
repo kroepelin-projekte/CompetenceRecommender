@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . "/../vendor/autoload.php";
 
 include_once("GUI/class.ilCompetenceRecommenderGUI.php");
+include_once("class.ilCompetenceRecommenderAlgorithm.php");
 
 /**
  * Class ilCompetenceRecommenderUIHookGUI
@@ -123,9 +124,19 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 		$btpl->setVariable("TITLE", "Meine Lernempfehlungen");
 		$compRecRow = "";
 
-		$items = $renderer->render($factory->image()->standard("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/BildKlein.png", "Platzhalter Item"));
-		$items = $items ."<br/>". $renderer->render($factory->image()->standard("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/BildKlein.png", "Platzhalter Item"));
-		$items = $items ."<br/>". $renderer->render($factory->image()->standard("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/BildKlein.png", "Platzhalter Item"));
+		$data = \ilCompetenceRecommenderAlgorithm::getDataForDesktop();
+		$allcards = array();
+
+		foreach ($data as $row) {
+			$obj_id = ilObject::_lookupObjectId($row["id"]);
+			$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($obj_id)));
+			$image = $factory->image()->standard(ilObject::_getIcon($obj_id), "Icon");
+			$card = $factory->card($link, $image)->withSections(array($factory->legacy($row["title"])));
+			array_push($allcards, $card);
+		};
+
+		$deck = $factory->deck($allcards);
+		$renderedobjects = $renderer->render($deck);
 
 		// render button for dashboard on extra page
 		$button = $renderer->render($factory->button()
@@ -133,7 +144,7 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 					ilCompetenceRecommenderGUI::class], 'show')));
 
 		// append html with a new line
-		$compRecRow = $compRecRow . "<div class=\"ilObjRow\">" . $items . "<div class=\"ilFloatRight\">" .$button . "</div> <hr /> </div>";
+		$compRecRow = $compRecRow . "<div class=\"ilObjRow\">" . $renderedobjects . "<div class=\"ilFloatRight\">" .$button . "</div> <br /> <hr /> </div>";
 		$btpl->setVariable("COMPRECROW", $compRecRow);
 		return $btpl->get();
 	}
