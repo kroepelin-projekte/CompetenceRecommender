@@ -1,0 +1,82 @@
+<style>
+    .barchart {
+        width: 100%;
+        height: 30px;
+    }
+    .barchart_outer {
+        background: #CCC;
+        margin: 10px 0;
+        overflow: hidden;
+        position: relative;
+        display: block;
+    }
+    .barchart_inner {
+        background: #2A7BB4;
+        left: 0;
+        position: absolute;
+        overflow: hidden;
+        top: 0;
+    }
+    .barchart_inner_profile {
+        background: black;
+        left: 0;
+        position: absolute;
+        overflow: hidden;
+        top: 0;
+    }
+    .barchart_scale_min {
+        background: #CCC;
+        left: 0;
+        position: absolute;
+        overflow: visible;
+        top: 0;
+    }
+    .barchart_scale_max {
+        background: #AAA;
+        left: 0;
+        position: absolute;
+        overflow: visible;
+        top: 0;
+    }
+    .barchart_text{
+        color: white;
+        overflow: visible;
+        position: relative;
+        line-height: 30px;
+        white-space: nowrap;
+    }
+</style>
+
+<script>
+    ( function( $ ) {
+        var BarchartScale = {
+            init: function(scale, goal, score) {
+                // disable button
+                BarchartScale.plotscale(scale, goal, score);
+            },
+
+            plotscale: function(scale, goal, score) {
+                scaleOrig = scale;
+                while (scaleOrig > 0) {
+                    $('#{ID}').append("<div class='barchart barchart_scale_max' style='width:" + (scaleOrig/scale*100+0.1) + "%'></div>");
+                    if (parseInt(goal) === parseInt(scaleOrig)) {
+                        $('#{ID}').append("<div class='barchart_inner_profile barchart' style='width:"+(goal/scale*100+0.5)+"%'></div>");
+                        $('#{ID}').append("<div class='barchart barchart_scale_min' style='width:" + (scaleOrig/scale*100-0.5)+ "%'></div>");
+                    } else {
+                        $('#{ID}').append("<div class='barchart barchart_scale_min' style='width:" + (scaleOrig / scale * 100 - 0.1) + "%'></div>");
+                    }
+                    scaleOrig--;
+                }
+                $('#{ID}').append("<div class='barchart_inner barchart' style='width:" + (score/scale*100) + "%'></div>");
+                $('#{ID}').append("<div class='barchart_text'>{TITLE}</div>");
+            },
+
+        };
+        $( document ).ready( function( $ ) {
+            BarchartScale.init({SCALE}, {GOALAT}, {SCORE});
+        } );
+    } )( jQuery );
+
+</script>
+
+<div id="{ID}" class="barchart_outer barchart"></div>

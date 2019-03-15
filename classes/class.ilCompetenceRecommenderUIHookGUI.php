@@ -99,7 +99,9 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 		$a_par = []): array 
 	{
 		if ($a_comp == "Services/PersonalDesktop" && $a_part == "center_column") {
-			return ["mode" => ilUIHookPluginGUI::PREPEND, "html" => $this->pdRecommendation()];
+			if (ilCompetenceRecommenderAlgorithm::hasUserProfile()) {
+				return ["mode" => ilUIHookPluginGUI::PREPEND, "html" => $this->pdRecommendation()];
+			}
 		}
 		return [ "mode" => ilUIHookPluginGUI::KEEP, "html" => "" ];
 	}
@@ -118,18 +120,17 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 		$renderer = $this->ui->renderer();
 		$factory = $this->ui->factory();
 
-		// if the user has a profile, show recommendations
+		// show recommendations in template
 		$pl = $this->getPluginObject();
 		$btpl = $pl->getTemplate("tpl.comprecDesktop.html");
 		$btpl->setVariable("TITLE", "Meine Lernempfehlungen");
-		$compRecRow = "";
 
 		$data = \ilCompetenceRecommenderAlgorithm::getDataForDesktop();
 		$allcards = array();
 
 		foreach ($data as $row) {
 			$obj_id = ilObject::_lookupObjectId($row["id"]);
-			$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($obj_id)));
+			$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($row["id"])));
 			$image = $factory->image()->standard(ilObject::_getIcon($obj_id), "Icon");
 			$card = $factory->card($link, $image)->withSections(array($factory->legacy($row["title"])));
 			array_push($allcards, $card);
@@ -144,7 +145,7 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 					ilCompetenceRecommenderGUI::class], 'show')));
 
 		// append html with a new line
-		$compRecRow = $compRecRow . "<div class=\"ilObjRow\">" . $renderedobjects . "<div class=\"ilFloatRight\">" .$button . "</div> <br /> <hr /> </div>";
+		$compRecRow = "<div class=\"ilObjRow\">" . $renderedobjects . "<div class=\"ilFloatRight\">" .$button . "</div> <br /> <hr /> </div>";
 		$btpl->setVariable("COMPRECROW", $compRecRow);
 		return $btpl->get();
 	}

@@ -71,33 +71,32 @@ class ilCompetenceRecommenderActivitiesGUI
 
 		$this->tpl->getStandardTemplate();
 		$this->tpl->setTitle("Meine Lernempfehlungen");
-		$html = "<br />";
+		$html = "";
 
 		$competences = ilCompetenceRecommenderAlgorithm::getNCompetencesOfUserProfile(5);
 		foreach ($competences as $competence) {
-			$barwidth = $competence["score"]/$competence["scale"]*100;
-			$goalwidthmax = $competence["goal"]/$competence["scale"]*100+1;
-			$goalwidthmin = $competence["goal"]/$competence["scale"]*100-1;
-			$html .= "<br />".$competence["title"]."<br />";
-			$html .= "<svg id=\"statSvg\" width=\"421\" height=\"151\">
-					<rect x=\"50\" y=\"32\" width=\"".$goalwidthmax."%\" 
-					height=\"26\" rx=\"3\" ry=\"3\" fill=\"#000000\" />
-					<rect x=\"50\" y=\"30\" width=\"".$goalwidthmin."%\" 
-					height=\"30\" rx=\"3\" ry=\"3\" fill=\"#FFFFFF\" />
-					<rect x=\"50\" y=\"35\" width=\"".$barwidth."%\" 
-					height=\"20\" rx=\"3\" ry=\"3\" fill=\"#2A7BB4\" />
-					</svg>";
+			$score = $competence["score"];
+			$goalat = $competence["goal"];
 			$resourcearray = array();
+			$btpl = new ilTemplate("./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/tpl.comprecBar.html", true, true);
+			$btpl->setVariable("TITLE", $competence["title"]);
+			$btpl->setVariable("ID", $competence["id"]);
+			$btpl->setVariable("SCORE", $score);
+			$btpl->setVariable("GOALAT", $goalat);
+			$btpl->setVariable("SCALE", $competence["scale"]);
 			foreach ($competence["resources"] as $resource) {
 				$obj_id = ilObject::_lookupObjectId($resource["id"]);
-				$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($obj_id)));
+				$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($resource["id"])));
 				$image = $factory->image()->standard(ilObject::_getIcon($obj_id), "Icon");
 				$card = $factory->card($link, $image);
 				array_push($resourcearray, $card);
 			};
+			$html .= $btpl->get();
 			if ($resourcearray != []) {
 				$deck = $factory->deck($resourcearray);
-				$html .= "<br />" . $renderer->render($deck);
+				$ctpl = new ilTemplate("./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/tpl.comprecCollapsible.html", true, true);
+				$ctpldivs = $ctpl->get();
+				$html .= "<br />" . "<div aria-label='Collapse Content'>" .$renderer->render($deck) . "</div>";
 			}
 		}
 
