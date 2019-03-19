@@ -5,11 +5,9 @@ Start at your ILIAS root directory. It is assumed the generated downloaded plugi
 
 Run the follow commands:
 ```bash
-mkdir -p Customizing/global/plugins
-cd Customizing/global/plugins
-mv ~/Downloads/comprec.zip comprec.zip
-unzip comprec.zip
-unlink comprec.zip
+mkdir -p Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/
+cd Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/
+git clone https://github.com/feldbusl/CompetenceRecommender.git
 ```
 
 Update and activate the plugin in the ILIAS Plugin Administration
