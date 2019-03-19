@@ -1,7 +1,9 @@
 ## Installation
 
 ### Install CompetenceRecommender-Plugin
-Start at your ILIAS root directory. It is assumed the generated downloaded plugin `comprec.zip` is in your download folder `~/Downloads`. Otherwise please adjust the commands below
+In order to install the plugin from github, please follow the commands below:
+
+Start at your ILIAS root directory. 
 
 Run the follow commands:
 ```bash
@@ -12,7 +14,7 @@ git clone https://github.com/feldbusl/CompetenceRecommender.git
 
 Update and activate the plugin in the ILIAS Plugin Administration
 
-Look after `TODO`'s in the plugin code. May you can remove some files (For example config) depending on your use. Also override this inital Readme
+Look after `TODO`'s in the plugin code. Maybe you can remove some files (For example config) depending on your use. Also override this inital Readme
 
 ### Dependencies (Already exists in `vendor`)
 * ILIAS 5.3
