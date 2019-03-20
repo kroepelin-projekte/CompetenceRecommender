@@ -82,6 +82,12 @@ class ilCompetenceRecommenderGUI {
 					case 'show':
 						$this->forwardShow();
 						break;
+					case 'info':
+						$this->forwardInfo();
+						break;
+					case 'eval':
+						$this->forwardAll();
+						break;
 					default:
 						throw new Exception("ilCompetenceRecommenderGUI: Unknown command: ".$cmd);
 						break;

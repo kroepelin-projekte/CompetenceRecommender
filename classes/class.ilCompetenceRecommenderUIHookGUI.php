@@ -128,24 +128,43 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 		$data = \ilCompetenceRecommenderAlgorithm::getDataForDesktop();
 		$allcards = array();
 
-		foreach ($data as $row) {
-			$obj_id = ilObject::_lookupObjectId($row["id"]);
-			$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($row["id"])));
-			$image = $factory->image()->standard(ilObject::_getIcon($obj_id), "Icon");
-			$card = $factory->card($link, $image)->withSections(array($factory->legacy($row["title"])));
-			array_push($allcards, $card);
-		};
+		if ($data != array()) {
+			foreach ($data as $row) {
+				$obj_id = ilObject::_lookupObjectId($row["id"]);
+				$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($row["id"])));
+				$image = $factory->image()->standard(ilObject::_getIcon($obj_id), "Icon");
+				$card = $factory->card($link, $image)->withSections(array($factory->legacy($row["title"])));
+				array_push($allcards, $card);
+			};
 
-		$deck = $factory->deck($allcards);
-		$renderedobjects = $renderer->render($deck);
+			$deck = $factory->deck($allcards);
+			$renderedobjects = $renderer->render($deck);
+		} else {
+			if (!\ilCompetenceRecommenderAlgorithm::hasUserFinishedAll()) {
+				$renderedobjects = "Keine Daten vorhanden. Bitte mache eine " . $renderer->render($factory->link()->standard("Selbstevaluation",
+						$this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class, ilCompetenceRecommenderGUI::class], 'eval')));
+			}
+			else {
+				$renderedobjects = "Du solltest dich verbessern. Mache anschließend eine " . $renderer->render($factory->link()->standard("Selbstevaluation",
+						$this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class, ilCompetenceRecommenderGUI::class], 'eval')));;
+			}
+		}
 
 		// render button for dashboard on extra page
 		$button = $renderer->render($factory->button()
 				->standard("mehr Details", $this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class,
 					ilCompetenceRecommenderGUI::class], 'show')));
 
+		$linktoinfo = $renderer->render($factory->link()->standard("Was bedeutet diese Box",
+						$this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class, ilCompetenceRecommenderGUI::class], 'info')));
+
 		// append html with a new line
-		$compRecRow = "<div class=\"ilObjRow\">" . $renderedobjects . "<div class=\"ilFloatRight\">" .$button . "</div> <br /> <hr /> </div>";
+		$compRecRow = "<div class=\"ilObjRow\">" . $renderedobjects . "
+						<div class=\"ilFloatRight\">" .$button . "</div> 
+						<br />
+						<div class=\"ilFloatDown\">"
+						. $linktoinfo .
+						"</div><hr /> </div>";
 		$btpl->setVariable("COMPRECROW", $compRecRow);
 		return $btpl->get();
 	}

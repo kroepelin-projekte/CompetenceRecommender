@@ -64,24 +64,50 @@ class ilCompetenceRecommenderAlgorithm {
 		return ($numberofprofiles > 0);
 	}
 
-	public static function getDataForDesktop() {
+	public static function hasUserFinishedAll()
+	{
 		$db = self::getDatabaseObj();
+		$user_id = self::getUserObj()->getId();
 
-		// todo: beste Ressourcen, nicht zufällige
-		$allRefIds = array();
-		$result = $db->query("SELECT ssr.rep_ref_id,ssr.tref_id,stn.title 
-								FROM skl_skill_resource AS ssr 
-								JOIN skl_tree_node AS stn ON ssr.tref_id = stn.obj_id");
-		$values = $db->fetchAll($result);
+		// get user profiles
+		$result = $db->query("SELECT profile_id FROM skl_profile_user WHERE user_id = '".$user_id."'");
+		$profiles = $db->fetchAll($result);
 
-		foreach ($values as $value) {
-			array_push($allRefIds, array("id" => $value["rep_ref_id"], "title" => $value["title"]));
+		foreach ($profiles as $profile) {
+			$result = $db->query("SELECT spl.level_id, spl.base_skill_id, spl.tref_id
+									FROM skl_profile_level AS spl
+									WHERE spl.profile_id = '".$profile["profile_id"]."'");
+			$skills = $db->fetchAll($result);
+			foreach($skills as $skill) {
+				$profilegoal = $db->query("SELECT nr FROM skl_level WHERE skill_id = '" . $skill["base_skill_id"] . "' AND id = '" . $skill["level_id"] . "'");
+				$goal = $profilegoal->fetchAssoc();
+				$score = self::computeScore($skill["tref_id"]);
+				if ($score < $goal) {return false;}
+			}
 		}
 
-		return array_slice($allRefIds, 0 ,3);
+		return true;
 	}
 
-	public static function getAllCompetencesOfUserProfile() {
+	public static function getDataForDesktop(int $n = 3) {
+		$allRefIds = array();
+		$competences = self::getAllCompetencesOfUserProfile();
+
+		foreach ($competences as $competence) {
+			foreach ($competence["resources"] as $resource) {
+				if ($resource["level"] > $competence["score"]) {
+					array_push($allRefIds, $resource);
+				}
+				break;
+			}
+		}
+
+		$data = array_slice($allRefIds, 0, $n);
+
+		return $data;
+	}
+
+	public static function getAllCompetencesOfUserProfile(int $n = 0) {
 		$db = self::getDatabaseObj();
 		$user_id = self::getUserObj()->getId();
 
@@ -97,37 +123,61 @@ class ilCompetenceRecommenderAlgorithm {
 									WHERE spl.profile_id = '".$profile["profile_id"]."'");
 			$skills = $db->fetchAll($result);
 			foreach($skills as $skill) {
-				$level = $db->query("SELECT * FROM skl_level WHERE skill_id = '".$skill["base_skill_id"]."'");
+				// get data needed for Selfevaluations
+				$childId = $skill["tref_id"]; $depth = 3;
+				while ($depth > 2) {
+					$parent_query = $db->query("SELECT depth, child, parent
+									FROM skl_tree
+									WHERE child = '" . $childId . "'");
+					$parent = $db->fetchAssoc($parent_query);
+					$depth = $parent["depth"];
+					$childId = $parent["parent"];
+					$parentId = $parent["child"];
+				}
+
+				// get resources and score
+				$level = $db->query("SELECT * FROM skl_level WHERE skill_id = '" . $skill["base_skill_id"] . "'");
 				$levelcount = $level->numRows();
-				$profilegoal = $db->query("SELECT nr FROM skl_level WHERE skill_id = '".$skill["base_skill_id"]."' AND id = '".$skill["level_id"]."'");
+				$profilegoal = $db->query("SELECT nr FROM skl_level WHERE skill_id = '" . $skill["base_skill_id"] . "' AND id = '" . $skill["level_id"] . "'");
 				$goal = $profilegoal->fetchAssoc();
 				$score = self::computeScore($skill["tref_id"]);
-				$skillsToSort[$skill["tref_id"]] = array(
-					"id" => $skill["tref_id"],
-					"title" => $skill['title'],
-					"score" => $score,
-					"diff" => $goal["nr"]-$score,
-					"goal" => $goal["nr"],
-					"scale" => $levelcount,
-					"resources" => self::getResourcesForCompetence(intval($skill["tref_id"])));
+				if ($n == 0 || $score != 0) {
+					if (!isset($skillsToSort["tref_id"])) {
+						$skillsToSort[$skill["tref_id"]] = array(
+							"id" => $skill["tref_id"],
+							"base_skill" => $skill["base_id"],
+							"parent" => $parentId,
+							"title" => $skill['title'],
+							"score" => $score,
+							"diff" => $score == 0 ? 1 - $goal["nr"] / $levelcount : $score / $goal["nr"],
+							"goal" => $goal["nr"],
+							"scale" => $levelcount,
+							"resources" => self::getResourcesForCompetence(intval($skill["tref_id"])));
+					} else if ($goal["nr"] > $skillsToSort["tref_id"]["goal"]) {
+						// if several profiles with same skill take maximum
+						$skillsToSort[$skill["tref_id"]]["goal"] = $goal["nr"];
+					}
+				}
 			}
 		}
 
-		$score_sorter  = array_column($skillsToSort, 'diff');
-		array_multisort($score_sorter, SORT_NUMERIC, SORT_DESC,$skillsToSort);
+		$sortedSkills = self::sortCompetences($skillsToSort);
+		if ($n > 0) {
+			return array_slice($sortedSkills, 0, $n);
+		}
 
-		return $skillsToSort;
+		return $sortedSkills;
 	}
 
 	public static function sortCompetences(array $competences) {
 		$score_sorter  = array_column($competences, 'diff');
-		array_multisort($score_sorter, SORT_NUMERIC, SORT_DESC,$competences);
-		return $score_sorter;
+		array_multisort($score_sorter, SORT_NUMERIC, SORT_ASC,$competences);
+		return $competences;
 	}
 
 	public static function getNCompetencesOfUserProfile(int $n) {
-		$allCompetences = self::getAllCompetencesOfUserProfile();
-		return array_slice($allCompetences, 0, $n);
+		$competences = self::getAllCompetencesOfUserProfile($n);
+		return $competences;
 	}
 
 	private static function computeScore($skill)
@@ -143,13 +193,13 @@ class ilCompetenceRecommenderAlgorithm {
 								AND suhl.tref_id ='".$skill."'
 								AND suhl.self_eval = '1'
 								ORDER BY suhl.status_date DESC");
-		// todo: Fremdeinschaetzung richtig setzen
 		$resultLastFremdEval = $db->query("SELECT suhl.level_id, sl.nr, suhl.status_date
 								FROM skl_user_has_level AS suhl
 								JOIN skl_level AS sl ON suhl.level_id = sl.id
 								WHERE suhl.user_id ='".$user_id. "' 
 								AND suhl.tref_id ='".$skill."'
-								AND suhl.self_eval = '1'
+								AND suhl.self_eval = '0'
+								AND (suhl.trigger_obj_type = 'crs' OR suhl.trigger_obj_type = 'svy')
 								ORDER BY suhl.status_date DESC");
 		$resultLastMessung = $db->query("SELECT suhl.level_id, sl.nr, suhl.status_date
 								FROM skl_user_has_level AS suhl
@@ -157,6 +207,8 @@ class ilCompetenceRecommenderAlgorithm {
 								WHERE suhl.user_id ='".$user_id. "' 
 								AND suhl.tref_id ='".$skill."'
 								AND suhl.self_eval = '0'
+								AND suhl.trigger_obj_type != 'crs'
+								AND suhl.trigger_obj_type != 'svy'
 								ORDER BY suhl.status_date DESC");
 
 		// last value of user levels
@@ -178,24 +230,47 @@ class ilCompetenceRecommenderAlgorithm {
 			$scoreM = $valueLastMessung["nr"];
 			$t_M = ceil((time() - strtotime($valueLastMessung["status_date"]))/86400);
 		}
+
+		// set t_i to value since newest date
+		if ($t_S != 0 && ($t_M == 0 || $t_S <= $t_M) && ($t_F == 0 || $t_S <= $t_F)) {
+			$t_M == 0 ? $t_M = 0 : $t_M -= $t_S - 1;
+			$t_F == 0 ? $t_F = 0 : $t_F -= $t_S - 1;
+			$t_S = 1;
+		} else if ($t_M != 0 && ($t_S == 0 || $t_M <= $t_S) && ($t_F == 0 || $t_M <= $t_F)) {
+			$t_S == 0 ? $t_S = 0 : $t_S -= $t_M + 1;
+			$t_F == 0 ? $t_F = 0 : $t_F -= $t_M + 1;
+			$t_M = 1;
+		} else if ($t_F != 0 && ($t_M == 0 || $t_F <= $t_M) && ($t_S == 0 || $t_F <= $t_S)) {
+			$t_M == 0 ? $t_M = 0 : $t_M -= $t_F + 1;
+			$t_S == 0 ? $t_S = 0 : $t_S -= $t_F + 1;
+			$t_F = 1;
+		}
 		$sum_t = $t_S+$t_F+$t_M;
 
 		//Konstanten
 		$m_S = 1/3; $m_F = 1/3; $m_M = 1/3;
 
 		//Fallunterscheidung
-		if ($t_S === 0) {$m_S = 0;}
-		if ($t_F === 0) {$m_F = 0;}
-		if ($t_M === 0) {$m_M = 0;}
+		if ($t_S == 0) {$m_S = 0;}
+		if ($t_F == 0) {$m_F = 0;}
+		if ($t_M == 0) {$m_M = 0;}
 		//Berechnung
 		if ($sum_t != 0) {
 			$sumS = (1 - ($t_S / $sum_t)) * $m_S;
 			$sumM = (1 - ($t_M / $sum_t)) * $m_M;
 			$sumF = (1 - ($t_F / $sum_t)) * $m_F;
-			$scorePartS = ( $sumS / ($sumS + $sumM + $sumF) ) * $scoreS;
-			$scorePartM = ( $sumM / ($sumS + $sumM + $sumF) ) * $scoreM;
-			$scorePartF = ( $sumF / ($sumS + $sumM + $sumF) ) * $scoreF;
-			$score = $scorePartS+$scorePartF+$scorePartM;
+			if ($t_S / $sum_t == 1) {
+				$score = $scoreS;
+			} else if ($t_M / $sum_t == 1) {
+				$score = $scoreM;
+			} else if ($t_F / $sum_t == 1) {
+				$score = $scoreF;
+			} else {
+				$scorePartS = ($sumS / ($sumS + $sumM + $sumF)) * $scoreS;
+				$scorePartM = ($sumM / ($sumS + $sumM + $sumF)) * $scoreM;
+				$scorePartF = ($sumF / ($sumS + $sumM + $sumF)) * $scoreF;
+				$score = $scorePartS + $scorePartF + $scorePartM;
+			}
 		}
 
 		return $score;
@@ -205,16 +280,24 @@ class ilCompetenceRecommenderAlgorithm {
 		$db = self::getDatabaseObj();
 
 		$refIds = array();
-		$result = $db->query("SELECT ssr.rep_ref_id,ssr.tref_id,stn.title 
+		$result = $db->query("SELECT ssr.rep_ref_id,ssr.tref_id,ssr.level_id,stn.title 
 								FROM skl_skill_resource AS ssr 
 								JOIN skl_tree_node AS stn ON ssr.tref_id = stn.obj_id
 								WHERE ssr.tref_id ='".$skill_id."'");
 		$values = $db->fetchAll($result);
 
 		foreach ($values as $value) {
-			array_push($refIds, array("id" => $value["rep_ref_id"], "title" => $value["title"]));
+			$level = $db->query("SELECT nr
+								FROM skl_level
+								WHERE id ='".$value["level_id"]."'");
+			$levelnumber = $level->fetchAssoc();
+			array_push($refIds, array("id" => $value["rep_ref_id"], "title" => $value["title"], "level" => $levelnumber["nr"]));
 		}
-		// todo: sort
+
+		// sort
+		$sorter  = array_column($refIds, 'level');
+		array_multisort($sorter, SORT_NUMERIC, SORT_ASC, $refIds);
+
 		return $refIds;
 	}
 }

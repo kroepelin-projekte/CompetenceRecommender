@@ -53,6 +53,7 @@ class ilCompetenceRecommenderInfoGUI
 				$this->showInfo();
 				break;
 			default:
+				throw new Exception("ilCompetenceRecommenderInfoGUI: Unknown command: ".$cmd);
 				break;
 		}
 

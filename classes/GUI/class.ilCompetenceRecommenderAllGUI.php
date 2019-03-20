@@ -1,10 +1,13 @@
 <?php
 declare(strict_types=1);
 
+include_once("./Services/Skill/classes/class.ilPersonalSkillsGUI.php");
+
 /**
  * Class ilCompetenceRecommenderAllGUI
  *
  * @ilCtrl_isCalledBy ilCompetenceRecommenderAllGUI: ilCompetenceRecommenderGUI
+ * @ilCtrl_Calls ilCompetenceRecommenderAllGUI: ilPersonalSkillsGUI
  */
 class ilCompetenceRecommenderAllGUI
 {
@@ -49,10 +52,12 @@ class ilCompetenceRecommenderAllGUI
 	{
 		$cmd = $this->ctrl->getCmd('all');
 		switch ($cmd) {
+			case 'eval':
 			case 'all':
 				$this->showAll();
 				break;
 			default:
+				throw new Exception("ilCompetenceRecommenderAllGUI: Unknown command: ".$cmd);
 				break;
 		}
 
@@ -78,6 +83,7 @@ class ilCompetenceRecommenderAllGUI
 			$score = $competence["score"];
 			$goalat = $competence["goal"];
 			$resourcearray = array();
+			$oldresourcearray = array();
 			$btpl = new ilTemplate("./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/tpl.comprecBar.html", true, true);
 			$btpl->setVariable("TITLE", $competence["title"]);
 			$btpl->setVariable("ID", $competence["id"]);
@@ -89,19 +95,34 @@ class ilCompetenceRecommenderAllGUI
 				$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($resource["id"])));
 				$image = $factory->image()->standard(ilObject::_getIcon($obj_id), "Icon");
 				$card = $factory->card($link, $image);
-				array_push($resourcearray, $card);
+				if ($resource["level"] > $score) {
+					array_push($resourcearray, $card);
+				} else {
+					array_push($oldresourcearray, $card);
+				}
 			};
-			$html .= $btpl->get();
 			if ($resourcearray != []) {
 				$deck = $factory->deck($resourcearray);
-				$ctpl = new ilTemplate("./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/tpl.comprecCollapsible.html", true, true);
-				$ctpldivs = $ctpl->get();
-				$html .= "<br />" . "<div aria-label='Collapse Content'>" .$renderer->render($deck) . "</div>";
+				$btpl->setVariable("RESOURCES", $renderer->render($deck));
+			} else if ($score < $goalat) {
+				$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'skill_id', $competence["parent"]);
+				$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'tref_id', $competence["id"]);
+				$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'basic_skill_id', $competence["base_id"]);
+				$btpl->setVariable("RESOURCES",
+					$link = "Du solltest dich hier verbessern. Mache eine ". $renderer->render($factory->link()->standard("Selbsteinschätzung",
+						$this->ctrl->getLinkTargetByClass([ilPersonalDesktopGUI::class, ilPersonalSkillsGUI::class], 'selfEvaluation'))));
 			}
+			if ($oldresourcearray != []) {
+				$deck = $factory->deck($oldresourcearray);
+				$btpl->setVariable("OLDRESOURCES", $renderer->render($deck));
+			}
+			$btpl->setVariable("COLLAPSEON", $renderer->render($factory->glyph()->collapse()));
+			$btpl->setVariable("COLLAPSE", $renderer->render($factory->glyph()->expand()));
+			$html .= $btpl->get();
 		}
 
 
-		$this->tpl->setContent("Hier sollen alle zu verbessernden Kompetenzen auftauchen". $html);
+		$this->tpl->setContent($html);
 		$this->tpl->show();
 		return;
 	}

@@ -1,49 +1,77 @@
 <style>
-    .barchart {
-        width: 100%;
-        height: 30px;
+    .complete_row {
+        border: 1px ridge gray;
+        margin: 5px;
     }
-    .barchart_outer {
-        background: #CCC;
-        margin: 10px 0;
-        overflow: hidden;
+    .bar_row {
+        width: 100%;
+        height: 40px;
+        position:relative;
+    }
+    .barchart {
+        width: 65%;
+        height: 40px;
+        left: 35%;
         position: relative;
-        display: block;
+    }
+    .scale_bar {
+        top: 19px;
+        height: 2px;
+        width: 100%;
+        background: #AAA;
+        overflow: hidden;
+        position: absolute;
     }
     .barchart_inner {
+        top: 5px;
         background: #2A7BB4;
-        left: 0;
-        position: absolute;
+        height: 30px;
         overflow: hidden;
-        top: 0;
+        position: absolute;
     }
     .barchart_inner_profile {
         background: black;
-        left: 0;
-        position: absolute;
-        overflow: hidden;
-        top: 0;
-    }
-    .barchart_scale_min {
-        background: #CCC;
-        left: 0;
-        position: absolute;
+        height: 40px;
+        width: 8px;
         overflow: visible;
-        top: 0;
+        position: absolute;
     }
-    .barchart_scale_max {
+    .scale {
         background: #AAA;
-        left: 0;
+        height: 40px;
+        width: 2px;
+        overflow: visible;
         position: absolute;
-        overflow: visible;
-        top: 0;
     }
-    .barchart_text{
-        color: white;
-        overflow: visible;
-        position: relative;
-        line-height: 30px;
+    .title{
+        position: absolute;
+        line-height: 40px;
+        left: 5%;
+        width: 29%;
+        text-align: right;
+        overflow: hidden;
         white-space: nowrap;
+        text-overflow:ellipsis;
+    }
+    .percentage_text{
+        position: absolute;
+        line-height: 30px;
+        text-align: right;
+        overflow: visible;
+    }
+    .oldresource_text{
+        position: relative;
+        left: 5%;
+        overflow: visible;
+        line-height: 40px;
+    }
+    .resources{
+        left: 35%;
+        position: relative;
+    }
+    .glyph{
+        position: absolute;
+        line-height: 40px;
     }
 </style>
 
@@ -58,25 +86,70 @@
             plotscale: function(scale, goal, score) {
                 scaleOrig = scale;
                 while (scaleOrig > 0) {
-                    $('#{ID}').append("<div class='barchart barchart_scale_max' style='width:" + (scaleOrig/scale*100+0.1) + "%'></div>");
-                    if (parseInt(goal) === parseInt(scaleOrig)) {
-                        $('#{ID}').append("<div class='barchart_inner_profile barchart' style='width:"+(goal/scale*100+0.5)+"%'></div>");
-                        $('#{ID}').append("<div class='barchart barchart_scale_min' style='width:" + (scaleOrig/scale*100-0.5)+ "%'></div>");
-                    } else {
-                        $('#{ID}').append("<div class='barchart barchart_scale_min' style='width:" + (scaleOrig / scale * 100 - 0.1) + "%'></div>");
-                    }
+                    $('#{ID}').append("<div class='scale' style=" +
+                        "'left:" + (scaleOrig/scale*100-0.1) + "%;'" +
+                        "></div>");
                     scaleOrig--;
                 }
-                $('#{ID}').append("<div class='barchart_inner barchart' style='width:" + (score/scale*100) + "%'></div>");
-                $('#{ID}').append("<div class='barchart_text'>{TITLE}</div>");
+                $('#{ID}').append("<div class='barchart_inner_profile' style=" +
+                    "'left:"+(goal/scale*100-0.5)+"%;'" +
+                    "></div>");
+                $('#{ID}').append("<div id='innerbarchart{ID}' class='barchart_inner' style=" +
+                    "'width:" + (score/scale*100) + "%'" +
+                    "></div>");
+                if (score > 0) {
+                    $('#innerbarchart{ID}').append("<div class='percentage_text' style='color:white'>" + Round.round(score / goal * 100, 2) + "% </div>");
+                }
             },
-
         };
+        var Round = {
+            round: function (x, n) {
+                var a = Math.pow(10, n);
+                return (Math.round(x * a) / a);
+            }
+        };
+
         $( document ).ready( function( $ ) {
             BarchartScale.init({SCALE}, {GOALAT}, {SCORE});
+            $( '#collapse{ID}on' ).hide();
+            $( '#resources{ID}' ).hide();
+            $( '#collapseold{ID}on' ).hide();
+            $( '#oldresourcecontent{ID}' ).hide();
+
+            $( '#row{ID}' ).click( function() {
+                $( '#resources{ID}' ).toggle();
+                $( '#collapse{ID}on' ).toggle();
+                $( '#collapse{ID}off' ).toggle();
+            });
+
+            $( '#oldresources{ID}' ).click( function() {
+                $( '#oldresourcecontent{ID}' ).toggle();
+                $( '#collapseold{ID}on' ).toggle();
+                $( '#collapseold{ID}off' ).toggle();
+            });
         } );
     } )( jQuery );
 
 </script>
 
-<div id="{ID}" class="barchart_outer barchart"></div>
+<div class="complete_row">
+    <div id="row{ID}" class="bar_row">
+        <div id="collapse{ID}on" class="glyph"> {COLLAPSEON} </div>
+        <div id="collapse{ID}off" class="glyph"> {COLLAPSE} </div>
+        <div class='title'>{TITLE}</div>
+        <div id="{ID}" class="barchart">
+            <div class="scale_bar"></div>
+        </div>
+    </div>
+    <div id="resources{ID}" class="resources" aria-label="Collapse Content">
+        {RESOURCES}
+        <div id="oldresources{ID}">
+            <div id="collapseold{ID}on" class="glyph"> {COLLAPSEON} </div>
+            <div id="collapseold{ID}off" class="glyph"> {COLLAPSE} </div>
+            <div class="oldresource_text">Materialien einer niedrigeren Kompetenzstufe</div>
+        </div>
+        <div id="oldresourcecontent{ID}" aria-label="Collapse Content">
+            {OLDRESOURCES}
+        </div>
+    </div>
+</div>
