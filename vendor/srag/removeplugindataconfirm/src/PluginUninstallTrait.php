@@ -2,6 +2,8 @@
 
 namespace srag\RemovePluginDataConfirm\CompetenceRecommender;
 
+use srag\RemovePluginDataConfirm\CompetenceRecommender\Exception\RemovePluginDataConfirmException;
+
 /**
  * Trait PluginUninstallTrait
  *

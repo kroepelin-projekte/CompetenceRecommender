@@ -513,9 +513,9 @@ class MultiLineInputGUI extends ilFormPropertyGUI implements ilTableFilterItem, 
 	 */
 	public function initCSSandJS()/*: void*/ {
 		$dir = __DIR__;
-		$dir = substr($dir, strpos($dir, "/Customizing/") + 1);
+		$dir = "./" . substr($dir, strpos($dir, "/Customizing/") + 1);
 
-		self::dic()->mainTemplate()->addCss($dir . '/css/multi_line_input.min.css');
+		self::dic()->mainTemplate()->addCss($dir . '/css/multi_line_input.css');
 		self::dic()->mainTemplate()->addJavascript($dir . '/js/multi_line_input.min.js');
 	}
 
@@ -541,7 +541,8 @@ class MultiLineInputGUI extends ilFormPropertyGUI implements ilTableFilterItem, 
 				'keepInvalid' => true,
 				'sideBySide' => true,
 				//'collapse' => false,
-				'format' => ilCalendarUtil::getUserDateFormat(false)
+				'format' => !empty(self::dic()->user()->getId())
+				&& intval(self::dic()->user()->getId()) !== ANONYMOUS_USER_ID ? ilCalendarUtil::getUserDateFormat(false) : "DD.MM.YYYY"
 			]
 		];
 
@@ -569,22 +570,18 @@ class MultiLineInputGUI extends ilFormPropertyGUI implements ilTableFilterItem, 
 
 
 	/**
-	 * Get HTML for table filter
+	 * @inheritdoc
 	 */
 	public function getTableFilterHTML()/*: string*/ {
-		$html = $this->render();
-
-		return $html;
+		return $this->render();
 	}
 
 
 	/**
-	 * Get HTML for toolbar
+	 * @inheritdoc
 	 */
 	public function getToolbarHTML()/*: string*/ {
-		$html = $this->render("toolbar");
-
-		return $html;
+		return $this->render("toolbar");
 	}
 
 

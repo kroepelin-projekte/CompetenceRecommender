@@ -2,6 +2,8 @@
 
 namespace srag\RemovePluginDataConfirm\CompetenceRecommender;
 
+use srag\RemovePluginDataConfirm\CompetenceRecommender\Exception\RemovePluginDataConfirmException;
+
 /**
  * Trait RepositoryObjectPluginUninstallTrait
  *
@@ -40,6 +42,8 @@ trait RepositoryObjectPluginUninstallTrait {
 		if ($uninstall_removes_data) {
 			$this->deleteData();
 		}
+
+		$remove_plugin_data_confirm_class->removeUninstallRemovesData();
 	}
 
 

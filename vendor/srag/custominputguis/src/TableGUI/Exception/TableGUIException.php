@@ -14,16 +14,20 @@ use ilException;
 final class TableGUIException extends ilException {
 
 	/**
+	 * @var int
+	 */
+	const CODE_INVALID_FIELD = 1;
+
+
+	/**
 	 * TableGUIException constructor
 	 *
 	 * @param string $message
 	 * @param int    $code
-	 *
-	 * @internal
 	 */
 	public function __construct(/*string*/
 		$message, /*int*/
-		$code = 0) {
+		$code) {
 		parent::__construct($message, $code);
 	}
 }

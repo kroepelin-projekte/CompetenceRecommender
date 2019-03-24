@@ -68,9 +68,9 @@ class ilCompetenceRecommenderInfoGUI
 	protected function showInfo()
 	{
 		$this->tpl->getStandardTemplate();
-		$this->tpl->setTitle("Meine Lernempfehlungen");
+		$this->tpl->setTitle($this->lng->txt('ui_uihk_comprec_plugin_title'));
 
-		$this->tpl->setContent("Hier erscheint Information zum Recommender");
+		$this->tpl->setContent($this->lng->txt('ui_uihk_comprec_info_text'));
 		$this->tpl->show();
 		return;
 	}

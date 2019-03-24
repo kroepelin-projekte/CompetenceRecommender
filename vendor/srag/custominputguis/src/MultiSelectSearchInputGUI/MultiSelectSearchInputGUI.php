@@ -3,7 +3,9 @@
 namespace srag\CustomInputGUIs\CompetenceRecommender\MultiSelectSearchInputGUI;
 
 use ilMultiSelectInputGUI;
+use ilTableFilterItem;
 use ilTemplate;
+use ilToolbarItem;
 use ilUtil;
 use srag\DIC\CompetenceRecommender\DICTrait;
 
@@ -16,7 +18,7 @@ use srag\DIC\CompetenceRecommender\DICTrait;
  * @author  Oskar Truffer <ot@studer-raimann.ch>
  * @author  Martin Studer <ms@studer-raimann.ch>
  */
-class MultiSelectSearchInputGUI extends ilMultiSelectInputGUI {
+class MultiSelectSearchInputGUI extends ilMultiSelectInputGUI implements ilTableFilterItem, ilToolbarItem {
 
 	use DICTrait;
 	/**
@@ -60,13 +62,13 @@ class MultiSelectSearchInputGUI extends ilMultiSelectInputGUI {
 		parent::__construct($title, $post_var);
 
 		$dir = __DIR__;
-		$dir = substr($dir, strpos($dir, "/Customizing/") + 1);
+		$dir = "./" . substr($dir, strpos($dir, "/Customizing/") + 1);
 
 		self::dic()->mainTemplate()->addJavaScript($dir . "/../../node_modules/select2/dist/js/select2.full.min.js");
 		self::dic()->mainTemplate()->addJavaScript($dir . "/../../node_modules/select2/dist/js/i18n/" . self::dic()->user()->getCurrentLanguage()
 			. ".js");
 		self::dic()->mainTemplate()->addCss($dir . "/../../node_modules/select2/dist/css/select2.min.css");
-		self::dic()->mainTemplate()->addCss($dir . "/css/multiselectsearchinputgui.min.css");
+		self::dic()->mainTemplate()->addCss($dir . "/css/multiselectsearchinputgui.css");
 		$this->setInputTemplate(new ilTemplate(__DIR__ . "/templates/tpl.multiple_select.html", true, true));
 		$this->setWidth("308px");
 	}
@@ -304,5 +306,21 @@ class MultiSelectSearchInputGUI extends ilMultiSelectInputGUI {
 			$a_postvar = $a_postvar . "[]";
 		}
 		parent::setPostVar($a_postvar);
+	}
+
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getTableFilterHTML()/*: string*/ {
+		return $this->render();
+	}
+
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getToolbarHTML()/*: string*/ {
+		return $this->render();
 	}
 }

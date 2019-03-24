@@ -75,7 +75,7 @@ class ilCompetenceRecommenderAllGUI
 		$factory = $this->ui->factory();
 
 		$this->tpl->getStandardTemplate();
-		$this->tpl->setTitle("Meine Lernempfehlungen");
+		$this->tpl->setTitle($this->lng->txt('ui_uihk_comprec_plugin_title'));
 		$html = "";
 
 		$competences = ilCompetenceRecommenderAlgorithm::getAllCompetencesOfUserProfile();
@@ -90,31 +90,43 @@ class ilCompetenceRecommenderAllGUI
 			$btpl->setVariable("SCORE", $score);
 			$btpl->setVariable("GOALAT", $goalat);
 			$btpl->setVariable("SCALE", $competence["scale"]);
-			foreach ($competence["resources"] as $resource) {
-				$obj_id = ilObject::_lookupObjectId($resource["id"]);
-				$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($resource["id"])));
-				$image = $factory->image()->standard(ilObject::_getIcon($obj_id), "Icon");
-				$card = $factory->card($link, $image);
-				if ($resource["level"] > $score) {
-					array_push($resourcearray, $card);
-				} else {
-					array_push($oldresourcearray, $card);
+			if ($score > 0) {
+				foreach ($competence["resources"] as $resource) {
+					$obj_id = ilObject::_lookupObjectId($resource["id"]);
+					$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($resource["id"])));
+					$image = $factory->image()->standard(ilObject::_getIcon($obj_id), "Icon");
+					$card = $factory->card($link, $image);
+					if ($resource["level"] > $score) {
+						array_push($resourcearray, $card);
+					} else {
+						array_push($oldresourcearray, $card);
+					}
+				};
+				if ($resourcearray != []) {
+					$deck = $factory->deck($resourcearray);
+					$btpl->setVariable("RESOURCES", $renderer->render($deck));
+				} else if ($score < $goalat) {
+					$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'skill_id', $competence["parent"]);
+					$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'tref_id', $competence["id"]);
+					$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'basic_skill_id', $competence["base_id"]);
+					$btpl->setVariable("RESOURCES",
+						$link = $this->lng->txt('ui_uihk_comprec_no_resources') . " " . $renderer->render($factory->link()->standard($this->lng->txt('ui_uihk_comprec_self_eval'),
+								$this->ctrl->getLinkTargetByClass([ilPersonalDesktopGUI::class, ilPersonalSkillsGUI::class], 'selfEvaluation'))));
 				}
-			};
-			if ($resourcearray != []) {
-				$deck = $factory->deck($resourcearray);
-				$btpl->setVariable("RESOURCES", $renderer->render($deck));
-			} else if ($score < $goalat) {
+				$btpl->setVariable("OLDRESOURCETEXT", $this->lng->txt('ui_uihk_comprec_old_resources_text'));
+				if ($oldresourcearray != []) {
+					$deck = $factory->deck($oldresourcearray);
+					$btpl->setVariable("OLDRESOURCES", $renderer->render($deck));
+				}
+				$btpl->setVariable("COLLAPSEONRESOURCE", $renderer->render($factory->glyph()->collapse()));
+				$btpl->setVariable("COLLAPSERESOURCE", $renderer->render($factory->glyph()->expand()));
+			} else {
 				$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'skill_id', $competence["parent"]);
 				$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'tref_id', $competence["id"]);
 				$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'basic_skill_id', $competence["base_id"]);
 				$btpl->setVariable("RESOURCES",
-					$link = "Du solltest dich hier verbessern. Mache eine ". $renderer->render($factory->link()->standard("Selbsteinschätzung",
-						$this->ctrl->getLinkTargetByClass([ilPersonalDesktopGUI::class, ilPersonalSkillsGUI::class], 'selfEvaluation'))));
-			}
-			if ($oldresourcearray != []) {
-				$deck = $factory->deck($oldresourcearray);
-				$btpl->setVariable("OLDRESOURCES", $renderer->render($deck));
+					$link = $this->lng->txt('ui_uihk_comprec_no_formationdata') . " " . $renderer->render($factory->link()->standard($this->lng->txt('ui_uihk_comprec_self_eval'),
+							$this->ctrl->getLinkTargetByClass([ilPersonalDesktopGUI::class, ilPersonalSkillsGUI::class], 'selfEvaluation'))));
 			}
 			$btpl->setVariable("COLLAPSEON", $renderer->render($factory->glyph()->collapse()));
 			$btpl->setVariable("COLLAPSE", $renderer->render($factory->glyph()->expand()));

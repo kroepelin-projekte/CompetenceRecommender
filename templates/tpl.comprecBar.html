@@ -1,6 +1,6 @@
 <style>
     .complete_row {
-        border: 1px ridge gray;
+        border: 0px ridge gray;
         margin: 5px;
     }
     .bar_row {
@@ -39,7 +39,7 @@
     .scale {
         background: #AAA;
         height: 40px;
-        width: 2px;
+        width: 0px;
         overflow: visible;
         position: absolute;
     }
@@ -144,9 +144,9 @@
     <div id="resources{ID}" class="resources" aria-label="Collapse Content">
         {RESOURCES}
         <div id="oldresources{ID}">
-            <div id="collapseold{ID}on" class="glyph"> {COLLAPSEON} </div>
-            <div id="collapseold{ID}off" class="glyph"> {COLLAPSE} </div>
-            <div class="oldresource_text">Materialien einer niedrigeren Kompetenzstufe</div>
+            <div id="collapseold{ID}on" class="glyph"> {COLLAPSEONRESOURCE} </div>
+            <div id="collapseold{ID}off" class="glyph"> {COLLAPSERESOURCE} </div>
+            <div class="oldresource_text">{OLDRESOURCETEXT}</div>
         </div>
         <div id="oldresourcecontent{ID}" aria-label="Collapse Content">
             {OLDRESOURCES}

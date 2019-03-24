@@ -47,6 +47,17 @@ final class DICStatic implements DICStaticInterface {
 	/**
 	 * @inheritdoc
 	 */
+	public static function clearCache()/*: void*/ {
+		self::$dic = NULL;
+		self::$output = NULL;
+		self::$plugins = [];
+		self::$version = NULL;
+	}
+
+
+	/**
+	 * @inheritdoc
+	 */
 	public static function dic()/*: DICInterface*/ {
 		if (self::$dic === NULL) {
 			switch (true) {
@@ -95,7 +106,7 @@ final class DICStatic implements DICStaticInterface {
 		$plugin_class_name)/*: PluginInterface*/ {
 		if (!isset(self::$plugins[$plugin_class_name])) {
 			if (!class_exists($plugin_class_name)) {
-				throw new DICException("Class $plugin_class_name not exists!");
+				throw new DICException("Class $plugin_class_name not exists!", DICException::CODE_INVALID_PLUGIN_CLASS);
 			}
 
 			if (method_exists($plugin_class_name, "getInstance")) {
@@ -107,7 +118,7 @@ final class DICStatic implements DICStaticInterface {
 			}
 
 			if (!$plugin_object instanceof ilPlugin) {
-				throw new DICException("Class $plugin_class_name not extends ilPlugin!");
+				throw new DICException("Class $plugin_class_name not extends ilPlugin!", DICException::CODE_INVALID_PLUGIN_CLASS);
 			}
 
 			self::$plugins[$plugin_class_name] = new Plugin($plugin_object);

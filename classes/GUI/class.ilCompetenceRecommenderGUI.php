@@ -34,6 +34,11 @@ class ilCompetenceRecommenderGUI {
 	/** @var  ilCompetenceRecommenderPlugin */
     public $pl;
 
+	/**
+	 * @var ilLanguage
+	 */
+	protected $lng;
+
 	/** @var  ilUIFramework */
 	public $ui;
 
@@ -51,6 +56,7 @@ class ilCompetenceRecommenderGUI {
 		$this->ui = $DIC->ui();
 		$this->db = $DIC->database();
 		$this->pl = ilCompetenceRecommenderPlugin::getInstance();
+		$this->lng = $DIC['lng'];
 	}
 
 
@@ -146,10 +152,10 @@ class ilCompetenceRecommenderGUI {
 	protected function setTabs()
 	{
 		// Tabs
-		$this->tabs->setBack2Target("Back to PD", $this->ctrl->getLinkTargetByClass("ilPersonalDesktopGUI"));
-		$this->tabs->addTab('show', "Aktivitäten", $this->ctrl->getLinkTargetByClass(ilCompetenceRecommenderActivitiesGUI::class));
-		$this->tabs->addTab('all', "Alle Empfehlungen", $this->ctrl->getLinkTargetByClass(ilCompetenceRecommenderAllGUI::class));
-		$this->tabs->addTab('info', "Info", $this->ctrl->getLinkTargetByClass(ilCompetenceRecommenderInfoGUI::class));
+		$this->tabs->setBack2Target($this->lng->txt('ui_uihk_comprec_back_tab'), $this->ctrl->getLinkTargetByClass("ilPersonalDesktopGUI"));
+		$this->tabs->addTab('show', $this->lng->txt('ui_uihk_comprec_activities_tab'), $this->ctrl->getLinkTargetByClass(ilCompetenceRecommenderActivitiesGUI::class));
+		$this->tabs->addTab('all', $this->lng->txt('ui_uihk_comprec_all_tab'), $this->ctrl->getLinkTargetByClass(ilCompetenceRecommenderAllGUI::class));
+		$this->tabs->addTab('info', $this->lng->txt('ui_uihk_comprec_info_tab'), $this->ctrl->getLinkTargetByClass(ilCompetenceRecommenderInfoGUI::class));
 		$this->tabs->activateTab('show');
 	}
 }

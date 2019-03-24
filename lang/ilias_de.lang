@@ -9,3 +9,15 @@ removeplugindataconfirm_keep_data#:#%1$s-Daten behalten
 removeplugindataconfirm_msg_kept_data#:#Die %1$s-Daten wurden behalten
 removeplugindataconfirm_msg_removed_data#:#Die %1$s-Daten wurden auch entfernt
 removeplugindataconfirm_remove_data#:#Entferne %1$s-Daten
+plugin_title#:#Meine Lernempfehlungen
+no_formationdata#:#Keine Daten vorhanden. Bitte mache eine
+self_eval#:#Selbsteinschätzung
+no_resources#:#Du solltest dich verbessern. Mache anschließend eine
+detail_button#:#mehr Details
+info_link#:#Was bedeutet diese Box
+back_tab#:#Back to PD
+activities_tab#:#Aktivitäten
+all_tab#:#Alle Empfehlungen
+info_tab#:#Info
+info_text#:#Diese Ansicht wird über das von der Universität Freiburg entwickelte Competence-Recommender-Plugin generiert. Anhand von bereits bearbeiteten Aufgaben werden weitere Aufgaben und andere Materialien vorgeschlagen, die zum Erreichen des vorgegebenen Profilwerts benötigt werden. Nach Messungen, die durch das Lösen von Aufgaben ausgelöst werden, Selbsteinschätzungen und Fremdeinschätzungen werden die Fortschritte neu berechnet und mit Materialien als Lernempfehlungen angezeigt.
+old_resources_text#:#Materialien einer niedrigeren Kompetenzstufe

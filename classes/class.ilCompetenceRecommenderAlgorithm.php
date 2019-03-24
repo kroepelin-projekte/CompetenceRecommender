@@ -89,18 +89,34 @@ class ilCompetenceRecommenderAlgorithm {
 		return true;
 	}
 
+	public static function noResourcesLeft()
+	{
+		$competences = self::getAllCompetencesOfUserProfile();
+
+		foreach ($competences as $competence) {
+			foreach ($competence["resources"] as $resource) {
+				if ($resource["level"] >= $competence["score"] && $competence["score"] < $competence["goal"]) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
 	public static function getDataForDesktop(int $n = 3) {
 		$allRefIds = array();
 		$competences = self::getAllCompetencesOfUserProfile();
 
 		foreach ($competences as $competence) {
 			foreach ($competence["resources"] as $resource) {
-				if ($resource["level"] > $competence["score"]) {
+				if ($resource["level"] >= $competence["score"] && $competence["score"] < $competence["goal"] && $competence["score"] > 0) {
 					array_push($allRefIds, $resource);
+					break;
 				}
-				break;
 			}
 		}
+
 
 		$data = array_slice($allRefIds, 0, $n);
 
@@ -184,52 +200,61 @@ class ilCompetenceRecommenderAlgorithm {
 	{
 		$db = self::getDatabaseObj();
 		$user_id = self::getUserObj()->getId();
-		$score = 0;
 
 		$resultLastSelfEval = $db->query("SELECT suhl.level_id, sl.nr, suhl.status_date
 								FROM skl_user_has_level AS suhl
 								JOIN skl_level AS sl ON suhl.level_id = sl.id
-								WHERE suhl.user_id ='".$user_id. "' 
-								AND suhl.tref_id ='".$skill."'
+								WHERE suhl.user_id ='" . $user_id . "' 
+								AND suhl.tref_id ='" . $skill . "'
 								AND suhl.self_eval = '1'
 								ORDER BY suhl.status_date DESC");
 		$resultLastFremdEval = $db->query("SELECT suhl.level_id, sl.nr, suhl.status_date
 								FROM skl_user_has_level AS suhl
 								JOIN skl_level AS sl ON suhl.level_id = sl.id
-								WHERE suhl.user_id ='".$user_id. "' 
-								AND suhl.tref_id ='".$skill."'
+								WHERE suhl.user_id ='" . $user_id . "' 
+								AND suhl.tref_id ='" . $skill . "'
 								AND suhl.self_eval = '0'
 								AND (suhl.trigger_obj_type = 'crs' OR suhl.trigger_obj_type = 'svy')
 								ORDER BY suhl.status_date DESC");
 		$resultLastMessung = $db->query("SELECT suhl.level_id, sl.nr, suhl.status_date
 								FROM skl_user_has_level AS suhl
 								JOIN skl_level AS sl ON suhl.level_id = sl.id
-								WHERE suhl.user_id ='".$user_id. "' 
-								AND suhl.tref_id ='".$skill."'
+								WHERE suhl.user_id ='" . $user_id . "' 
+								AND suhl.tref_id ='" . $skill . "'
 								AND suhl.self_eval = '0'
 								AND suhl.trigger_obj_type != 'crs'
 								AND suhl.trigger_obj_type != 'svy'
 								ORDER BY suhl.status_date DESC");
 
 		// last value of user levels
-		$scoreS = 0; $scoreF = 0; $scoreM = 0;
+		$scoreS = 0;
+		$scoreF = 0;
+		$scoreM = 0;
 		// time in days since value was set
-		$t_S = 0; $t_F = 0; $t_M = 0;
+		$t_S = 0;
+		$t_F = 0;
+		$t_M = 0;
 		if ($resultLastSelfEval->numRows() > 0) {
 			$valueLastSelfEval = $db->fetchAssoc($resultLastSelfEval);
-			$scoreS = $valueLastSelfEval["nr"];
-			$t_S = ceil((time() - strtotime($valueLastSelfEval["status_date"]))/86400);
+			$scoreS = intval($valueLastSelfEval["nr"]);
+			$t_S = intval(ceil((time() - strtotime($valueLastSelfEval["status_date"])) / 86400));
 		}
 		if ($resultLastFremdEval->numRows() > 0) {
 			$valueLastFremdEval = $db->fetchAssoc($resultLastFremdEval);
-			$scoreF = $valueLastFremdEval["nr"];
-			$t_F = ceil((time() - strtotime($valueLastFremdEval["status_date"]))/86400);
+			$scoreF = intval($valueLastFremdEval["nr"]);
+			$t_F = intval(ceil((time() - strtotime($valueLastFremdEval["status_date"])) / 86400));
 		}
 		if ($resultLastMessung->numRows() > 0) {
 			$valueLastMessung = $db->fetchAssoc($resultLastMessung);
-			$scoreM = $valueLastMessung["nr"];
-			$t_M = ceil((time() - strtotime($valueLastMessung["status_date"]))/86400);
+			$scoreM = intval($valueLastMessung["nr"]);
+			$t_M = intval(ceil((time() - strtotime($valueLastMessung["status_date"])) / 86400));
 		}
+
+		return self::score($t_S, $t_M, $t_F, $scoreS, $scoreM, $scoreF);
+	}
+
+	public static function score(int $t_S, int $t_M, int $t_F, int $scoreS, int $scoreM, int $scoreF) {
+		$score = 0;
 
 		// set t_i to value since newest date
 		if ($t_S != 0 && ($t_M == 0 || $t_S <= $t_M) && ($t_F == 0 || $t_S <= $t_F)) {
@@ -245,15 +270,16 @@ class ilCompetenceRecommenderAlgorithm {
 			$t_S == 0 ? $t_S = 0 : $t_S -= $t_F + 1;
 			$t_F = 1;
 		}
-		$sum_t = $t_S+$t_F+$t_M;
 
 		//Konstanten
 		$m_S = 1/3; $m_F = 1/3; $m_M = 1/3;
 
 		//Fallunterscheidung
-		if ($t_S == 0) {$m_S = 0;}
-		if ($t_F == 0) {$m_F = 0;}
-		if ($t_M == 0) {$m_M = 0;}
+		if ($t_S == 0 || $scoreS == 0) {$m_S = 0; $t_S = 0;}
+		if ($t_F == 0 || $scoreF == 0) {$m_F = 0; $t_F = 0;}
+		if ($t_M == 0 || $scoreM == 0) {$m_M = 0; $t_M = 0;}
+
+		$sum_t = $t_S+$t_F+$t_M;
 		//Berechnung
 		if ($sum_t != 0) {
 			$sumS = (1 - ($t_S / $sum_t)) * $m_S;

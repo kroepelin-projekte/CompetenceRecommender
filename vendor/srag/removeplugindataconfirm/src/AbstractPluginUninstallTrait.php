@@ -4,6 +4,7 @@ namespace srag\RemovePluginDataConfirm\CompetenceRecommender;
 
 use ilUIPluginRouterGUI;
 use srag\DIC\CompetenceRecommender\DICTrait;
+use srag\RemovePluginDataConfirm\CompetenceRecommender\Exception\RemovePluginDataConfirmException;
 
 /**
  * Trait AbstractPluginUninstallTrait
@@ -74,13 +75,13 @@ trait AbstractPluginUninstallTrait {
 
 		$uninstall_removes_data = boolval($uninstall_removes_data);
 
-		if ($uninstall_removes_data) {
-			if ($remove_data) {
+		if ($remove_data) {
+			if ($uninstall_removes_data) {
 				$this->deleteData();
 			}
-		}
 
-		$remove_plugin_data_confirm_class->removeUninstallRemovesData();
+			$remove_plugin_data_confirm_class->removeUninstallRemovesData();
+		}
 
 		return true;
 	}
@@ -121,17 +122,17 @@ trait AbstractPluginUninstallTrait {
 
 		if (!isset(self::$remove_plugin_data_confirm_classes[$remove_plugin_data_confirm_class_name])) {
 			if (!class_exists($remove_plugin_data_confirm_class_name)) {
-				throw new RemovePluginDataConfirmException("Class $remove_plugin_data_confirm_class_name not exists!");
+				throw new RemovePluginDataConfirmException("Class $remove_plugin_data_confirm_class_name not exists!", RemovePluginDataConfirmException::CODE_INVALID_REMOVE_PLUGIN_DATA_CONFIRM_CLASS);
 			}
 
 			if (!method_exists($remove_plugin_data_confirm_class_name, "getInstance")) {
-				throw new RemovePluginDataConfirmException("Class $remove_plugin_data_confirm_class_name not extends AbstractRemovePluginDataConfirm!");
+				throw new RemovePluginDataConfirmException("Class $remove_plugin_data_confirm_class_name not extends AbstractRemovePluginDataConfirm!", RemovePluginDataConfirmException::CODE_INVALID_REMOVE_PLUGIN_DATA_CONFIRM_CLASS);
 			}
 
 			$remove_plugin_data_confirm_class = $remove_plugin_data_confirm_class_name::getInstance();
 
 			if (!$remove_plugin_data_confirm_class instanceof AbstractRemovePluginDataConfirm) {
-				throw new RemovePluginDataConfirmException("Class $remove_plugin_data_confirm_class_name not extends AbstractRemovePluginDataConfirm!");
+				throw new RemovePluginDataConfirmException("Class $remove_plugin_data_confirm_class_name not extends AbstractRemovePluginDataConfirm!", RemovePluginDataConfirmException::CODE_INVALID_REMOVE_PLUGIN_DATA_CONFIRM_CLASS);
 			}
 
 			self::$remove_plugin_data_confirm_classes[$remove_plugin_data_confirm_class_name] = $remove_plugin_data_confirm_class;
@@ -148,7 +149,7 @@ trait AbstractPluginUninstallTrait {
 	 */
 	private static final function checkRemovePluginDataConfirmClassNameConst()/*: void*/ {
 		if (!defined("static::REMOVE_PLUGIN_DATA_CONFIRM_CLASS_NAME") || empty(static::REMOVE_PLUGIN_DATA_CONFIRM_CLASS_NAME)) {
-			throw new RemovePluginDataConfirmException("Your class needs to implement the REMOVE_PLUGIN_DATA_CONFIRM_CLASS_NAME constant!");
+			throw new RemovePluginDataConfirmException("Your class needs to implement the REMOVE_PLUGIN_DATA_CONFIRM_CLASS_NAME constant!", RemovePluginDataConfirmException::CODE_MISSING_CONST_REMOVE_PLUGIN_DATA_CONFIRM_CLASS_NAME);
 		}
 	}
 }

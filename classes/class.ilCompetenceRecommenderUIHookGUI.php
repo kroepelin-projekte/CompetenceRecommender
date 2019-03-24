@@ -99,7 +99,7 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 		$a_par = []): array 
 	{
 		if ($a_comp == "Services/PersonalDesktop" && $a_part == "center_column") {
-			if (ilCompetenceRecommenderAlgorithm::hasUserProfile()) {
+			if (ilCompetenceRecommenderAlgorithm::hasUserProfile() && !\ilCompetenceRecommenderAlgorithm::hasUserFinishedAll()) {
 				return ["mode" => ilUIHookPluginGUI::PREPEND, "html" => $this->pdRecommendation()];
 			}
 		}
@@ -123,7 +123,7 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 		// show recommendations in template
 		$pl = $this->getPluginObject();
 		$btpl = $pl->getTemplate("tpl.comprecDesktop.html");
-		$btpl->setVariable("TITLE", "Meine Lernempfehlungen");
+		$btpl->setVariable("TITLE", $this->lng->txt('ui_uihk_comprec_plugin_title'));
 
 		$data = \ilCompetenceRecommenderAlgorithm::getDataForDesktop();
 		$allcards = array();
@@ -140,26 +140,26 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 			$deck = $factory->deck($allcards);
 			$renderedobjects = $renderer->render($deck);
 		} else {
-			if (!\ilCompetenceRecommenderAlgorithm::hasUserFinishedAll()) {
-				$renderedobjects = "Keine Daten vorhanden. Bitte mache eine " . $renderer->render($factory->link()->standard("Selbstevaluation",
+			if (!\ilCompetenceRecommenderAlgorithm::noResourcesLeft()) {
+				$renderedobjects = $this->lng->txt('ui_uihk_comprec_no_formationdata') . " " . $renderer->render($factory->link()->standard($this->lng->txt('ui_uihk_comprec_self_eval'),
 						$this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class, ilCompetenceRecommenderGUI::class], 'eval')));
 			}
 			else {
-				$renderedobjects = "Du solltest dich verbessern. Mache anschließend eine " . $renderer->render($factory->link()->standard("Selbstevaluation",
+				$renderedobjects = $this->lng->txt('ui_uihk_comprec_no_resources') . " " . $renderer->render($factory->link()->standard($this->lng->txt('ui_uihk_comprec_self_eval'),
 						$this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class, ilCompetenceRecommenderGUI::class], 'eval')));;
 			}
 		}
 
 		// render button for dashboard on extra page
 		$button = $renderer->render($factory->button()
-				->standard("mehr Details", $this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class,
+				->standard($this->lng->txt('ui_uihk_comprec_detail_button'), $this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class,
 					ilCompetenceRecommenderGUI::class], 'show')));
 
-		$linktoinfo = $renderer->render($factory->link()->standard("Was bedeutet diese Box",
+		$linktoinfo = $renderer->render($factory->link()->standard($this->lng->txt('ui_uihk_comprec_info_link'),
 						$this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class, ilCompetenceRecommenderGUI::class], 'info')));
 
 		// append html with a new line
-		$compRecRow = "<div class=\"ilObjRow\">" . $renderedobjects . "
+		$compRecRow = "<div class=\"ilObjRow\" id=\"comprec_widget\">" . $renderedobjects . "
 						<div class=\"ilFloatRight\">" .$button . "</div> 
 						<br />
 						<div class=\"ilFloatDown\">"

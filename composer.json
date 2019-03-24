@@ -32,6 +32,9 @@
       "classes/"
     ]
   },
+  "require-dev": {
+    "phpunit/phpunit": "^8"
+  },
   "config": {
     "classmap-authoritative": true,
     "optimize-autoloader": true,
