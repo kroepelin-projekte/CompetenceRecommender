@@ -94,11 +94,16 @@
                 $('#{ID}').append("<div class='barchart_inner_profile' style=" +
                     "'left:"+(goal/scale*100-0.5)+"%;'" +
                     "></div>");
+                $('#{ID}').append("<div id='goalbarchart{ID}' class='barchart_inner' style=" +
+                    "'width:"+(goal/scale*100-0.5)+"%;background:lightgray'" +
+                    "></div>");
                 $('#{ID}').append("<div id='innerbarchart{ID}' class='barchart_inner' style=" +
                     "'width:" + (score/scale*100) + "%'" +
                     "></div>");
                 if (score > 0) {
                     $('#innerbarchart{ID}').append("<div class='percentage_text' style='color:white'>" + Round.round(score / goal * 100, 2) + "% </div>");
+                } else {
+                    $('#goalbarchart{ID}').append("<div class='percentage_text' style='color:white'>" + Round.round(score / goal * 100, 2) + "% </div>");
                 }
             },
         };
