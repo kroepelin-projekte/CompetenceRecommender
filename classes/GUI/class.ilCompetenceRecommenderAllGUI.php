@@ -29,6 +29,9 @@ class ilCompetenceRecommenderAllGUI
 	/** @var  ilUIFramework */
 	protected $ui;
 
+	/** @var  ilToolbarGUI */
+	protected $toolbar;
+
 	/**
 	 * Constructor of the class ilDistributorTrainingsLanguagesGUI.
 	 *
@@ -41,6 +44,7 @@ class ilCompetenceRecommenderAllGUI
 		$this->lng = $DIC['lng'];
 		$this->ctrl = $DIC['ilCtrl'];
 		$this->ui = $DIC->ui();
+		$this->toolbar = $DIC->toolbar();
 	}
 
 	/**
@@ -56,12 +60,27 @@ class ilCompetenceRecommenderAllGUI
 			case 'all':
 				$this->showAll();
 				break;
+			case 'saveSelfEvaluation':
+				$this->saveEval();
+				break;
 			default:
 				throw new Exception("ilCompetenceRecommenderAllGUI: Unknown command: ".$cmd);
 				break;
 		}
 
 		return;
+	}
+
+	protected function saveEval() {
+		$user = ilCompetenceRecommenderAlgorithm::getUserObj()->getId();
+		$base_skill_id = $_GET["basic_skill_id"];
+		$skill_id = $_GET["skill_id"];
+		$tref_id = $_GET["tref_id"];
+		$level_id = $_POST["se"];
+		ilPersonalSkill::saveSelfEvaluation($user, (int) $skill_id,
+			(int) $tref_id, (int) $base_skill_id, (int) $level_id);
+		ilUtil::sendSuccess($this->lng->txt("self_eval_saved"), true);
+		$this->ctrl->redirect($this);
 	}
 
 	/**
@@ -78,6 +97,11 @@ class ilCompetenceRecommenderAllGUI
 		$this->tpl->setTitle($this->lng->txt('ui_uihk_comprec_plugin_title'));
 		$html = "";
 
+		$atpl = new ilTemplate("./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/tpl.comprecBarColumnTitle.html", true, true);
+		$atpl->setVariable("NAME_HEAD", $this->lng->txt('ui_uihk_comprec_competence'));
+		$atpl->setVariable("BAR_HEAD", $this->lng->txt('ui_uihk_comprec_progress'));
+		$html .= $atpl->get();
+
 		$competences = ilCompetenceRecommenderAlgorithm::getAllCompetencesOfUserProfile();
 		foreach ($competences as $competence) {
 			$score = $competence["score"];
@@ -90,7 +114,9 @@ class ilCompetenceRecommenderAllGUI
 			$btpl->setVariable("SCORE", $score);
 			$btpl->setVariable("GOALAT", $goalat);
 			$btpl->setVariable("SCALE", $competence["scale"]);
+			$btpl->setVariable("LASTUSEDTEXT", $this->lng->txt('ui_uihk_comprec_last_used'));
 			if ($score > 0) {
+				$btpl->setVariable("LASTUSEDDATE", $competence["lastUsed"]);
 				foreach ($competence["resources"] as $resource) {
 					$obj_id = ilObject::_lookupObjectId($resource["id"]);
 					$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($resource["id"])));
@@ -104,13 +130,14 @@ class ilCompetenceRecommenderAllGUI
 				};
 				if ($resourcearray != []) {
 					$deck = $factory->deck($resourcearray);
+					$btpl->setVariable("RESOURCESINFO", $this->lng->txt('ui_uihk_comprec_resources'));
 					$btpl->setVariable("RESOURCES", $renderer->render($deck));
 				} else if ($score < $goalat) {
 					$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'skill_id', $competence["parent"]);
 					$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'tref_id', $competence["id"]);
 					$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'basic_skill_id', $competence["base_id"]);
 					$btpl->setVariable("RESOURCES",
-						$link = $this->lng->txt('ui_uihk_comprec_no_resources') . " " . $renderer->render($factory->link()->standard($this->lng->txt('ui_uihk_comprec_self_eval'),
+						$link = $this->lng->txt('ui_uihk_comprec_no_resources') . " " . $renderer->render($factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'),
 								$this->ctrl->getLinkTargetByClass([ilPersonalDesktopGUI::class, ilPersonalSkillsGUI::class], 'selfEvaluation'))));
 				}
 				$btpl->setVariable("OLDRESOURCETEXT", $this->lng->txt('ui_uihk_comprec_old_resources_text'));
@@ -121,12 +148,14 @@ class ilCompetenceRecommenderAllGUI
 				$btpl->setVariable("COLLAPSEONRESOURCE", $renderer->render($factory->glyph()->collapse()));
 				$btpl->setVariable("COLLAPSERESOURCE", $renderer->render($factory->glyph()->expand()));
 			} else {
+				$btpl->setVariable("LASTUSEDDATE", $this->lng->txt('ui_uihk_comprec_never'));
 				$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'skill_id', $competence["parent"]);
 				$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'tref_id', $competence["id"]);
 				$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'basic_skill_id', $competence["base_id"]);
-				$btpl->setVariable("RESOURCES",
-					$link = $this->lng->txt('ui_uihk_comprec_no_formationdata') . " " . $renderer->render($factory->link()->standard($this->lng->txt('ui_uihk_comprec_self_eval'),
-							$this->ctrl->getLinkTargetByClass([ilPersonalDesktopGUI::class, ilPersonalSkillsGUI::class], 'selfEvaluation'))));
+				$text = $this->lng->txt('ui_uihk_comprec_no_formationdata');
+				$modal = $factory->modal()->roundtrip($this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent($competence["parent"],$competence["id"],$competence["base_id"]));
+				$modalbutton = $factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'), "")->withOnClick($modal->getShowSignal());
+				$btpl->setVariable("RESOURCES", $text . " " . $renderer->render([$modalbutton, $modal]));
 			}
 			$btpl->setVariable("COLLAPSEON", $renderer->render($factory->glyph()->collapse()));
 			$btpl->setVariable("COLLAPSE", $renderer->render($factory->glyph()->expand()));
@@ -134,8 +163,59 @@ class ilCompetenceRecommenderAllGUI
 		}
 
 
+
 		$this->tpl->setContent($html);
 		$this->tpl->show();
 		return;
+	}
+
+	private function getModalContent($skill_id, $tref_id, $base_skill_id) {
+		$factory = $this->ui->factory();
+
+		$this->ctrl->saveParameter($skill_id, "skill_id");
+		$this->ctrl->saveParameter($base_skill_id, "basic_skill_id");
+		$this->ctrl->saveParameter($tref_id, "tref_id");
+
+		// basic skill selection
+		include_once("./Services/Skill/classes/class.ilSkillTreeNode.php");
+		include_once("./Services/Skill/classes/class.ilVirtualSkillTree.php");
+		$vtree = new ilVirtualSkillTree();
+		$vtref_id = 0;
+		if (ilSkillTreeNode::_lookupType((int) $skill_id) == "sktr")
+		{
+			include_once("./Services/Skill/classes/class.ilSkillTemplateReference.php");
+			$vtref_id = $skill_id;
+			$skill_id = ilSkillTemplateReference::_lookupTemplateId($skill_id);
+		}
+		$bs = $vtree->getSubTreeForCSkillId($skill_id.":".$vtref_id, true);
+
+
+		$options = array();
+		foreach ($bs as $b)
+		{
+			$options[$b["skill_id"]] = ilSkillTreeNode::_lookupTitle($b["skill_id"]);
+		}
+
+		$cur_basic_skill_id = ((int) $_POST["basic_skill_id"] > 0)
+			? (int) $_POST["basic_skill_id"]
+			: (((int) $_GET["basic_skill_id"] > 0)
+				? (int) $_GET["basic_skill_id"]
+				: key($options));
+
+		$this->ctrl->setParameter($this, "basic_skill_id", $cur_basic_skill_id);
+		$this->ctrl->setParameter($this, "skill_id", $skill_id);
+		$this->ctrl->setParameter($this, "tref_id", $tref_id);
+
+		// table
+		include_once("./Services/Skill/classes/class.ilSelfEvaluationSimpleTableGUI.php");
+		$tab = new ilSelfEvaluationSimpleTableGUI($this, "selfEvaluation",
+			(int) $skill_id, (int) $tref_id, $cur_basic_skill_id);
+		$html = $tab->getHTML();
+
+		$html = str_replace("-skmg_skill_level-", $this->lng->txt("ui_uihk_comprec_skmg_skill_level"), $html);
+		$html = str_replace("-skmg_no_skills-", $this->lng->txt("ui_uihk_comprec_skmg_no_skills"), $html);
+
+		$modalContent = $factory->legacy($html);
+		return $modalContent;
 	}
 }

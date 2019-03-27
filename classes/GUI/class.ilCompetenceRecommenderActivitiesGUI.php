@@ -80,12 +80,16 @@ class ilCompetenceRecommenderActivitiesGUI
 
 		$competences = ilCompetenceRecommenderAlgorithm::getNCompetencesOfUserProfile(5);
 		if ($competences == []) {
-			$html = $this->lng->txt('ui_uihk_comprec_no_formationdata') . " " . $renderer->render($factory->link()->standard($this->lng->txt('ui_uihk_comprec_self_eval'),
+			$html = $this->lng->txt('ui_uihk_comprec_no_formationdata') . " " . $renderer->render($factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'),
 					$this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class, ilCompetenceRecommenderGUI::class], 'eval')));
 			$this->tpl->setContent($html);
 			$this->tpl->show();
 			return;
 		}
+		$atpl = new ilTemplate("./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/tpl.comprecBarColumnTitle.html", true, true);
+		$atpl->setVariable("NAME_HEAD", $this->lng->txt('ui_uihk_comprec_competence'));
+		$atpl->setVariable("BAR_HEAD", $this->lng->txt('ui_uihk_comprec_progress'));
+		$html .= $atpl->get();
 		foreach ($competences as $competence) {
 			$score = $competence["score"];
 			$goalat = $competence["goal"];
@@ -97,6 +101,8 @@ class ilCompetenceRecommenderActivitiesGUI
 			$btpl->setVariable("SCORE", $score);
 			$btpl->setVariable("GOALAT", $goalat);
 			$btpl->setVariable("SCALE", $competence["scale"]);
+			$btpl->setVariable("LASTUSEDTEXT", $this->lng->txt('ui_uihk_comprec_last_used'));
+			$btpl->setVariable("LASTUSEDDATE", $competence["lastUsed"]);
 			foreach ($competence["resources"] as $resource) {
 				$obj_id = ilObject::_lookupObjectId($resource["id"]);
 				$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($resource["id"])));
@@ -110,14 +116,17 @@ class ilCompetenceRecommenderActivitiesGUI
 			};
 			if ($resourcearray != []) {
 				$deck = $factory->deck($resourcearray);
+				$btpl->setVariable("RESOURCESINFO", $this->lng->txt('ui_uihk_comprec_resources'));
 				$btpl->setVariable("RESOURCES", $renderer->render($deck));
 			} else if ($score < $goalat) {
 				$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'skill_id', $competence["parent"]);
 				$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'tref_id', $competence["id"]);
 				$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'basic_skill_id', $competence["base_id"]);
-				$btpl->setVariable("RESOURCES",
-					$link = $this->lng->txt('ui_uihk_comprec_no_resources') . " " . $renderer->render($factory->link()->standard($this->lng->txt('ui_uihk_comprec_self_eval'),
-							$this->ctrl->getLinkTargetByClass([ilPersonalDesktopGUI::class, ilPersonalSkillsGUI::class], 'selfEvaluation'))));
+				$link = $this->lng->txt('ui_uihk_comprec_no_resources') . " " . $renderer->render($factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'),
+						$this->ctrl->getLinkTargetByClass([ilPersonalDesktopGUI::class, ilPersonalSkillsGUI::class], 'selfEvaluation')));
+				$modal = $factory->modal()->roundtrip("Title", $factory->legacy("Content"));
+				$modalbutton = $renderer->render($factory->button()->standard("Test", "")->withOnClick($modal->getShowSignal()));
+				$btpl->setVariable("RESOURCES", $link);
 			}
 			$btpl->setVariable("OLDRESOURCETEXT", $this->lng->txt('ui_uihk_comprec_old_resources_text'));
 			if ($oldresourcearray != []) {

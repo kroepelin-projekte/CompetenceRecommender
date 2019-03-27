@@ -4,10 +4,6 @@
 
 require_once __DIR__ . "/../vendor/autoload.php";
 
-use feldbusl\Plugins\CompetenceRecommender\Config\ConfigFormGUI;
-use feldbusl\Plugins\CompetenceRecommender\Utils\CompetenceRecommenderTrait;
-use srag\ActiveRecordConfig\CompetenceRecommender\ActiveRecordConfigGUI;
-
 /**
  * Class ilCompetenceRecommenderConfigGUI
  *
@@ -15,12 +11,167 @@ use srag\ActiveRecordConfig\CompetenceRecommender\ActiveRecordConfigGUI;
  *
  * @author Leonie Feldbusch <feldbusl@informatik.uni-freiburg.de>
  */
-class ilCompetenceRecommenderConfigGUI extends ActiveRecordConfigGUI {
+class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI {
 
-	use CompetenceRecommenderTrait;
-	const PLUGIN_CLASS_NAME = ilCompetenceRecommenderPlugin::class;
 	/**
-	 * @var array
+	 * @var \ilCtrl
 	 */
-	protected static $tabs = [ self::TAB_CONFIGURATION => ConfigFormGUI::class ];
+	protected $ctrl;
+
+	/**
+	 * @var ilTemplate
+	 */
+	protected $tpl;
+
+	/**
+	 * @var ilLanguage
+	 */
+	protected $lng;
+
+	/**
+	 * @var ilDB
+	 */
+	protected $db;
+
+	/**
+	 * Constructor of the class ilDistributorTrainingsConfigGUI.
+	 *
+	 * @return 	void
+	 */
+	public function __construct()
+	{
+		global $DIC;
+
+		$this->tpl = $DIC['tpl'];
+		$this->lng = $DIC['lng'];
+		$this->ctrl = $DIC->ctrl();
+		$this->db = $DIC->database();
+		$this->user = $DIC->user();
+	}
+
+	/**
+	 * Delegate incoming comands.
+	 *
+	 * @param 	string 	$cmd
+	 * @return 	void
+	 */
+	public function performCommand($cmd)
+	{
+		$cmd = $this->ctrl->getCmd("configure");
+		switch ($cmd) {
+			case "configure":
+				$this->showConfig();
+				break;
+			case "save_dropout":
+				$this->saveDropout();
+				break;
+			case "save_profile":
+				$this->saveProfile();
+				break;
+			default:
+				throw new Exception("ilCompetenceRecommenderConfigGUI: Unknown command: ".$cmd);
+				break;
+		}
+	}
+
+	private function profiles() {
+		$result = $this->db->query("SELECT id, title FROM skl_profile");
+		$profiles = $this->db->fetchAll($result);
+		$profileArray = array();
+		foreach ($profiles as $profile) {
+			$profileArray[$profile["id"]] = $profile["title"];
+		}
+		return $profileArray;
+	}
+
+	private function saveDropout() {
+		$value = $_POST["dropout_input"];
+		if (is_numeric($value) && $value >= 0) {
+			$save_settings = new ilSetting("comprec");
+			$save_settings->set("dropout_input", intval(floor($value)));
+			ilUtil::sendInfo("Dropout von " . intval(floor($value)) . " gespeichert.");
+		} else {
+			ilUtil::sendFailure("Dropout muss eine ganze Zahl größer oder gleich 0 sein.");
+		}
+		$this->showConfig();
+	}
+
+	private function saveProfile() {
+		$selected_profile = $_POST["selected_profile"];
+		$check = $_POST["use_select"];
+		$save_settings = new ilSetting("comprec");
+		if ($check == 1) {
+			if ($save_settings->get("checked_profile_".$selected_profile) != $selected_profile) {
+				$save_settings->set("checked_profile_" . $selected_profile, $selected_profile);
+			}
+		} else {
+			if ($save_settings->get("checked_profile_".$selected_profile) == $selected_profile) {
+				$save_settings->delete("checked_profile_".$selected_profile);
+			}
+		}
+		ilUtil::sendInfo("Profilkonfiguration gespeichert");
+		$this->showConfig();
+	}
+
+	private function showConfig() {
+		$this->tpl->addJavascript("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/ProfileSelector.js");
+		$available_profiles = $this->profiles();
+
+		$selected_profile = $available_profiles[0];
+		if (isset($_GET["selected_profile"])
+			&& $_GET["selected_profile"] != ""
+			&& array_key_exists($_GET["selected_profile"], $available_profiles)
+		) {
+			$selected_profile = $_GET["selected_profile"];
+		}
+
+		if (isset($_POST["selected_profile"])
+			&& $_POST["selected_profile"] != ""
+			&& array_key_exists($_POST["selected_profile"], $available_profiles)
+		) {
+			$selected_profile = $_POST["selected_profile"];
+		}
+
+		$html = "";
+
+		$old_input = new ilSetting("comprec");
+
+		$form = new ilPropertyFormGUI();
+		$form->setTitle($this->lng->txt('ui_uihk_comprec_config_dropout_title'));
+		$form->addCommandButton("save_dropout", $this->lng->txt('ui_uihk_comprec_config_save'));
+		$form->setFormAction($this->ctrl->getFormAction($this));
+
+		$dropout_input = new ilTextInputGUI($this->lng->txt('ui_uihk_comprec_dropout_input_label'), "dropout_input");
+		$dropout_input->setInfo($this->lng->txt('ui_uihk_comprec_dropout_input_info'));
+		$dropout_input->setValue($old_input->get("dropout_input"));
+		$form->addItem($dropout_input);
+
+		$html .= $form->getHTML();
+
+		$form = new ilPropertyFormGUI();
+		$form->setTitle($this->lng->txt('ui_uihk_comprec_profile_config'));
+		$form->addCommandButton("save_profile", $this->lng->txt('ui_uihk_comprec_config_save'));
+		$form->setFormAction($this->ctrl->getFormAction($this));
+
+		$profile_selector = new ilSelectInputGUI($this->lng->txt('ui_uihk_comprec_profile_select_label'), "selected_profile");
+		$profile_selector->setInfo($this->lng->txt('ui_uihk_comprec_profile_select_info'));
+		$profile_selector->setOptions($available_profiles);
+		if ($selected_profile != null)
+		{
+			$profile_selector->setValue($selected_profile);
+		}
+		$form->addItem($profile_selector);
+
+		$toCheck = $old_input->get("checked_profile_".$selected_profile);
+		$toCheck == $selected_profile ? $checked = true : $checked = false;
+
+		$use_select = new ilCheckboxInputGUI($this->lng->txt('ui_uihk_comprec_use_select_label'), "use_select");
+		$use_select->setInfo($this->lng->txt('ui_uihk_comprec_use_select_info'));
+		$use_select->setChecked($checked);
+		$form->addItem($use_select);
+
+		$html .= $form->getHTML();
+
+		$this->tpl->setContent($html);
+	}
 }

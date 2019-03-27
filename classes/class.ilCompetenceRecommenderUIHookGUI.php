@@ -141,11 +141,11 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 			$renderedobjects = $renderer->render($deck);
 		} else {
 			if (!\ilCompetenceRecommenderAlgorithm::noResourcesLeft()) {
-				$renderedobjects = $this->lng->txt('ui_uihk_comprec_no_formationdata') . " " . $renderer->render($factory->link()->standard($this->lng->txt('ui_uihk_comprec_self_eval'),
+				$renderedobjects = $this->lng->txt('ui_uihk_comprec_no_formationdata') . " " . $renderer->render($factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'),
 						$this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class, ilCompetenceRecommenderGUI::class], 'eval')));
 			}
 			else {
-				$renderedobjects = $this->lng->txt('ui_uihk_comprec_no_resources') . " " . $renderer->render($factory->link()->standard($this->lng->txt('ui_uihk_comprec_self_eval'),
+				$renderedobjects = $this->lng->txt('ui_uihk_comprec_no_resources') . " " . $renderer->render($factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'),
 						$this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class, ilCompetenceRecommenderGUI::class], 'eval')));;
 			}
 		}
@@ -159,10 +159,10 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 						$this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class, ilCompetenceRecommenderGUI::class], 'info')));
 
 		// append html with a new line
-		$compRecRow = "<div class=\"ilObjRow\" id=\"comprec_widget\">" . $renderedobjects . "
-						<div class=\"ilFloatRight\">" .$button . "</div> 
+		$compRecRow = "<div class='ilObjRow' id='comprec_widget' style='margin: 5px'>" . $renderedobjects . "
+						<div class='ilFloatRight'>" .$button . "</div> 
 						<br />
-						<div class=\"ilFloatDown\">"
+						<div class='ilFloatDown'>"
 						. $linktoinfo .
 						"</div><hr /> </div>";
 		$btpl->setVariable("COMPRECROW", $compRecRow);

@@ -10,10 +10,13 @@ removeplugindataconfirm_msg_kept_data#:#Die %1$s-Daten wurden behalten
 removeplugindataconfirm_msg_removed_data#:#Die %1$s-Daten wurden auch entfernt
 removeplugindataconfirm_remove_data#:#Entferne %1$s-Daten
 plugin_title#:#Meine Lernempfehlungen
-no_formationdata#:#Keine Daten vorhanden. Bitte mache eine
+no_formationdata#:#Keine Daten vorhanden. Bitte mache hier eine Selbsteinschätzung, um Materialien vorgeschlagen zu bekommen:
 self_eval#:#Selbsteinschätzung
-no_resources#:#Du solltest dich verbessern. Mache anschließend eine
-detail_button#:#mehr Details
+competence#:#Kompetenz
+progress#:#Fortschritt
+no_resources#:#Du solltest dich verbessern. Wenn du dich besser fühlst kannst Du hier eine Selbsteinschätzung machen:
+resources#:#Materialien, mit denen Du dich verbessern kannst
+detail_button#:#mehr Empfehlungen
 info_link#:#Was bedeutet diese Box
 back_tab#:#Back to PD
 activities_tab#:#Aktivitäten
@@ -21,3 +24,17 @@ all_tab#:#Alle Empfehlungen
 info_tab#:#Info
 info_text#:#Diese Ansicht wird über das von der Universität Freiburg entwickelte Competence-Recommender-Plugin generiert. Anhand von bereits bearbeiteten Aufgaben werden weitere Aufgaben und andere Materialien vorgeschlagen, die zum Erreichen des vorgegebenen Profilwerts benötigt werden. Nach Messungen, die durch das Lösen von Aufgaben ausgelöst werden, Selbsteinschätzungen und Fremdeinschätzungen werden die Fortschritte neu berechnet und mit Materialien als Lernempfehlungen angezeigt.
 old_resources_text#:#Materialien einer niedrigeren Kompetenzstufe
+last_used#:#Zuletzt bearbeitet:
+never#:#nie
+config_dropout_title#:#Dropout-Zeit
+config_save#:#Speichern
+profile_config#:#Profilkonfiguration
+dropout_input_label#:#Dropout-Zeit
+dropout_input_info#:#Zeit in Tagen, nach denen Formationsdaten nicht mehr in der Scoreberechnung verwendet werden
+profile_select_label#:#Profil
+profile_select_info#:#Profil zur Konfiguration auswählen
+use_select_label#:#Profil in Recommender verwenden
+use_select_info#:#Verwende dieses Profil für Empfehlungen an die Studierenden
+self_eval_saved#:#
+skmg_skill_level#:#Kompetenzausprägung
+skmg_no_skills#:#Keine Kompetenz
