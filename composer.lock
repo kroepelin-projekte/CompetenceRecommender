@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "2caa0474f70817d02953209943e19034",
+    "content-hash": "17478644af0e5bdfdf738ee22577cba0",
     "packages": [
         {
             "name": "srag/activerecordconfig",
@@ -54,16 +54,16 @@
         },
         {
             "name": "srag/custominputguis",
-            "version": "v0.19.7",
+            "version": "v0.19.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/studer-raimann/CustomInputGUIs.git",
-                "reference": "95f2ffa2d774e753c05028bbdb8d71348dad46de"
+                "reference": "ad4420a2a53a82bbf109682ce6ebc9a01fd49202"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/studer-raimann/CustomInputGUIs/zipball/95f2ffa2d774e753c05028bbdb8d71348dad46de",
-                "reference": "95f2ffa2d774e753c05028bbdb8d71348dad46de",
+                "url": "https://api.github.com/repos/studer-raimann/CustomInputGUIs/zipball/ad4420a2a53a82bbf109682ce6ebc9a01fd49202",
+                "reference": "ad4420a2a53a82bbf109682ce6ebc9a01fd49202",
                 "shasum": ""
             },
             "require": {
@@ -97,20 +97,20 @@
                 "input",
                 "table"
             ],
-            "time": "2019-03-19T14:43:37+00:00"
+            "time": "2019-03-26T09:38:29+00:00"
         },
         {
             "name": "srag/dic",
-            "version": "v0.14.13",
+            "version": "v0.15.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/studer-raimann/DIC.git",
-                "reference": "7b8b2082622901cee63570b3e96be8a693f07279"
+                "reference": "9f90f54f36a00a793fc08a7916dfdb06ebe3a76c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/studer-raimann/DIC/zipball/7b8b2082622901cee63570b3e96be8a693f07279",
-                "reference": "7b8b2082622901cee63570b3e96be8a693f07279",
+                "url": "https://api.github.com/repos/studer-raimann/DIC/zipball/9f90f54f36a00a793fc08a7916dfdb06ebe3a76c",
+                "reference": "9f90f54f36a00a793fc08a7916dfdb06ebe3a76c",
                 "shasum": ""
             },
             "require": {
@@ -142,7 +142,7 @@
                 "globals",
                 "trait"
             ],
-            "time": "2019-02-26T08:34:09+00:00"
+            "time": "2019-03-26T13:15:41+00:00"
         },
         {
             "name": "srag/librariesnamespacechanger",
@@ -189,16 +189,16 @@
         },
         {
             "name": "srag/removeplugindataconfirm",
-            "version": "v0.3.6",
+            "version": "v0.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/studer-raimann/RemovePluginDataConfirm.git",
-                "reference": "c9bab84437a3029ca919da727d7f315c6de3c675"
+                "reference": "fc1f1828c05ac2548d3b4022d53422cf1335ffc2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/studer-raimann/RemovePluginDataConfirm/zipball/c9bab84437a3029ca919da727d7f315c6de3c675",
-                "reference": "c9bab84437a3029ca919da727d7f315c6de3c675",
+                "url": "https://api.github.com/repos/studer-raimann/RemovePluginDataConfirm/zipball/fc1f1828c05ac2548d3b4022d53422cf1335ffc2",
+                "reference": "fc1f1828c05ac2548d3b4022d53422cf1335ffc2",
                 "shasum": ""
             },
             "require": {
@@ -232,7 +232,7 @@
                 "plugin",
                 "uninstall"
             ],
-            "time": "2019-01-22T09:18:04+00:00"
+            "time": "2019-03-26T13:17:27+00:00"
         }
     ],
     "packages-dev": [
@@ -911,16 +911,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "7.5.7",
+            "version": "7.5.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "eb343b86753d26de07ecba7868fa983104361948"
+                "reference": "c29c0525cf4572c11efe1db49a8b8aee9dfac58a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/eb343b86753d26de07ecba7868fa983104361948",
-                "reference": "eb343b86753d26de07ecba7868fa983104361948",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/c29c0525cf4572c11efe1db49a8b8aee9dfac58a",
+                "reference": "c29c0525cf4572c11efe1db49a8b8aee9dfac58a",
                 "shasum": ""
             },
             "require": {
@@ -991,7 +991,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2019-03-16T07:31:17+00:00"
+            "time": "2019-03-26T13:23:54+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -1717,5 +1717,7 @@
     "platform": {
         "php": ">=7.0"
     },
-    "platform-dev": []
+    "platform-dev": {
+        "ext-bcmath": ">=0.1.0"
+    }
 }

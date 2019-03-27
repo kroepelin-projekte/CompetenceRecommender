@@ -25,7 +25,7 @@ final class ilCompetenceRecommenderAlgorithmTest extends TestCase
 		$this->assertEquals(3.5, ilCompetenceRecommenderAlgorithm::score(1, 0, 1, 2, 0, 5));
 		$this->assertEquals(2.25, ilCompetenceRecommenderAlgorithm::score(1, 0, 3, 2, 0, 3));
 		$this->assertEquals(4.43, round(ilCompetenceRecommenderAlgorithm::score(6, 0, 1, 1, 0, 5), 2));
-		$this->assertEquals(2.5, ilCompetenceRecommenderAlgorithm::score(0, 1, 1, 2, 3, 0));
+		$this->assertEquals(2.5, ilCompetenceRecommenderAlgorithm::score(0, 1, 1, 0, 2, 3));
 		$this->assertEquals(4.71, round(ilCompetenceRecommenderAlgorithm::score(0, 13, 1, 0, 1, 5), 2));
 	}
 

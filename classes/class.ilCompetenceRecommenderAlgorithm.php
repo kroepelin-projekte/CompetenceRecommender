@@ -294,18 +294,16 @@ class ilCompetenceRecommenderAlgorithm {
 			$t_F == 0 ? $t_F = 0 : $t_F -= $t_S - 1;
 			$t_S = 1;
 		} else if ($t_M == $t_minimum && $t_minimum > 0) {
-			$t_S == 0 ? $t_S = 0 : $t_S -= $t_M + 1;
-			$t_F == 0 ? $t_F = 0 : $t_F -= $t_M + 1;
+			$t_S == 0 ? $t_S = 0 : $t_S -= $t_M - 1;
+			$t_F == 0 ? $t_F = 0 : $t_F -= $t_M - 1;
 			$t_M = 1;
 		} else if ($t_F == $t_minimum && $t_minimum > 0) {
-			$t_M == 0 ? $t_M = 0 : $t_M -= $t_F + 1;
-			$t_S == 0 ? $t_S = 0 : $t_S -= $t_F + 1;
+			$t_M == 0 ? $t_M = 0 : $t_M -= $t_F - 1;
+			$t_S == 0 ? $t_S = 0 : $t_S -= $t_F - 1;
 			$t_F = 1;
 		}
 
-		//Konstanten
 		$m_S = 1/3; $m_F = 1/3; $m_M = 1/3;
-
 		//Fallunterscheidung
 		if ($t_S == 0 || $scoreS == 0) {$m_S = 0; $t_S = 0;}
 		if ($t_F == 0 || $scoreF == 0) {$m_F = 0; $t_F = 0;}
@@ -314,9 +312,6 @@ class ilCompetenceRecommenderAlgorithm {
 		$sum_t = $t_S+$t_F+$t_M;
 		//Berechnung
 		if ($sum_t != 0) {
-			$sumS = (1 - ($t_S / $sum_t)) * $m_S;
-			$sumM = (1 - ($t_M / $sum_t)) * $m_M;
-			$sumF = (1 - ($t_F / $sum_t)) * $m_F;
 			if ($t_S / $sum_t == 1) {
 				$score = $scoreS;
 			} else if ($t_M / $sum_t == 1) {
@@ -324,10 +319,17 @@ class ilCompetenceRecommenderAlgorithm {
 			} else if ($t_F / $sum_t == 1) {
 				$score = $scoreF;
 			} else {
-				$scorePartS = ($sumS / ($sumS + $sumM + $sumF)) * $scoreS;
-				$scorePartM = ($sumM / ($sumS + $sumM + $sumF)) * $scoreM;
-				$scorePartF = ($sumF / ($sumS + $sumM + $sumF)) * $scoreF;
+				$m_S != 0 ? $sumS = array($sum_t - $t_S, $sum_t* 3) : $sumS=array(0,1);
+				$m_M != 0 ? $sumM = array($sum_t - $t_M, $sum_t* 3) : $sumM=array(0,1);
+				$m_F != 0 ? $sumF = array($sum_t - $t_F, $sum_t* 3) : $sumF=array(0,1);
+
+				$longdivisor = $sumS[0]*$sumM[1]*$sumF[1]+$sumS[1]*$sumM[0]*$sumF[1]+$sumS[1]*$sumM[1]*$sumF[0];
+				$mult = $sumS[1]*$sumM[1]*$sumF[1];
+				$scorePartS = bcdiv(strval($sumS[0] *  $mult * $scoreS), strval($sumS[1] * $longdivisor), 10);
+				$scorePartM = bcdiv(strval($sumM[0] *  $mult * $scoreM), strval($sumM[1] * $longdivisor), 10);
+				$scorePartF = bcdiv(strval($sumF[0] *  $mult * $scoreF), strval($sumF[1] * $longdivisor), 10);
 				$score = $scorePartS + $scorePartF + $scorePartM;
+				$score = round($score, 3);
 			}
 		}
 

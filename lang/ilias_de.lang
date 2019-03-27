@@ -30,7 +30,7 @@ config_dropout_title#:#Dropout-Zeit
 config_save#:#Speichern
 profile_config#:#Profilkonfiguration
 dropout_input_label#:#Dropout-Zeit
-dropout_input_info#:#Zeit in Tagen, nach denen Formationsdaten nicht mehr in der Scoreberechnung verwendet werden
+dropout_input_info#:#Zeit in Tagen, nach denen Formationsdaten nicht mehr in der Scoreberechnung verwendet werden. 0 wenn kein Dropout passieren soll
 profile_select_label#:#Profil
 profile_select_info#:#Profil zur Konfiguration auswählen
 use_select_label#:#Profil in Recommender verwenden

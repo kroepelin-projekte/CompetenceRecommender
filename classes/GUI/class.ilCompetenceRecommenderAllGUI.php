@@ -114,8 +114,9 @@ class ilCompetenceRecommenderAllGUI
 			$btpl->setVariable("SCORE", $score);
 			$btpl->setVariable("GOALAT", $goalat);
 			$btpl->setVariable("SCALE", $competence["scale"]);
-			$btpl->setVariable("LASTUSEDTEXT", $this->lng->txt('ui_uihk_comprec_last_used'));
+			//$btpl->setVariable("LASTUSEDTEXT", $this->lng->txt('ui_uihk_comprec_last_used'));
 			if ($score > 0) {
+				$btpl->setVariable("LASTUSEDTEXT", $this->lng->txt('ui_uihk_comprec_last_used'));
 				$btpl->setVariable("LASTUSEDDATE", $competence["lastUsed"]);
 				foreach ($competence["resources"] as $resource) {
 					$obj_id = ilObject::_lookupObjectId($resource["id"]);
@@ -136,9 +137,10 @@ class ilCompetenceRecommenderAllGUI
 					$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'skill_id', $competence["parent"]);
 					$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'tref_id', $competence["id"]);
 					$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'basic_skill_id', $competence["base_id"]);
-					$btpl->setVariable("RESOURCES",
-						$link = $this->lng->txt('ui_uihk_comprec_no_resources') . " " . $renderer->render($factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'),
-								$this->ctrl->getLinkTargetByClass([ilPersonalDesktopGUI::class, ilPersonalSkillsGUI::class], 'selfEvaluation'))));
+					$text = $this->lng->txt('ui_uihk_comprec_no_resources');
+					$modal = $factory->modal()->roundtrip($this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent($competence["parent"], $competence["id"], $competence["base_id"]));
+					$modalbutton = $factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'), "")->withOnClick($modal->getShowSignal());
+					$btpl->setVariable("RESOURCES", $text . " " . $renderer->render([$modalbutton, $modal]));
 				}
 				$btpl->setVariable("OLDRESOURCETEXT", $this->lng->txt('ui_uihk_comprec_old_resources_text'));
 				if ($oldresourcearray != []) {
@@ -148,7 +150,7 @@ class ilCompetenceRecommenderAllGUI
 				$btpl->setVariable("COLLAPSEONRESOURCE", $renderer->render($factory->glyph()->collapse()));
 				$btpl->setVariable("COLLAPSERESOURCE", $renderer->render($factory->glyph()->expand()));
 			} else {
-				$btpl->setVariable("LASTUSEDDATE", $this->lng->txt('ui_uihk_comprec_never'));
+				//$btpl->setVariable("LASTUSEDDATE", $this->lng->txt('ui_uihk_comprec_never'));
 				$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'skill_id', $competence["parent"]);
 				$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'tref_id', $competence["id"]);
 				$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'basic_skill_id', $competence["base_id"]);
