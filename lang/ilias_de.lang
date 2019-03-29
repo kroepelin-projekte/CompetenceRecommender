@@ -11,6 +11,7 @@ removeplugindataconfirm_msg_removed_data#:#Die %1$s-Daten wurden auch entfernt
 removeplugindataconfirm_remove_data#:#Entferne %1$s-Daten
 plugin_title#:#Meine Lernempfehlungen
 no_formationdata#:#Keine Daten vorhanden. Bitte mache hier eine Selbsteinschätzung, um Materialien vorgeschlagen zu bekommen:
+no_formationdata_init_obj#:#Keine Daten vorhanden. Bitte bearbeite zunächst eines der folgenden Materialien:
 self_eval#:#Selbsteinschätzung
 competence#:#Kompetenz
 progress#:#Fortschritt
@@ -28,13 +29,27 @@ last_used#:#Zuletzt bearbeitet:
 never#:#nie
 config_dropout_title#:#Dropout-Zeit
 config_save#:#Speichern
+config_saved#:#Profilkonfiguration gespeichert.
 profile_config#:#Profilkonfiguration
 dropout_input_label#:#Dropout-Zeit
 dropout_input_info#:#Zeit in Tagen, nach denen Formationsdaten nicht mehr in der Scoreberechnung verwendet werden. 0 wenn kein Dropout passieren soll
+dropout_save#:#Dropout gespeichert.
+dropout_failure#:#Dropout muss eine ganze Zahl größer oder gleich 0 sein.
 profile_select_label#:#Profil
 profile_select_info#:#Profil zur Konfiguration auswählen
 use_select_label#:#Profil in Recommender verwenden
 use_select_info#:#Verwende dieses Profil für Empfehlungen an die Studierenden
-self_eval_saved#:#
+init_obj_label#:#Initiationsobjekt
+init_obj_info#:#Objekt, das den Studierenden empfohlen wird, wenn noch keine Formationsdaten vorhanden sind.
+init_obj_title#:#Auswahl des Initiationsobjekts
+self_eval_saved#:#Selbsteinschätzung gespeichert
 skmg_skill_level#:#Kompetenzausprägung
 skmg_no_skills#:#Keine Kompetenz
+list#:#Liste
+profiles#:#Profile
+error#:#Es ist ein Fehler aufgetreten.
+sort_best#:# Beste
+sort_percentage#:#Prozent
+sort_lastUsed#:#Zuletzt bearbeitet - absteigend
+sort_oldest#:#Zuletzt bearbeitet - aufsteigend
+sortation_label#:#Sortiere nach

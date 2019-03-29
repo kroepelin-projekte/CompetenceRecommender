@@ -71,6 +71,26 @@ class ilCompetenceRecommenderAlgorithm {
 		return false;
 	}
 
+	public static function getUserProfiles() {
+		$db = self::getDatabaseObj();
+		$user_id = self::getUserObj()->getId();
+
+		$profilearray = array();
+
+		// get user profiles
+		$result = $db->query("SELECT spu.profile_id, sp.title FROM skl_profile_user AS spu JOIN skl_profile AS sp ON sp.id = spu.profile_id WHERE user_id = '".$user_id."'");
+		$profiles = $db->fetchAll($result);
+
+		$profile_settings = new ilSetting("comprec");
+		foreach ($profiles as $profile) {
+			if ($profile_settings->get("checked_profile_".$profile['profile_id']) == $profile['profile_id']) {
+				array_push($profilearray, $profile);
+			}
+		}
+
+		return $profilearray;
+	}
+
 	public static function hasUserFinishedAll()
 	{
 		$db = self::getDatabaseObj();
@@ -116,6 +136,24 @@ class ilCompetenceRecommenderAlgorithm {
 		return true;
 	}
 
+
+	public static function getInitObjects($profile_id = -1) {
+		$profiles = self::getUserProfiles();
+		$settings = new ilSetting("comprec");
+		$ref_ids = array();
+
+		foreach ($profiles as $profile) {
+			if ($profile_id == -1 || $profile_id == $profile["profile_id"]) {
+				$ref_id = $settings->get("init_obj_" . $profile["profile_id"]);
+				if (is_numeric($ref_id)) {
+					array_push($ref_ids, array("id" => $ref_id, "title" => $profile["title"]));
+				}
+			}
+		}
+		return $ref_ids;
+	}
+
+
 	public static function getDataForDesktop(int $n = 3) {
 		$allRefIds = array();
 		$competences = self::getAllCompetencesOfUserProfile();
@@ -135,7 +173,7 @@ class ilCompetenceRecommenderAlgorithm {
 		return $data;
 	}
 
-	public static function getAllCompetencesOfUserProfile(int $n = 0) {
+	public static function getAllCompetencesOfUserProfile(int $n = 0, string $sortation = "diff") {
 		$db = self::getDatabaseObj();
 		$user_id = self::getUserObj()->getId();
 
@@ -144,55 +182,8 @@ class ilCompetenceRecommenderAlgorithm {
 		$profiles = $db->fetchAll($result);
 		$skillsToSort = array();
 
-		$profile_settings = new ilSetting("comprec");
-
 		foreach ($profiles as $profile) {
-			if ($profile_settings->get("checked_profile_".$profile['profile_id']) == $profile['profile_id']) {
-				$result = $db->query("SELECT spl.tref_id,spl.base_skill_id,spl.level_id,stn.title
-									FROM skl_profile_level AS spl
-									JOIN skl_tree_node AS stn ON spl.tref_id = stn.obj_id
-									WHERE spl.profile_id = '" . $profile["profile_id"] . "'");
-				$skills = $db->fetchAll($result);
-				foreach ($skills as $skill) {
-					// get data needed for Selfevaluations
-					$childId = $skill["tref_id"];
-					$depth = 3;
-					while ($depth > 2) {
-						$parent_query = $db->query("SELECT depth, child, parent
-									FROM skl_tree
-									WHERE child = '" . $childId . "'");
-						$parent = $db->fetchAssoc($parent_query);
-						$depth = $parent["depth"];
-						$childId = $parent["parent"];
-						$parentId = $parent["child"];
-					}
-
-					// get resources and score
-					$level = $db->query("SELECT * FROM skl_level WHERE skill_id = '" . $skill["base_skill_id"] . "'");
-					$levelcount = $level->numRows();
-					$profilegoal = $db->query("SELECT nr FROM skl_level WHERE skill_id = '" . $skill["base_skill_id"] . "' AND id = '" . $skill["level_id"] . "'");
-					$goal = $profilegoal->fetchAssoc();
-					$score = self::computeScore($skill["tref_id"]);
-					if ($n == 0 || $score != 0) {
-						if (!isset($skillsToSort["tref_id"])) {
-							$skillsToSort[$skill["tref_id"]] = array(
-								"id" => $skill["tref_id"],
-								"base_skill" => $skill["base_id"],
-								"parent" => $parentId,
-								"title" => $skill['title'],
-								"lastUsed" => self::getLastUsedDate(intval($skill["tref_id"])),
-								"score" => $score,
-								"diff" => $score == 0 ? 1 - $goal["nr"] / $levelcount : $score / $goal["nr"],
-								"goal" => $goal["nr"],
-								"scale" => $levelcount,
-								"resources" => self::getResourcesForCompetence(intval($skill["tref_id"])));
-						} else if ($goal["nr"] > $skillsToSort["tref_id"]["goal"]) {
-							// if several profiles with same skill take maximum
-							$skillsToSort[$skill["tref_id"]]["goal"] = $goal["nr"];
-						}
-					}
-				}
-			}
+			$skillsToSort = self::getCompetencesToProfile($profile, $skillsToSort, $n);
 		}
 
 		$sortedSkills = self::sortCompetences($skillsToSort);
@@ -203,9 +194,81 @@ class ilCompetenceRecommenderAlgorithm {
 		return $sortedSkills;
 	}
 
+	public static function getCompetencesToProfile($profile, $skillsToSort = array(), int $n = 0) {
+		$db = self::getDatabaseObj();
+
+		$profile_settings = new ilSetting("comprec");
+
+		if ($profile_settings->get("checked_profile_".$profile['profile_id']) == $profile['profile_id']) {
+			$result = $db->query("SELECT spl.tref_id,spl.base_skill_id,spl.level_id,stn.title
+									FROM skl_profile_level AS spl
+									JOIN skl_tree_node AS stn ON spl.tref_id = stn.obj_id
+									WHERE spl.profile_id = '" . $profile["profile_id"] . "'");
+			$skills = $db->fetchAll($result);
+			foreach ($skills as $skill) {
+				// get data needed for Selfevaluations
+				$childId = $skill["tref_id"];
+				$depth = 3;
+				while ($depth > 2) {
+					$parent_query = $db->query("SELECT depth, child, parent
+									FROM skl_tree
+									WHERE child = '" . $childId . "'");
+					$parent = $db->fetchAssoc($parent_query);
+					$depth = $parent["depth"];
+					$childId = $parent["parent"];
+					$parentId = $parent["child"];
+				}
+
+				// get resources and score
+				$level = $db->query("SELECT * FROM skl_level WHERE skill_id = '" . $skill["base_skill_id"] . "'");
+				$levelcount = $level->numRows();
+				$profilegoal = $db->query("SELECT nr FROM skl_level WHERE skill_id = '" . $skill["base_skill_id"] . "' AND id = '" . $skill["level_id"] . "'");
+				$goal = $profilegoal->fetchAssoc();
+				$score = self::computeScore($skill["tref_id"]);
+				if ($n == 0 || $score != 0) {
+					if (!isset($skillsToSort[$skill["tref_id"]])) {
+						$skillsToSort[$skill["tref_id"]] = array(
+							"id" => $skill["tref_id"],
+							"base_skill" => $skill["base_id"],
+							"parent" => $parentId,
+							"title" => $skill['title'],
+							"lastUsed" => self::getLastUsedDate(intval($skill["tref_id"])),
+							"score" => $score,
+							"diff" => $score == 0 ? 1 - $goal["nr"] / $levelcount : $score / $goal["nr"],
+							"goal" => $goal["nr"],
+							"percentage" => $score/$goal["nr"],
+							"scale" => $levelcount,
+							"resources" => self::getResourcesForCompetence(intval($skill["tref_id"])));
+					} else if ($goal["nr"] > $skillsToSort[$skill["tref_id"]]["goal"]) {
+						// if several profiles with same skill take maximum
+						$skillsToSort[$skill["tref_id"]]["goal"] = $goal["nr"];
+						$skillsToSort[$skill["tref_id"]]["percentage"] = $score/$goal["nr"];
+					}
+				}
+			}
+		}
+		return $skillsToSort;
+	}
+
 	public static function sortCompetences(array $competences) {
-		$score_sorter  = array_column($competences, 'diff');
-		array_multisort($score_sorter, SORT_NUMERIC, SORT_ASC,$competences);
+		$sortation = $_GET["sortation"];
+		$valid_sortations = array('diff','percentage','lastUsed','oldest');
+		if (in_array($sortation, $valid_sortations)) {
+			if ($sortation != 'oldest') {
+				$score_sorter = array_column($competences, $sortation);
+				if ($sortation != 'lastUsed') {
+					array_multisort($score_sorter, SORT_NUMERIC, SORT_ASC, $competences);
+				} else {
+					array_multisort($score_sorter, SORT_STRING, SORT_ASC, $competences);
+				}
+			} else {
+				$score_sorter = array_column($competences, 'lastUsed');
+				array_multisort($score_sorter, SORT_STRING, SORT_DESC, $competences);
+			}
+		} else {
+			$score_sorter = array_column($competences, 'diff');
+			array_multisort($score_sorter, SORT_NUMERIC, SORT_ASC, $competences);
+		}
 		return $competences;
 	}
 
@@ -346,7 +409,12 @@ class ilCompetenceRecommenderAlgorithm {
 								WHERE suhl.user_id ='" . $user_id . "' 
 								AND suhl.tref_id ='" . $skill_id . "'");
 
-		return $lastUsedDate->fetchAssoc()["status_date"];
+		$date = $lastUsedDate->fetchAssoc()["status_date"];
+		if (!isset($date)) {
+			$date = 9;
+		}
+
+		return $date;
 	}
 
 	private static function getResourcesForCompetence(int $skill_id) {

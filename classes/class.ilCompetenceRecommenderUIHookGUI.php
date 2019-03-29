@@ -141,8 +141,22 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 			$renderedobjects = $renderer->render($deck);
 		} else {
 			if (!\ilCompetenceRecommenderAlgorithm::noResourcesLeft()) {
-				$renderedobjects = $this->lng->txt('ui_uihk_comprec_no_formationdata') . " " . $renderer->render($factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'),
-						$this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class, ilCompetenceRecommenderGUI::class], 'eval')));
+				$init_obj = \ilCompetenceRecommenderAlgorithm::getInitObjects();
+				if ($init_obj != array()) {
+					foreach ($init_obj as $object) {
+						$obj_id = ilObject::_lookupObjectId($object["id"]);
+						$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($object["id"])));
+						$image = $factory->image()->standard(ilObject::_getIcon($obj_id), "Icon");
+						$card = $factory->card($link, $image)->withSections(array($factory->legacy($object["title"])));
+						array_push($allcards, $card);
+					}
+					$deck = $factory->deck($allcards);
+					$renderedobjects = $renderer->render($deck);
+				} else {
+					$renderedobjects = $this->lng->txt('ui_uihk_comprec_no_formationdata') . " " . $renderer->render($factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'),
+							$this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class, ilCompetenceRecommenderGUI::class], 'eval')));
+
+				}
 			}
 			else {
 				$renderedobjects = $this->lng->txt('ui_uihk_comprec_no_resources') . " " . $renderer->render($factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'),

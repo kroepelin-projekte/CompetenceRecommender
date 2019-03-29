@@ -62,11 +62,17 @@ class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI {
 			case "configure":
 				$this->showConfig();
 				break;
+			case "init_obj":
+				$this->repobjmodal();
+				break;
 			case "save_dropout":
 				$this->saveDropout();
 				break;
 			case "save_profile":
 				$this->saveProfile();
+				break;
+			case "save_init_obj":
+				$this->saveResource();
 				break;
 			default:
 				throw new Exception("ilCompetenceRecommenderConfigGUI: Unknown command: ".$cmd);
@@ -89,9 +95,9 @@ class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI {
 		if (is_numeric($value) && $value >= 0) {
 			$save_settings = new ilSetting("comprec");
 			$save_settings->set("dropout_input", intval(floor($value)));
-			ilUtil::sendInfo("Dropout von " . intval(floor($value)) . " gespeichert.");
+			ilUtil::sendInfo($this->lng->txt("ui_uihk_comprec_dropout_save"));
 		} else {
-			ilUtil::sendFailure("Dropout muss eine ganze Zahl größer oder gleich 0 sein.");
+			ilUtil::sendFailure($this->lng->txt("ui_uihk_comprec_dropout_failure"));
 		}
 		$this->showConfig();
 	}
@@ -109,15 +115,35 @@ class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI {
 				$save_settings->delete("checked_profile_".$selected_profile);
 			}
 		}
-		ilUtil::sendInfo("Profilkonfiguration gespeichert");
+		ilUtil::sendInfo($this->lng->txt("ui_uihk_comprec_config_saved"));
+		$this->showConfig();
+	}
+
+	/**
+	 * Save resource for profile
+	 */
+	function saveResource()
+	{
+		$ref_id = (int) $_GET["root_id"];
+		$selected_profile = $_GET["selected_profile"];
+		if ($ref_id > 0 && isset($selected_profile))
+		{
+			$save_input = new ilSetting("comprec");
+			$save_input->set("init_obj_".$selected_profile, $ref_id);
+			ilUtil::sendSuccess($this->lng->txt("msg_obj_modified"), true);
+		} else {
+			ilUtil::sendFailure($this->lng->txt("ui_uihk_comprec_error"));
+		}
+
 		$this->showConfig();
 	}
 
 	private function showConfig() {
 		$this->tpl->addJavascript("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/ProfileSelector.js");
+		$this->tpl->addJavascript("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/InitObject.js");
 		$available_profiles = $this->profiles();
 
-		$selected_profile = $available_profiles[0];
+		$selected_profile = array_keys($available_profiles)[0];
 		if (isset($_GET["selected_profile"])
 			&& $_GET["selected_profile"] != ""
 			&& array_key_exists($_GET["selected_profile"], $available_profiles)
@@ -170,8 +196,27 @@ class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI {
 		$use_select->setChecked($checked);
 		$form->addItem($use_select);
 
+		$init_obj = new ilTextInputGUI($this->lng->txt("ui_uihk_comprec_init_obj_label"), "init_obj");
+		$obj_id = ilObject::_lookupObjectId($old_input->get("init_obj_".$selected_profile));
+		$init_obj->setValue(ilObject::_lookupTitle($obj_id));
+		$init_obj->setInfo($this->lng->txt("ui_uihk_comprec_init_obj_info"));
+		$form->addItem($init_obj);
+
 		$html .= $form->getHTML();
 
 		$this->tpl->setContent($html);
+	}
+
+	private function repobjmodal() {
+		$this->tpl->setTitle($this->lng->txt("ui_uihk_comprec_init_obj_title"));
+
+		include_once("./Services/Repository/classes/class.ilRepositorySelectorExplorerGUI.php");
+		$initiationsobj = new ilRepositorySelectorExplorerGUI($this, "configure", ilCompetenceRecommenderConfigGUI::class, "save_init_obj", "root_id");
+
+		$this->ctrl->setParameterByClass(ilCompetenceRecommenderConfigGUI::class, "selected_profile", $_GET["selected_profile"]);
+		if (!$initiationsobj->handleCommand())
+		{
+			$this->tpl->setContent($initiationsobj->getHTML());
+		}
 	}
 }

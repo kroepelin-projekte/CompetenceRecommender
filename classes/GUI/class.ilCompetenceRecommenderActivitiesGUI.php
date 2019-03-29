@@ -80,11 +80,24 @@ class ilCompetenceRecommenderActivitiesGUI
 
 		$competences = ilCompetenceRecommenderAlgorithm::getNCompetencesOfUserProfile(5);
 		if ($competences == []) {
-			$text = $this->lng->txt('ui_uihk_comprec_no_formationdata');
-			$modal = $factory->modal()->roundtrip($this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent($competence["parent"],$competence["id"],$competence["base_id"]));
-			$modalbutton = $factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'), "")->withOnClick($modal->getShowSignal());
-			$html = $text . " " . $renderer->render([$modalbutton, $modal]);
-			$this->tpl->setContent($html);
+			$resourcearray = array();
+			$init_obj = \ilCompetenceRecommenderAlgorithm::getInitObjects();
+			if ($init_obj != array()) {
+				foreach ($init_obj as $object) {
+					$obj_id = ilObject::_lookupObjectId($object["id"]);
+					$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($object["id"])));
+					$image = $factory->image()->standard(ilObject::_getIcon($obj_id), "Icon");
+					$card = $factory->card($link, $image);
+					array_push($resourcearray, $card);
+				}
+				$deck = $factory->deck($resourcearray);
+				$text = $this->lng->txt('ui_uihk_comprec_no_formationdata_init_obj');
+				$this->tpl->setContent($text . " <br /> " . $renderer->render($deck));
+			} else {
+				$html = $this->lng->txt('ui_uihk_comprec_no_formationdata') . " " . $renderer->render($factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'),
+						$this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class, ilCompetenceRecommenderGUI::class], 'eval')));
+				$this->tpl->setContent($html);
+			}
 			$this->tpl->show();
 			return;
 		}
@@ -124,7 +137,7 @@ class ilCompetenceRecommenderActivitiesGUI
 				$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'skill_id', $competence["parent"]);
 				$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'tref_id', $competence["id"]);
 				$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'basic_skill_id', $competence["base_id"]);
-				$text = $this->lng->txt('ui_uihk_comprec_no_formationdata');
+				$text = $this->lng->txt('ui_uihk_comprec_no_resources');
 				$modal = $factory->modal()->roundtrip($this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent($competence["parent"],$competence["id"],$competence["base_id"]));
 				$modalbutton = $factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'), "")->withOnClick($modal->getShowSignal());
 				$btpl->setVariable("RESOURCES", $text . " " . $renderer->render([$modalbutton, $modal]));

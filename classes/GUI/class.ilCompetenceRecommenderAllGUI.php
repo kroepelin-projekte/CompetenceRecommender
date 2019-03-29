@@ -32,6 +32,9 @@ class ilCompetenceRecommenderAllGUI
 	/** @var  ilToolbarGUI */
 	protected $toolbar;
 
+	/** @var  \ILIAS\DI\HTTPServices */
+	protected $http;
+
 	/**
 	 * Constructor of the class ilDistributorTrainingsLanguagesGUI.
 	 *
@@ -45,6 +48,7 @@ class ilCompetenceRecommenderAllGUI
 		$this->ctrl = $DIC['ilCtrl'];
 		$this->ui = $DIC->ui();
 		$this->toolbar = $DIC->toolbar();
+		$this->http = $DIC->http();
 	}
 
 	/**
@@ -59,6 +63,12 @@ class ilCompetenceRecommenderAllGUI
 			case 'eval':
 			case 'all':
 				$this->showAll();
+				break;
+			case 'list':
+				$this->showAll('list');
+				break;
+			case 'profiles':
+				$this->showAll('profiles');
 				break;
 			case 'saveSelfEvaluation':
 				$this->saveEval();
@@ -88,8 +98,11 @@ class ilCompetenceRecommenderAllGUI
 	 *
 	 * @return	void
 	 */
-	protected function showAll()
+	protected function showAll(string $viewmode = "list")
 	{
+		isset($_GET["selected_profile"]) ? $showprofile = $_GET["selected_profile"] : $showprofile = -1;
+		$showprofile != -1 ? $viewmode = "profiles" : $showprofile = -1;
+
 		$renderer = $this->ui->renderer();
 		$factory = $this->ui->factory();
 
@@ -97,6 +110,53 @@ class ilCompetenceRecommenderAllGUI
 		$this->tpl->setTitle($this->lng->txt('ui_uihk_comprec_plugin_title'));
 		$html = "";
 
+		$actions = array(
+			$this->lng->txt('ui_uihk_comprec_list') => $this->ctrl->getLinkTargetByClass(\ilCompetenceRecommenderAllGUI::class, "list"),
+			$this->lng->txt('ui_uihk_comprec_profiles') => $this->ctrl->getLinkTargetByClass(\ilCompetenceRecommenderAllGUI::class, "profiles")
+		);
+
+		$aria_label = "change_the_currently_displayed_mode";
+		$view_control = $factory->viewControl()->mode($actions, $aria_label)->withActive($this->lng->txt("ui_uihk_comprec_" . $viewmode));
+
+		$this->tpl->addJavaScript("./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/ProfileSelector.js");
+
+		$selectprofiles = new ilSelectInputGUI($this->lng->txt("profile"), "selected_profile");
+		$options = array(-1 => "alle anzeigen");
+		$profiles = ilCompetenceRecommenderAlgorithm::getUserProfiles();
+		foreach ($profiles as $profile) {
+			$options[$profile["profile_id"]] = $profile["title"];
+		}
+		$selectprofiles->setOptions($options);
+		$selectprofiles->setValue($showprofile);
+
+		$sortoptions = array(
+			'diff' => $this->lng->txt("ui_uihk_comprec_sort_best"),
+			'percentage' => $this->lng->txt("ui_uihk_comprec_sort_percentage"),
+			'lastUsed' => $this->lng->txt("ui_uihk_comprec_sort_lastUsed"),
+			'oldest' => $this->lng->txt("ui_uihk_comprec_sort_oldest")
+		);
+		$sorter = $factory->viewControl()->sortation($sortoptions)
+			->withTargetURL($this->http->request()->getRequestTarget(), 'sortation')
+			->withLabel($this->lng->txt('ui_uihk_comprec_sortation_label'));
+
+		$this->toolbar->addComponent($view_control);
+		$this->toolbar->addSeparator();
+		$this->toolbar->addInputItem($selectprofiles);
+		$this->toolbar->addSeparator();
+		$this->toolbar->addComponent($sorter);
+
+		if ($viewmode == "list" && $showprofile == -1) {
+			$html .= $this->showList();
+		} else {
+			$html .= $this->showProfiles($showprofile);
+		}
+		$this->tpl->setContent($html);
+		$this->tpl->show();
+		return;
+	}
+
+	private function showList() {
+		$html = '';
 		$atpl = new ilTemplate("./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/tpl.comprecBarColumnTitle.html", true, true);
 		$atpl->setVariable("NAME_HEAD", $this->lng->txt('ui_uihk_comprec_competence'));
 		$atpl->setVariable("BAR_HEAD", $this->lng->txt('ui_uihk_comprec_progress'));
@@ -104,71 +164,95 @@ class ilCompetenceRecommenderAllGUI
 
 		$competences = ilCompetenceRecommenderAlgorithm::getAllCompetencesOfUserProfile();
 		foreach ($competences as $competence) {
-			$score = $competence["score"];
-			$goalat = $competence["goal"];
-			$resourcearray = array();
-			$oldresourcearray = array();
-			$btpl = new ilTemplate("./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/tpl.comprecBar.html", true, true);
-			$btpl->setVariable("TITLE", $competence["title"]);
-			$btpl->setVariable("ID", $competence["id"]);
-			$btpl->setVariable("SCORE", $score);
-			$btpl->setVariable("GOALAT", $goalat);
-			$btpl->setVariable("SCALE", $competence["scale"]);
-			//$btpl->setVariable("LASTUSEDTEXT", $this->lng->txt('ui_uihk_comprec_last_used'));
-			if ($score > 0) {
-				$btpl->setVariable("LASTUSEDTEXT", $this->lng->txt('ui_uihk_comprec_last_used'));
-				$btpl->setVariable("LASTUSEDDATE", $competence["lastUsed"]);
-				foreach ($competence["resources"] as $resource) {
-					$obj_id = ilObject::_lookupObjectId($resource["id"]);
-					$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($resource["id"])));
-					$image = $factory->image()->standard(ilObject::_getIcon($obj_id), "Icon");
-					$card = $factory->card($link, $image);
-					if ($resource["level"] > $score) {
-						array_push($resourcearray, $card);
-					} else {
-						array_push($oldresourcearray, $card);
-					}
-				};
-				if ($resourcearray != []) {
-					$deck = $factory->deck($resourcearray);
-					$btpl->setVariable("RESOURCESINFO", $this->lng->txt('ui_uihk_comprec_resources'));
-					$btpl->setVariable("RESOURCES", $renderer->render($deck));
-				} else if ($score < $goalat) {
-					$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'skill_id', $competence["parent"]);
-					$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'tref_id', $competence["id"]);
-					$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'basic_skill_id', $competence["base_id"]);
-					$text = $this->lng->txt('ui_uihk_comprec_no_resources');
-					$modal = $factory->modal()->roundtrip($this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent($competence["parent"], $competence["id"], $competence["base_id"]));
-					$modalbutton = $factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'), "")->withOnClick($modal->getShowSignal());
-					$btpl->setVariable("RESOURCES", $text . " " . $renderer->render([$modalbutton, $modal]));
+			$html .= $this->setBar($competence);
+		}
+		return $html;
+	}
+
+	private function showProfiles($profile_id) {
+		$renderer = $this->ui->renderer();
+		$factory = $this->ui->factory();
+
+		$html = '';
+		$profiles = ilCompetenceRecommenderAlgorithm::getUserProfiles();
+		foreach ($profiles as $profile) {
+			if ($profile["profile_id"] == $profile_id || $profile_id == -1) {
+				$rawcontent = ilCompetenceRecommenderAlgorithm::getCompetencesToProfile($profile);
+				$sortedRaw = ilCompetenceRecommenderAlgorithm::sortCompetences($rawcontent);
+				$content = "";
+				foreach ($sortedRaw as $competence) {
+					$content .= $this->setBar($competence, $profile["profile_id"]);
 				}
-				$btpl->setVariable("OLDRESOURCETEXT", $this->lng->txt('ui_uihk_comprec_old_resources_text'));
-				if ($oldresourcearray != []) {
-					$deck = $factory->deck($oldresourcearray);
-					$btpl->setVariable("OLDRESOURCES", $renderer->render($deck));
+				$panel = $factory->panel()->standard($profile["title"], $factory->legacy($content));
+				$html .= $renderer->render($panel);
+			}
+		}
+		return $html;
+	}
+
+	private function setBar($competence, string $profile_id = "") {
+		$renderer = $this->ui->renderer();
+		$factory = $this->ui->factory();
+
+		$html = '';
+		$score = $competence["score"];
+		$goalat = $competence["goal"];
+		$resourcearray = array();
+		$oldresourcearray = array();
+		$btpl = new ilTemplate("./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/tpl.comprecBar.html", true, true);
+		$btpl->setVariable("TITLE", $competence["title"]);
+		$btpl->setVariable("ID", $profile_id."_".$competence["id"]);
+		$btpl->setVariable("SCORE", $score);
+		$btpl->setVariable("GOALAT", $goalat);
+		$btpl->setVariable("SCALE", $competence["scale"]);
+		//$btpl->setVariable("LASTUSEDTEXT", $this->lng->txt('ui_uihk_comprec_last_used'));
+		if ($score > 0) {
+			$btpl->setVariable("LASTUSEDTEXT", $this->lng->txt('ui_uihk_comprec_last_used'));
+			$btpl->setVariable("LASTUSEDDATE", $competence["lastUsed"]);
+			foreach ($competence["resources"] as $resource) {
+				$obj_id = ilObject::_lookupObjectId($resource["id"]);
+				$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($resource["id"])));
+				$image = $factory->image()->standard(ilObject::_getIcon($obj_id), "Icon");
+				$card = $factory->card($link, $image);
+				if ($resource["level"] > $score) {
+					array_push($resourcearray, $card);
+				} else {
+					array_push($oldresourcearray, $card);
 				}
-				$btpl->setVariable("COLLAPSEONRESOURCE", $renderer->render($factory->glyph()->collapse()));
-				$btpl->setVariable("COLLAPSERESOURCE", $renderer->render($factory->glyph()->expand()));
-			} else {
-				//$btpl->setVariable("LASTUSEDDATE", $this->lng->txt('ui_uihk_comprec_never'));
+			};
+			if ($resourcearray != []) {
+				$deck = $factory->deck($resourcearray);
+				$btpl->setVariable("RESOURCESINFO", $this->lng->txt('ui_uihk_comprec_resources'));
+				$btpl->setVariable("RESOURCES", $renderer->render($deck));
+			} else if ($score < $goalat) {
 				$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'skill_id', $competence["parent"]);
 				$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'tref_id', $competence["id"]);
 				$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'basic_skill_id', $competence["base_id"]);
-				$text = $this->lng->txt('ui_uihk_comprec_no_formationdata');
-				$modal = $factory->modal()->roundtrip($this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent($competence["parent"],$competence["id"],$competence["base_id"]));
+				$text = $this->lng->txt('ui_uihk_comprec_no_resources');
+				$modal = $factory->modal()->roundtrip($this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent($competence["parent"], $competence["id"], $competence["base_id"]));
 				$modalbutton = $factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'), "")->withOnClick($modal->getShowSignal());
 				$btpl->setVariable("RESOURCES", $text . " " . $renderer->render([$modalbutton, $modal]));
 			}
-			$btpl->setVariable("COLLAPSEON", $renderer->render($factory->glyph()->collapse()));
-			$btpl->setVariable("COLLAPSE", $renderer->render($factory->glyph()->expand()));
-			$html .= $btpl->get();
+			$btpl->setVariable("OLDRESOURCETEXT", $this->lng->txt('ui_uihk_comprec_old_resources_text'));
+			if ($oldresourcearray != []) {
+				$deck = $factory->deck($oldresourcearray);
+				$btpl->setVariable("OLDRESOURCES", $renderer->render($deck));
+			}
+			$btpl->setVariable("COLLAPSEONRESOURCE", $renderer->render($factory->glyph()->collapse()));
+			$btpl->setVariable("COLLAPSERESOURCE", $renderer->render($factory->glyph()->expand()));
+		} else {
+			$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'skill_id', $competence["parent"]);
+			$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'tref_id', $competence["id"]);
+			$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'basic_skill_id', $competence["base_id"]);
+			$text = $this->lng->txt('ui_uihk_comprec_no_formationdata');
+			$modal = $factory->modal()->roundtrip($this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent($competence["parent"], $competence["id"], $competence["base_id"]));
+			$modalbutton = $factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'), "")->withOnClick($modal->getShowSignal());
+			$btpl->setVariable("RESOURCES", $text . " " . $renderer->render([$modalbutton, $modal]));
 		}
-
-
-
-		$this->tpl->setContent($html);
-		$this->tpl->show();
-		return;
+		$btpl->setVariable("COLLAPSEON", $renderer->render($factory->glyph()->collapse()));
+		$btpl->setVariable("COLLAPSE", $renderer->render($factory->glyph()->expand()));
+		$html .= $btpl->get();
+		return $html;
 	}
 
 	private function getModalContent($skill_id, $tref_id, $base_skill_id) {
