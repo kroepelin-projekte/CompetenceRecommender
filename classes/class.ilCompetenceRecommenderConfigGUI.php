@@ -137,7 +137,7 @@ class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI {
 	function saveResource()
 	{
 		$ref_id = (int) $_GET["root_id"];
-		$selected_profile = $_GET["selected_profile"];
+		$selected_profile = $_GET["profile_id"];
 		if ($ref_id > 0 && isset($selected_profile))
 		{
 			$save_input = new ilCompetenceRecommenderSettings();
@@ -198,13 +198,14 @@ class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI {
 		$this->tpl->setTitle($this->lng->txt("ui_uihk_comprec_init_obj_title"));
 
 		include_once("./Services/Repository/classes/class.ilRepositorySelectorExplorerGUI.php");
-		$initiationsobj = new ilRepositorySelectorExplorerGUI($this, "configure", ilCompetenceRecommenderConfigGUI::class, "save_init_obj", "root_id");
+		$initiationsobj = new ilRepositorySelectorExplorerGUI($this, "set_init_obj", $this, "save_init_obj", "root_id");
+		$initiationsobj->setClickableTypes("tst");
 
 		$this->ctrl->setParameterByClass(ilCompetenceRecommenderConfigGUI::class, "profile_id", $_GET["profile_id"]);
 		if (!$initiationsobj->handleCommand())
 		{
 			$button = $this->renderer->render($this->factory->button()->standard($this->lng->txt("ui_uihk_comprec_cancel"), $this->ctrl->getLinkTarget($this, "configure")));
-			$this->tpl->setContent($initiationsobj->getHTML() . $button);
+			$this->tpl->setContent($initiationsobj->getHTML(). $button);
 		}
 	}
 }

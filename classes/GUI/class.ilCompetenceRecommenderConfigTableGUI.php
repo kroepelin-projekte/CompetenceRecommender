@@ -8,6 +8,7 @@ include_once("Services/Table/classes/class.ilTable2GUI.php");
  * @author Leonie Feldbusch <feldbusl@informatik.uni-freiburg.de>
  *
  * @ilCtrl_isCalledBy ilCompetenceRecommenderConfigTableGUI: ilCompetenceRecommenderConfigGUI
+ * @ilCtrl_Calls ilCompetenceRecommenderConfigTableGUI: ilCompetenceRecommenderConfigGUI
  */
 class ilCompetenceRecommenderConfigTableGUI extends ilTable2GUI
 {
