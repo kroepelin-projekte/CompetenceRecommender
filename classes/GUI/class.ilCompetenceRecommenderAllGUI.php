@@ -59,15 +59,22 @@ class ilCompetenceRecommenderAllGUI
 	public function executeCommand()
 	{
 		$cmd = $this->ctrl->getCmd('all');
+		$user_id = ilCompetenceRecommenderAlgorithm::getUserObj()->getId();
+
+		$settings = new ilCompetenceRecommenderSettings();
+		$viewmode = $settings->get("viewmode", $user_id);
+		if (isset($viewmode) && ($cmd == 'eval' || $cmd == 'all')) {$cmd = $viewmode;}
 		switch ($cmd) {
 			case 'eval':
 			case 'all':
 				$this->showAll();
 				break;
 			case 'list':
+				$settings->set("viewmode", 'list', $user_id);
 				$this->showAll('list');
 				break;
 			case 'profiles':
+				$settings->set("viewmode", 'profiles', $user_id);
 				$this->showAll('profiles');
 				break;
 			case 'saveSelfEvaluation':
@@ -100,10 +107,19 @@ class ilCompetenceRecommenderAllGUI
 	 */
 	protected function showAll(string $viewmode = "list")
 	{
-		isset($_GET["selected_profile"]) ? $showprofile = $_GET["selected_profile"] : $showprofile = -1;
+		$user_id = ilCompetenceRecommenderAlgorithm::getUserObj()->getId();
+
+		$settings = new ilCompetenceRecommenderSettings();
+		if (isset($_GET["selected_profile"])) {
+			$settings->set("selected_profile", $_GET["selected_profile"], $user_id);
+			$showprofile = $_GET["selected_profile"];
+		}  else if ($settings->get("selected_profile", $user_id) != null) {
+			$showprofile = $settings->get("selected_profile", $user_id);
+		} else {
+			$showprofile = -1;
+		}
 		$showprofile != -1 ? $viewmode = "profiles" : $showprofile = -1;
 
-		$renderer = $this->ui->renderer();
 		$factory = $this->ui->factory();
 
 		$this->tpl->getStandardTemplate();
@@ -135,27 +151,79 @@ class ilCompetenceRecommenderAllGUI
 			'lastUsed' => $this->lng->txt("ui_uihk_comprec_sort_lastUsed"),
 			'oldest' => $this->lng->txt("ui_uihk_comprec_sort_oldest")
 		);
+		if (isset($_GET["sortation"])) {
+			$settings->set("sortation",$_GET["sortation"], $user_id);
+			$sortation = $_GET["sortation"];
+
+		} else if ($settings->get("sortation", $user_id) != null) {
+			$sortation = $settings->get("sortation", $user_id);
+		} else {
+			$sortation = "diff";
+		}
 		$sorter = $factory->viewControl()->sortation($sortoptions)
 			->withTargetURL($this->http->request()->getRequestTarget(), 'sortation')
-			->withLabel($this->lng->txt('ui_uihk_comprec_sortation_label'));
+			->withLabel($this->lng->txt('ui_uihk_comprec_sortation_label') . ": " . $sortoptions[$sortation]);
+
+		$this->tpl->addJavaScript("./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/CheckboxChecker.js");
+
+		if (isset($_GET["onlymaterial"])) {
+			$settings->set("onlymaterial", $_GET["onlymaterial"], $user_id);
+			$onlymaterial = $_GET["onlymaterial"];
+		} else if ($settings->get("onlymaterial", $user_id)) {
+			$onlymaterial = $settings->get("onlymaterial", $user_id);
+		} else {
+			$onlymaterial = "0";
+		}
+		$checkbox_material = new ilCheckboxInputGUI($this->lng->txt("ui_uihk_comprec_onlymaterial"), "onlymaterial");
+		$checkbox_material->setOptionTitle($this->lng->txt("ui_uihk_comprec_onlymaterial"));
+		$checkbox_material->setChecked($onlymaterial == "1");
+
+		if (isset($_GET["withoutdata"])) {
+			$settings->set("withoutdata", $_GET["withoutdata"], $user_id);
+			$withoutdata = $_GET["withoutdata"];
+		} else if ($settings->get("withoutdata", $user_id)) {
+			$withoutdata = $settings->get("withoutdata", $user_id);
+		} else {
+			$withoutdata = "0";
+		}
+		$checkbox_data = new ilCheckboxInputGUI($this->lng->txt("ui_uihk_comprec_withoutdata"),"withoutdata");
+		$checkbox_data->setOptionTitle($this->lng->txt("ui_uihk_comprec_withoutdata"));
+		$checkbox_data->setChecked($withoutdata == "1");
+
+		if (isset($_GET["notfinished"])) {
+			$settings->set("notfinished", $_GET["notfinished"], $user_id);
+			$notfinished = $_GET["notfinished"];
+		} else if ($settings->get("notfinished", $user_id)) {
+			$notfinished = $settings->get("notfinished", $user_id);
+		} else {
+			$notfinished = "0";
+		}
+		$checkbox_finished = new ilCheckboxInputGUI($this->lng->txt("ui_uihk_comprec_notfinished"), "notfinished");
+		$checkbox_finished->setOptionTitle($this->lng->txt("ui_uihk_comprec_notfinished"));
+		$checkbox_finished->setChecked($notfinished == "1");
 
 		$this->toolbar->addComponent($view_control);
 		$this->toolbar->addSeparator();
 		$this->toolbar->addInputItem($selectprofiles);
 		$this->toolbar->addSeparator();
 		$this->toolbar->addComponent($sorter);
+		$this->toolbar->addSeparator();
+		$this->toolbar->addInputItem($checkbox_material);
+		$this->toolbar->addInputItem($checkbox_data);
+		$this->toolbar->addInputItem($checkbox_finished);
 
+		$checkboxarray = array("onlymaterial" => $onlymaterial, "withoutdata" => $withoutdata, "notfinished" => $notfinished);
 		if ($viewmode == "list" && $showprofile == -1) {
-			$html .= $this->showList();
+			$html .= $this->showList($checkboxarray);
 		} else {
-			$html .= $this->showProfiles($showprofile);
+			$html .= $this->showProfiles($showprofile, $checkboxarray);
 		}
 		$this->tpl->setContent($html);
 		$this->tpl->show();
 		return;
 	}
 
-	private function showList() {
+	private function showList(array $checked) {
 		$html = '';
 		$atpl = new ilTemplate("./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/tpl.comprecBarColumnTitle.html", true, true);
 		$atpl->setVariable("NAME_HEAD", $this->lng->txt('ui_uihk_comprec_competence'));
@@ -164,12 +232,17 @@ class ilCompetenceRecommenderAllGUI
 
 		$competences = ilCompetenceRecommenderAlgorithm::getAllCompetencesOfUserProfile();
 		foreach ($competences as $competence) {
-			$html .= $this->setBar($competence);
+			if (($competence["score"] != 0 || ($_GET["withoutdata"] != 1 && $checked["withoutdata"] != 1))
+				&& !($competence["resources"] == array() && ($_GET["onlymaterial"] == 1 || $checked["onlymaterial"] == 1))
+				&& ($competence["score"] < $competence["goal"] || ($_GET["notfinished"] != 1 && $checked["notfinished"] != 1))
+			) {
+				$html .= $this->setBar($competence);
+			}
 		}
 		return $html;
 	}
 
-	private function showProfiles($profile_id) {
+	private function showProfiles($profile_id, array $checked) {
 		$renderer = $this->ui->renderer();
 		$factory = $this->ui->factory();
 
@@ -181,7 +254,12 @@ class ilCompetenceRecommenderAllGUI
 				$sortedRaw = ilCompetenceRecommenderAlgorithm::sortCompetences($rawcontent);
 				$content = "";
 				foreach ($sortedRaw as $competence) {
-					$content .= $this->setBar($competence, $profile["profile_id"]);
+					if (($competence["score"] != 0 || ($_GET["withoutdata"] != 1 && $checked["withoutdata"] != 1))
+						&& !($competence["resources"] == array() && ($_GET["onlymaterial"] == 1 || $checked["onlymaterial"] == 1))
+						&& ($competence["score"] < $competence["goal"] || ($_GET["notfinished"] != 1 && $checked["notfinished"] != 1))
+					) {
+						$content .= $this->setBar($competence, $profile["profile_id"]);
+					}
 				}
 				$panel = $factory->panel()->standard($profile["title"], $factory->legacy($content));
 				$html .= $renderer->render($panel);
@@ -194,6 +272,9 @@ class ilCompetenceRecommenderAllGUI
 		$renderer = $this->ui->renderer();
 		$factory = $this->ui->factory();
 
+		$settings = new ilCompetenceRecommenderSettings();
+		$dropout = $settings->get("dropout_input");
+
 		$html = '';
 		$score = $competence["score"];
 		$goalat = $competence["goal"];
@@ -205,10 +286,15 @@ class ilCompetenceRecommenderAllGUI
 		$btpl->setVariable("SCORE", $score);
 		$btpl->setVariable("GOALAT", $goalat);
 		$btpl->setVariable("SCALE", $competence["scale"]);
-		//$btpl->setVariable("LASTUSEDTEXT", $this->lng->txt('ui_uihk_comprec_last_used'));
 		if ($score > 0) {
 			$btpl->setVariable("LASTUSEDTEXT", $this->lng->txt('ui_uihk_comprec_last_used'));
 			$btpl->setVariable("LASTUSEDDATE", $competence["lastUsed"]);
+			if (count($competence["resources"]) > 0) {
+				$btpl->setVariable("NUMBEROFMATERIAL", $this->lng->txt("ui_uihk_comprec_number_material").": " . count($competence["resources"]));
+			}
+			if ((time()-strtotime($competence["lastUsed"]))/86400 > $dropout && $dropout > 0) {
+				$btpl->setVariable("ALERTMESSAGE", $this->lng->txt("ui_uihk_comprec_alert_olddata"));
+			}
 			foreach ($competence["resources"] as $resource) {
 				$obj_id = ilObject::_lookupObjectId($resource["id"]);
 				$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($resource["id"])));
@@ -241,13 +327,14 @@ class ilCompetenceRecommenderAllGUI
 			$btpl->setVariable("COLLAPSEONRESOURCE", $renderer->render($factory->glyph()->collapse()));
 			$btpl->setVariable("COLLAPSERESOURCE", $renderer->render($factory->glyph()->expand()));
 		} else {
-			$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'skill_id', $competence["parent"]);
-			$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'tref_id', $competence["id"]);
-			$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'basic_skill_id', $competence["base_id"]);
-			$text = $this->lng->txt('ui_uihk_comprec_no_formationdata');
-			$modal = $factory->modal()->roundtrip($this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent($competence["parent"], $competence["id"], $competence["base_id"]));
-			$modalbutton = $factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'), "")->withOnClick($modal->getShowSignal());
-			$btpl->setVariable("RESOURCES", $text . " " . $renderer->render([$modalbutton, $modal]));
+			// keine Formationsdaten
+				$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'skill_id', $competence["parent"]);
+				$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'tref_id', $competence["id"]);
+				$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'basic_skill_id', $competence["base_id"]);
+				$text = $this->lng->txt('ui_uihk_comprec_no_formationdata');
+				$modal = $factory->modal()->roundtrip($this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent($competence["parent"], $competence["id"], $competence["base_id"]));
+				$modalbutton = $factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'), "")->withOnClick($modal->getShowSignal());
+				$btpl->setVariable("RESOURCES", $text . " " . $renderer->render([$modalbutton, $modal]));
 		}
 		$btpl->setVariable("COLLAPSEON", $renderer->render($factory->glyph()->collapse()));
 		$btpl->setVariable("COLLAPSE", $renderer->render($factory->glyph()->expand()));

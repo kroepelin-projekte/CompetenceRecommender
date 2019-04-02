@@ -12,14 +12,6 @@ class ComposerStaticInita448b5f6ceb6d1c30bdd45c83b234461
     );
 
     public static $prefixLengthsPsr4 = array (
-        's' => 
-        array (
-            'srag\\RemovePluginDataConfirm\\CompetenceRecommender\\' => 51,
-            'srag\\LibrariesNamespaceChanger\\' => 31,
-            'srag\\DIC\\CompetenceRecommender\\' => 31,
-            'srag\\CustomInputGUIs\\CompetenceRecommender\\' => 43,
-            'srag\\ActiveRecordConfig\\CompetenceRecommender\\' => 46,
-        ),
         'p' => 
         array (
             'phpDocumentor\\Reflection\\' => 25,
@@ -44,26 +36,6 @@ class ComposerStaticInita448b5f6ceb6d1c30bdd45c83b234461
     );
 
     public static $prefixDirsPsr4 = array (
-        'srag\\RemovePluginDataConfirm\\CompetenceRecommender\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/srag/removeplugindataconfirm/src',
-        ),
-        'srag\\LibrariesNamespaceChanger\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/srag/librariesnamespacechanger/src',
-        ),
-        'srag\\DIC\\CompetenceRecommender\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/srag/dic/src',
-        ),
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/srag/custominputguis/src',
-        ),
-        'srag\\ActiveRecordConfig\\CompetenceRecommender\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/srag/activerecordconfig/src',
-        ),
         'phpDocumentor\\Reflection\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
@@ -774,9 +746,11 @@ class ComposerStaticInita448b5f6ceb6d1c30bdd45c83b234461
         'ilCompetenceRecommenderAlgorithmTest' => __DIR__ . '/../..' . '/classes/tests/class.ilCompetenceRecommenderAlgorithmTest.php',
         'ilCompetenceRecommenderAllGUI' => __DIR__ . '/../..' . '/classes/GUI/class.ilCompetenceRecommenderAllGUI.php',
         'ilCompetenceRecommenderConfigGUI' => __DIR__ . '/../..' . '/classes/class.ilCompetenceRecommenderConfigGUI.php',
+        'ilCompetenceRecommenderConfigTableGUI' => __DIR__ . '/../..' . '/classes/GUI/class.ilCompetenceRecommenderConfigTableGUI.php',
         'ilCompetenceRecommenderGUI' => __DIR__ . '/../..' . '/classes/GUI/class.ilCompetenceRecommenderGUI.php',
         'ilCompetenceRecommenderInfoGUI' => __DIR__ . '/../..' . '/classes/GUI/class.ilCompetenceRecommenderInfoGUI.php',
         'ilCompetenceRecommenderPlugin' => __DIR__ . '/../..' . '/classes/class.ilCompetenceRecommenderPlugin.php',
+        'ilCompetenceRecommenderSettings' => __DIR__ . '/../..' . '/classes/class.ilCompetenceRecommenderSettings.php',
         'ilCompetenceRecommenderUIHookGUI' => __DIR__ . '/../..' . '/classes/class.ilCompetenceRecommenderUIHookGUI.php',
         'phpDocumentor\\Reflection\\DocBlock' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlock.php',
         'phpDocumentor\\Reflection\\DocBlockFactory' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlockFactory.php',
@@ -846,77 +820,6 @@ class ComposerStaticInita448b5f6ceb6d1c30bdd45c83b234461
         'phpDocumentor\\Reflection\\Types\\String_' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/String_.php',
         'phpDocumentor\\Reflection\\Types\\This' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/This.php',
         'phpDocumentor\\Reflection\\Types\\Void_' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/Void_.php',
-        'srag\\ActiveRecordConfig\\CompetenceRecommender\\ActiveRecordConfig' => __DIR__ . '/..' . '/srag/activerecordconfig/src/ActiveRecordConfig.php',
-        'srag\\ActiveRecordConfig\\CompetenceRecommender\\ActiveRecordConfigFormGUI' => __DIR__ . '/..' . '/srag/activerecordconfig/src/ActiveRecordConfigFormGUI.php',
-        'srag\\ActiveRecordConfig\\CompetenceRecommender\\ActiveRecordConfigGUI' => __DIR__ . '/..' . '/srag/activerecordconfig/src/ActiveRecordConfigGUI.php',
-        'srag\\ActiveRecordConfig\\CompetenceRecommender\\ActiveRecordConfigTableGUI' => __DIR__ . '/..' . '/srag/activerecordconfig/src/ActiveRecordConfigTableGUI.php',
-        'srag\\ActiveRecordConfig\\CompetenceRecommender\\ActiveRecordObjectFormGUI' => __DIR__ . '/..' . '/srag/activerecordconfig/src/ActiveRecordObjectFormGUI.php',
-        'srag\\ActiveRecordConfig\\CompetenceRecommender\\Exception\\ActiveRecordConfigException' => __DIR__ . '/..' . '/srag/activerecordconfig/src/Exception/ActiveRecordConfigException.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\CheckboxInputGUI\\CheckboxInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/CheckboxInputGUI/CheckboxInputGUI.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\CustomInputGUIs' => __DIR__ . '/..' . '/srag/custominputguis/src/CustomInputGUIs.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\CustomInputGUIsTrait' => __DIR__ . '/..' . '/srag/custominputguis/src/CustomInputGUIsTrait.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\DateDurationInputGUI\\DateDurationInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/DateDurationInputGUI/DateDurationInputGUI.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\GlyphGUI\\GlyphGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/GlyphGUI/GlyphGUI.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\HiddenInputGUI\\HiddenInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/HiddenInputGUI/HiddenInputGUI.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\LearningProgressPieUI\\AbstractLearningProgressPieUI' => __DIR__ . '/..' . '/srag/custominputguis/src/LearningProgressPieUI/AbstractLearningProgressPieUI.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\LearningProgressPieUI\\CountLearningProgressPieUI' => __DIR__ . '/..' . '/srag/custominputguis/src/LearningProgressPieUI/CountLearningProgressPieUI.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\LearningProgressPieUI\\LearningProgressPieUI' => __DIR__ . '/..' . '/srag/custominputguis/src/LearningProgressPieUI/LearningProgressPieUI.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\LearningProgressPieUI\\ObjIdsLearningProgressPieUI' => __DIR__ . '/..' . '/srag/custominputguis/src/LearningProgressPieUI/ObjIdsLearningProgressPieUI.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\LearningProgressPieUI\\UsrIdsLearningProgressPieUI' => __DIR__ . '/..' . '/srag/custominputguis/src/LearningProgressPieUI/UsrIdsLearningProgressPieUI.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\MultiLineInputGUI\\MultiLineInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/MultiLineInputGUI/MultiLineInputGUI.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\MultiSelectSearchInputGUI\\MultiSelectSearchInput2GUI' => __DIR__ . '/..' . '/srag/custominputguis/src/MultiSelectSearchInputGUI/MultiSelectSearchInput2GUI.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\MultiSelectSearchInputGUI\\MultiSelectSearchInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/MultiSelectSearchInputGUI/MultiSelectSearchInputGUI.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\NumberInputGUI\\NumberInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/NumberInputGUI/NumberInputGUI.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\ProgressMeter\\Component\\Factory' => __DIR__ . '/..' . '/srag/custominputguis/src/ProgressMeter/Component/Factory.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\ProgressMeter\\Component\\FixedSize' => __DIR__ . '/..' . '/srag/custominputguis/src/ProgressMeter/Component/FixedSize.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\ProgressMeter\\Component\\Mini' => __DIR__ . '/..' . '/srag/custominputguis/src/ProgressMeter/Component/Mini.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\ProgressMeter\\Component\\ProgressMeter' => __DIR__ . '/..' . '/srag/custominputguis/src/ProgressMeter/Component/ProgressMeter.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\ProgressMeter\\Component\\Standard' => __DIR__ . '/..' . '/srag/custominputguis/src/ProgressMeter/Component/Standard.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\ProgressMeter\\Implementation\\Factory' => __DIR__ . '/..' . '/srag/custominputguis/src/ProgressMeter/Implementation/Factory.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\ProgressMeter\\Implementation\\FixedSize' => __DIR__ . '/..' . '/srag/custominputguis/src/ProgressMeter/Implementation/FixedSize.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\ProgressMeter\\Implementation\\Mini' => __DIR__ . '/..' . '/srag/custominputguis/src/ProgressMeter/Implementation/Mini.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\ProgressMeter\\Implementation\\ProgressMeter' => __DIR__ . '/..' . '/srag/custominputguis/src/ProgressMeter/Implementation/ProgressMeter.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\ProgressMeter\\Implementation\\Renderer' => __DIR__ . '/..' . '/srag/custominputguis/src/ProgressMeter/Implementation/Renderer.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\ProgressMeter\\Implementation\\Standard' => __DIR__ . '/..' . '/srag/custominputguis/src/ProgressMeter/Implementation/Standard.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\PropertyFormGUI\\ConfigPropertyFormGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/PropertyFormGUI/ConfigPropertyFormGUI.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\PropertyFormGUI\\Exception\\PropertyFormGUIException' => __DIR__ . '/..' . '/srag/custominputguis/src/PropertyFormGUI/Exception/PropertyFormGUIException.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\PropertyFormGUI\\Items\\Items' => __DIR__ . '/..' . '/srag/custominputguis/src/PropertyFormGUI/Items/Items.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\PropertyFormGUI\\ObjectPropertyFormGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/PropertyFormGUI/ObjectPropertyFormGUI.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\PropertyFormGUI\\PropertyFormGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/PropertyFormGUI/PropertyFormGUI.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\ScreenshotsInputGUI\\ScreenshotsInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/ScreenshotsInputGUI/ScreenshotsInputGUI.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\StaticHTMLPresentationInputGUI\\StaticHTMLPresentationInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/StaticHTMLPresentationInputGUI/StaticHTMLPresentationInputGUI.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\TableGUI\\Exception\\TableGUIException' => __DIR__ . '/..' . '/srag/custominputguis/src/TableGUI/Exception/TableGUIException.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\TableGUI\\TableGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/TableGUI/TableGUI.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\Template\\Template' => __DIR__ . '/..' . '/srag/custominputguis/src/Template/Template.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\TextAreaInputGUI\\TextAreaInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/TextAreaInputGUI/TextAreaInputGUI.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\TextInputGUI\\TextInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/TextInputGUI/TextInputGUI.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\ViewControlModeUI\\ViewControlModeUI' => __DIR__ . '/..' . '/srag/custominputguis/src/ViewControlModeGUI/ViewControlModeUI.php',
-        'srag\\CustomInputGUIs\\CompetenceRecommender\\Waiter\\Waiter' => __DIR__ . '/..' . '/srag/custominputguis/src/Waiter/Waiter.php',
-        'srag\\DIC\\CompetenceRecommender\\DICStatic' => __DIR__ . '/..' . '/srag/dic/src/DICStatic.php',
-        'srag\\DIC\\CompetenceRecommender\\DICStaticInterface' => __DIR__ . '/..' . '/srag/dic/src/DICStaticInterface.php',
-        'srag\\DIC\\CompetenceRecommender\\DICTrait' => __DIR__ . '/..' . '/srag/dic/src/DICTrait.php',
-        'srag\\DIC\\CompetenceRecommender\\DIC\\AbstractDIC' => __DIR__ . '/..' . '/srag/dic/src/DIC/AbstractDIC.php',
-        'srag\\DIC\\CompetenceRecommender\\DIC\\DICInterface' => __DIR__ . '/..' . '/srag/dic/src/DIC/DICInterface.php',
-        'srag\\DIC\\CompetenceRecommender\\DIC\\Implementation\\ILIAS52DIC' => __DIR__ . '/..' . '/srag/dic/src/DIC/Implementation/ILIAS52DIC.php',
-        'srag\\DIC\\CompetenceRecommender\\DIC\\Implementation\\ILIAS53DIC' => __DIR__ . '/..' . '/srag/dic/src/DIC/Implementation/ILIAS53DIC.php',
-        'srag\\DIC\\CompetenceRecommender\\DIC\\Implementation\\ILIAS54DIC' => __DIR__ . '/..' . '/srag/dic/src/DIC/Implementation/ILIAS54DIC.php',
-        'srag\\DIC\\CompetenceRecommender\\DIC\\Implementation\\LegacyDIC' => __DIR__ . '/..' . '/srag/dic/src/DIC/Implementation/LegacyDIC.php',
-        'srag\\DIC\\CompetenceRecommender\\Exception\\DICException' => __DIR__ . '/..' . '/srag/dic/src/Exception/DICException.php',
-        'srag\\DIC\\CompetenceRecommender\\Output\\Output' => __DIR__ . '/..' . '/srag/dic/src/Output/Output.php',
-        'srag\\DIC\\CompetenceRecommender\\Output\\OutputInterface' => __DIR__ . '/..' . '/srag/dic/src/Output/OutputInterface.php',
-        'srag\\DIC\\CompetenceRecommender\\PHPVersionChecker' => __DIR__ . '/..' . '/srag/dic/src/PHPVersionChecker.php',
-        'srag\\DIC\\CompetenceRecommender\\Plugin\\Plugin' => __DIR__ . '/..' . '/srag/dic/src/Plugin/Plugin.php',
-        'srag\\DIC\\CompetenceRecommender\\Plugin\\PluginInterface' => __DIR__ . '/..' . '/srag/dic/src/Plugin/PluginInterface.php',
-        'srag\\DIC\\CompetenceRecommender\\Plugin\\Pluginable' => __DIR__ . '/..' . '/srag/dic/src/Plugin/Pluginable.php',
-        'srag\\DIC\\CompetenceRecommender\\Util\\LibraryLanguageInstaller' => __DIR__ . '/..' . '/srag/dic/src/Util/LibraryLanguageInstaller.php',
-        'srag\\DIC\\CompetenceRecommender\\Version\\Version' => __DIR__ . '/..' . '/srag/dic/src/Version/Version.php',
-        'srag\\DIC\\CompetenceRecommender\\Version\\VersionInterface' => __DIR__ . '/..' . '/srag/dic/src/Version/VersionInterface.php',
-        'srag\\LibrariesNamespaceChanger\\LibrariesNamespaceChanger' => __DIR__ . '/..' . '/srag/librariesnamespacechanger/src/LibrariesNamespaceChanger.php',
-        'srag\\RemovePluginDataConfirm\\CompetenceRecommender\\AbstractPluginUninstallTrait' => __DIR__ . '/..' . '/srag/removeplugindataconfirm/src/AbstractPluginUninstallTrait.php',
-        'srag\\RemovePluginDataConfirm\\CompetenceRecommender\\AbstractRemovePluginDataConfirm' => __DIR__ . '/..' . '/srag/removeplugindataconfirm/src/AbstractRemovePluginDataConfirm.php',
-        'srag\\RemovePluginDataConfirm\\CompetenceRecommender\\Exception\\RemovePluginDataConfirmException' => __DIR__ . '/..' . '/srag/removeplugindataconfirm/src/Exception/RemovePluginDataConfirmException.php',
-        'srag\\RemovePluginDataConfirm\\CompetenceRecommender\\PluginUninstallTrait' => __DIR__ . '/..' . '/srag/removeplugindataconfirm/src/PluginUninstallTrait.php',
-        'srag\\RemovePluginDataConfirm\\CompetenceRecommender\\RepositoryObjectPluginUninstallTrait' => __DIR__ . '/..' . '/srag/removeplugindataconfirm/src/RepositoryObjectPluginUninstallTrait.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

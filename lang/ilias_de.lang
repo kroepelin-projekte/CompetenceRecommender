@@ -29,7 +29,8 @@ last_used#:#Zuletzt bearbeitet:
 never#:#nie
 config_dropout_title#:#Dropout-Zeit
 config_save#:#Speichern
-config_saved#:#Profilkonfiguration gespeichert.
+config_saved_active#:#Profil aktiviert.
+config_saved_inactive#:#Profil deaktiviert.
 profile_config#:#Profilkonfiguration
 dropout_input_label#:#Dropout-Zeit
 dropout_input_info#:#Zeit in Tagen, nach denen Formationsdaten nicht mehr in der Scoreberechnung verwendet werden. 0 wenn kein Dropout passieren soll
@@ -53,3 +54,17 @@ sort_percentage#:#Prozent
 sort_lastUsed#:#Zuletzt bearbeitet - absteigend
 sort_oldest#:#Zuletzt bearbeitet - aufsteigend
 sortation_label#:#Sortiere nach
+profile#:#Profil
+state#:#Status
+active#:#Aktiv
+inactive#:#Inaktiv
+cancel#:#Abbrechen
+deactivate#:#Aktivieren/Deaktivieren
+set_init_obj#:#Initiationsobjekt setzen
+action#:#Aktion
+onlymaterial#:#mit Material
+withoutdata#:#mit Daten
+notfinished#:#nicht abgeschlossen
+config_info#:#Hier kommt ein Infotext hin.
+number_material#:#Verfügbare Materialien
+alert_olddata#:#Die Daten sind bereits veraltet. Nach einer erneuten Bearbeitung werden alle vorhergehenden Daten nicht mehr berücksichtigt.

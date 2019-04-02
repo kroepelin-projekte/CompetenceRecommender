@@ -6,11 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'srag\\RemovePluginDataConfirm\\CompetenceRecommender\\' => array($vendorDir . '/srag/removeplugindataconfirm/src'),
-    'srag\\LibrariesNamespaceChanger\\' => array($vendorDir . '/srag/librariesnamespacechanger/src'),
-    'srag\\DIC\\CompetenceRecommender\\' => array($vendorDir . '/srag/dic/src'),
-    'srag\\CustomInputGUIs\\CompetenceRecommender\\' => array($vendorDir . '/srag/custominputguis/src'),
-    'srag\\ActiveRecordConfig\\CompetenceRecommender\\' => array($vendorDir . '/srag/activerecordconfig/src'),
     'phpDocumentor\\Reflection\\' => array($vendorDir . '/phpdocumentor/reflection-common/src', $vendorDir . '/phpdocumentor/reflection-docblock/src', $vendorDir . '/phpdocumentor/type-resolver/src'),
     'feldbusl\\Plugins\\CompetenceRecommender\\' => array($baseDir . '/src'),
     'Webmozart\\Assert\\' => array($vendorDir . '/webmozart/assert/src'),

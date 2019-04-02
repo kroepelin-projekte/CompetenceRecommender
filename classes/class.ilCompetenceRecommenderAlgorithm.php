@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+include_once("class.ilCompetenceRecommenderSettings.php");
 /**
  * Class ilCompetenceRecommenderConfigGUI
  *
@@ -24,11 +25,17 @@ class ilCompetenceRecommenderAlgorithm {
 	 */
 	protected $user;
 
+	/**
+	 * @var \ilRBACAccessHandler
+	 */
+	protected $access;
+
 	public function __construct()
 	{
-		global $DIC, $ilUser;
+		global $DIC, $ilUser, $rbacsystem;
 		$this->db = $DIC->database();
 		$this->user = $ilUser;
+		$this->access = $rbacsystem;
 	}
 
 	protected static function getInstance()
@@ -52,6 +59,12 @@ class ilCompetenceRecommenderAlgorithm {
 		return $instance->user;
 	}
 
+	public static function getAccessObj()
+	{
+		$instance = self::getInstance();
+		return $instance->access;
+	}
+
 	public static function hasUserProfile()
 	{
 		$db = self::getDatabaseObj();
@@ -61,7 +74,7 @@ class ilCompetenceRecommenderAlgorithm {
 		$result = $db->query("SELECT profile_id FROM skl_profile_user WHERE user_id = '".$user_id."'");
 		$profiles = $db->fetchAll($result);
 
-		$profile_settings = new ilSetting("comprec");
+		$profile_settings = new ilCompetenceRecommenderSettings();
 		foreach ($profiles as $profile) {
 			if ($profile_settings->get("checked_profile_".$profile['profile_id']) == $profile['profile_id']) {
 				return true;
@@ -81,7 +94,7 @@ class ilCompetenceRecommenderAlgorithm {
 		$result = $db->query("SELECT spu.profile_id, sp.title FROM skl_profile_user AS spu JOIN skl_profile AS sp ON sp.id = spu.profile_id WHERE user_id = '".$user_id."'");
 		$profiles = $db->fetchAll($result);
 
-		$profile_settings = new ilSetting("comprec");
+		$profile_settings = new ilCompetenceRecommenderSettings();
 		foreach ($profiles as $profile) {
 			if ($profile_settings->get("checked_profile_".$profile['profile_id']) == $profile['profile_id']) {
 				array_push($profilearray, $profile);
@@ -100,7 +113,7 @@ class ilCompetenceRecommenderAlgorithm {
 		$result = $db->query("SELECT profile_id FROM skl_profile_user WHERE user_id = '".$user_id."'");
 		$profiles = $db->fetchAll($result);
 
-		$profile_settings = new ilSetting("comprec");
+		$profile_settings = new ilCompetenceRecommenderSettings();
 		foreach ($profiles as $profile) {
 			if ($profile_settings->get("checked_profile_".$profile['profile_id']) == $profile['profile_id']) {
 				$result = $db->query("SELECT spl.level_id, spl.base_skill_id, spl.tref_id
@@ -139,7 +152,7 @@ class ilCompetenceRecommenderAlgorithm {
 
 	public static function getInitObjects($profile_id = -1) {
 		$profiles = self::getUserProfiles();
-		$settings = new ilSetting("comprec");
+		$settings = new ilCompetenceRecommenderSettings();
 		$ref_ids = array();
 
 		foreach ($profiles as $profile) {
@@ -173,7 +186,7 @@ class ilCompetenceRecommenderAlgorithm {
 		return $data;
 	}
 
-	public static function getAllCompetencesOfUserProfile(int $n = 0, string $sortation = "diff") {
+	public static function getAllCompetencesOfUserProfile(int $n = 0) {
 		$db = self::getDatabaseObj();
 		$user_id = self::getUserObj()->getId();
 
@@ -197,7 +210,7 @@ class ilCompetenceRecommenderAlgorithm {
 	public static function getCompetencesToProfile($profile, $skillsToSort = array(), int $n = 0) {
 		$db = self::getDatabaseObj();
 
-		$profile_settings = new ilSetting("comprec");
+		$profile_settings = new ilCompetenceRecommenderSettings();
 
 		if ($profile_settings->get("checked_profile_".$profile['profile_id']) == $profile['profile_id']) {
 			$result = $db->query("SELECT spl.tref_id,spl.base_skill_id,spl.level_id,stn.title
@@ -225,7 +238,7 @@ class ilCompetenceRecommenderAlgorithm {
 				$profilegoal = $db->query("SELECT nr FROM skl_level WHERE skill_id = '" . $skill["base_skill_id"] . "' AND id = '" . $skill["level_id"] . "'");
 				$goal = $profilegoal->fetchAssoc();
 				$score = self::computeScore($skill["tref_id"]);
-				if ($n == 0 || $score != 0) {
+				if ($n == 0 || ($score != 0 && $score < $goal["nr"])) {
 					if (!isset($skillsToSort[$skill["tref_id"]])) {
 						$skillsToSort[$skill["tref_id"]] = array(
 							"id" => $skill["tref_id"],
@@ -332,7 +345,7 @@ class ilCompetenceRecommenderAlgorithm {
 		}
 
 		// drop values older than dropout_input
-		$dropout_setting = new ilSetting("comprec");
+		$dropout_setting = new ilCompetenceRecommenderSettings();
 		$dropout_value = $dropout_setting->get("dropout_input");
 		if ($dropout_value == null) {$dropout_value = 0;}
 
@@ -343,7 +356,7 @@ class ilCompetenceRecommenderAlgorithm {
 		$score = 0;
 
 		($t_M < $t_S && $t_M != 0) ? $t_minimum = $t_M : $t_minimum = $t_S;
-		($t_F > $t_minimum && $t_minimum != 0) ? $t_minimum = $t_minimum : $t_minimum = $t_F;
+		($t_F < $t_minimum && $t_F != 0) ? $t_minimum = $t_F : $t_minimum = $t_minimum;
 
 		if ($dropout_value > 0) {
 			$t_S - $t_minimum > $dropout_value ? $t_S = 0 : $t_S = $t_S;
@@ -419,6 +432,8 @@ class ilCompetenceRecommenderAlgorithm {
 
 	private static function getResourcesForCompetence(int $skill_id) {
 		$db = self::getDatabaseObj();
+		$access = self::getAccessObj();
+		$user = self::getUserObj()->getId();
 
 		$refIds = array();
 		$result = $db->query("SELECT ssr.rep_ref_id,ssr.tref_id,ssr.level_id,stn.title 
@@ -432,7 +447,9 @@ class ilCompetenceRecommenderAlgorithm {
 								FROM skl_level
 								WHERE id ='".$value["level_id"]."'");
 			$levelnumber = $level->fetchAssoc();
-			array_push($refIds, array("id" => $value["rep_ref_id"], "title" => $value["title"], "level" => $levelnumber["nr"]));
+			if ($access->checkAccessOfUser($user, 'read', $value["rep_ref_id"])) {
+				array_push($refIds, array("id" => $value["rep_ref_id"], "title" => $value["title"], "level" => $levelnumber["nr"]));
+			}
 		}
 
 		// sort

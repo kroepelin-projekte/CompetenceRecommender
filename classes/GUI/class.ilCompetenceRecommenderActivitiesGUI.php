@@ -71,6 +71,9 @@ class ilCompetenceRecommenderActivitiesGUI
 	 */
 	protected function showDashboard()
 	{
+		isset($_GET["num"]) ? $n = $_GET["num"] : $n = 5;
+		$settings = new ilCompetenceRecommenderSettings();
+		$dropout = $settings->get("dropout_input");
 		$renderer = $this->ui->renderer();
 		$factory = $this->ui->factory();
 
@@ -78,7 +81,7 @@ class ilCompetenceRecommenderActivitiesGUI
 		$this->tpl->setTitle($this->lng->txt('ui_uihk_comprec_plugin_title'));
 		$html = "";
 
-		$competences = ilCompetenceRecommenderAlgorithm::getNCompetencesOfUserProfile(5);
+		$competences = ilCompetenceRecommenderAlgorithm::getNCompetencesOfUserProfile(intval($n));
 		if ($competences == []) {
 			$resourcearray = array();
 			$init_obj = \ilCompetenceRecommenderAlgorithm::getInitObjects();
@@ -118,6 +121,12 @@ class ilCompetenceRecommenderActivitiesGUI
 			$btpl->setVariable("SCALE", $competence["scale"]);
 			$btpl->setVariable("LASTUSEDTEXT", $this->lng->txt('ui_uihk_comprec_last_used'));
 			$btpl->setVariable("LASTUSEDDATE", $competence["lastUsed"]);
+			if (count($competence["resources"]) > 0){
+				$btpl->setVariable("NUMBEROFMATERIAL", $this->lng->txt("ui_uihk_comprec_number_material").": " . count($competence["resources"]));
+			}
+			if ((time()-strtotime($competence["lastUsed"]))/86400 > $dropout && $dropout > 0) {
+				$btpl->setVariable("ALERTMESSAGE", $this->lng->txt("ui_uihk_comprec_alert_olddata"));
+			}
 			foreach ($competence["resources"] as $resource) {
 				$obj_id = ilObject::_lookupObjectId($resource["id"]);
 				$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($resource["id"])));
@@ -154,6 +163,8 @@ class ilCompetenceRecommenderActivitiesGUI
 			$html .= $btpl->get();
 		}
 
+		$this->ctrl->setParameterByClass(ilCompetenceRecommenderActivitiesGUI::class, "num", $n+1);
+		$html .= $renderer->render($factory->button()->standard("mehr Anzeigen", $this->ctrl->getLinkTarget($this, "show")));
 		$this->tpl->setContent($html);
 		$this->tpl->show();
 		return;

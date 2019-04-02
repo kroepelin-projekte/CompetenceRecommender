@@ -4,10 +4,6 @@
 
 require_once __DIR__ . "/../vendor/autoload.php";
 
-use feldbusl\Plugins\CompetenceRecommender\Config\Config;
-use feldbusl\Plugins\CompetenceRecommender\Utils\CompetenceRecommenderTrait;
-use srag\RemovePluginDataConfirm\CompetenceRecommender\PluginUninstallTrait;
-
 /**
  * Class ilCompetenceRecommenderPlugin
  *
@@ -17,12 +13,9 @@ use srag\RemovePluginDataConfirm\CompetenceRecommender\PluginUninstallTrait;
  */
 class ilCompetenceRecommenderPlugin extends ilUserInterfaceHookPlugin {
 
-	use PluginUninstallTrait;
-	use CompetenceRecommenderTrait;
 	const PLUGIN_ID = "comprec";
 	const PLUGIN_NAME = "CompetenceRecommender";
 	const PLUGIN_CLASS_NAME = self::class;
-	const REMOVE_PLUGIN_DATA_CONFIRM_CLASS_NAME = CompetenceRecommenderRemoveDataConfirm::class;
 	/**
 	 * @var self|null
 	 */
@@ -61,6 +54,6 @@ class ilCompetenceRecommenderPlugin extends ilUserInterfaceHookPlugin {
 	 * @inheritdoc
 	 */
 	protected function deleteData()/*: void*/ {
-		self::dic()->database()->dropTable(Config::TABLE_NAME, false);
+		self::dic()->database()->dropTable("ui_uihk_comprec_config");
 	}
 }
