@@ -6,7 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'CompetenceRecommenderRemoveDataConfirm' => $baseDir . '/classes/uninstall/class.CompetenceRecommenderRemoveDataConfirm.php',
     'DeepCopy\\DeepCopy' => $vendorDir . '/myclabs/deep-copy/src/DeepCopy/DeepCopy.php',
     'DeepCopy\\Exception\\CloneException' => $vendorDir . '/myclabs/deep-copy/src/DeepCopy/Exception/CloneException.php',
     'DeepCopy\\Exception\\PropertyException' => $vendorDir . '/myclabs/deep-copy/src/DeepCopy/Exception/PropertyException.php',
@@ -669,9 +668,6 @@ return array(
     'TheSeer\\Tokenizer\\Tokenizer' => $vendorDir . '/theseer/tokenizer/src/Tokenizer.php',
     'TheSeer\\Tokenizer\\XMLSerializer' => $vendorDir . '/theseer/tokenizer/src/XMLSerializer.php',
     'Webmozart\\Assert\\Assert' => $vendorDir . '/webmozart/assert/src/Assert.php',
-    'feldbusl\\Plugins\\CompetenceRecommender\\Access\\Access' => $baseDir . '/src/Access/Access.php',
-    'feldbusl\\Plugins\\CompetenceRecommender\\Access\\Ilias' => $baseDir . '/src/Access/Ilias.php',
-    'feldbusl\\Plugins\\CompetenceRecommender\\Utils\\CompetenceRecommenderTrait' => $baseDir . '/src/Utils/CompetenceRecommenderTrait.php',
     'ilCompetenceRecommenderActivitiesGUI' => $baseDir . '/classes/GUI/class.ilCompetenceRecommenderActivitiesGUI.php',
     'ilCompetenceRecommenderAlgorithm' => $baseDir . '/classes/class.ilCompetenceRecommenderAlgorithm.php',
     'ilCompetenceRecommenderAlgorithmTest' => $baseDir . '/classes/tests/class.ilCompetenceRecommenderAlgorithmTest.php',

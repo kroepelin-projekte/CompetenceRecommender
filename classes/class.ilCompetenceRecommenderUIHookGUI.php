@@ -157,8 +157,7 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 							$this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class, ilCompetenceRecommenderGUI::class], 'eval')));
 
 				}
-			}
-			else {
+			} else {
 				$renderedobjects = $this->lng->txt('ui_uihk_comprec_no_resources') . " " . $renderer->render($factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'),
 						$this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class, ilCompetenceRecommenderGUI::class], 'eval')));;
 			}

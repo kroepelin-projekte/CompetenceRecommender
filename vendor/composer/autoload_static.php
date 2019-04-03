@@ -75,7 +75,6 @@ class ComposerStaticInita448b5f6ceb6d1c30bdd45c83b234461
     );
 
     public static $classMap = array (
-        'CompetenceRecommenderRemoveDataConfirm' => __DIR__ . '/../..' . '/classes/uninstall/class.CompetenceRecommenderRemoveDataConfirm.php',
         'DeepCopy\\DeepCopy' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/DeepCopy.php',
         'DeepCopy\\Exception\\CloneException' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/Exception/CloneException.php',
         'DeepCopy\\Exception\\PropertyException' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/Exception/PropertyException.php',
@@ -738,9 +737,6 @@ class ComposerStaticInita448b5f6ceb6d1c30bdd45c83b234461
         'TheSeer\\Tokenizer\\Tokenizer' => __DIR__ . '/..' . '/theseer/tokenizer/src/Tokenizer.php',
         'TheSeer\\Tokenizer\\XMLSerializer' => __DIR__ . '/..' . '/theseer/tokenizer/src/XMLSerializer.php',
         'Webmozart\\Assert\\Assert' => __DIR__ . '/..' . '/webmozart/assert/src/Assert.php',
-        'feldbusl\\Plugins\\CompetenceRecommender\\Access\\Access' => __DIR__ . '/../..' . '/src/Access/Access.php',
-        'feldbusl\\Plugins\\CompetenceRecommender\\Access\\Ilias' => __DIR__ . '/../..' . '/src/Access/Ilias.php',
-        'feldbusl\\Plugins\\CompetenceRecommender\\Utils\\CompetenceRecommenderTrait' => __DIR__ . '/../..' . '/src/Utils/CompetenceRecommenderTrait.php',
         'ilCompetenceRecommenderActivitiesGUI' => __DIR__ . '/../..' . '/classes/GUI/class.ilCompetenceRecommenderActivitiesGUI.php',
         'ilCompetenceRecommenderAlgorithm' => __DIR__ . '/../..' . '/classes/class.ilCompetenceRecommenderAlgorithm.php',
         'ilCompetenceRecommenderAlgorithmTest' => __DIR__ . '/../..' . '/classes/tests/class.ilCompetenceRecommenderAlgorithmTest.php',
