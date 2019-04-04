@@ -31,7 +31,7 @@ $ilDB->createTable("ui_uihk_comprec_config", $fields);
 $ilDB->addPrimaryKey("ui_uihk_comprec_config", array("id"));
 $ilDB->createSequence("ui_uihk_comprec_config");
 ?>
-<#1>
+<#3>
 <?php
 $ilDB->dropSequence("ui_uihk_comprec_config");
 $ilDB->createSequence("ui_uihk_comprec_config", 1);

@@ -1,9 +1,10 @@
 <?php
 declare(strict_types=1);
 include_once("Services/Table/classes/class.ilTable2GUI.php");
+include_once("./Services/UIComponent/AdvancedSelectionList/classes/class.ilAdvancedSelectionListGUI.php");
 
 /**
- * TableGUI class for models listing
+ * TableGUI class for listing the profiles and their settings
  *
  * @author Leonie Feldbusch <feldbusl@informatik.uni-freiburg.de>
  *
@@ -12,7 +13,14 @@ include_once("Services/Table/classes/class.ilTable2GUI.php");
  */
 class ilCompetenceRecommenderConfigTableGUI extends ilTable2GUI
 {
-	function __construct($a_parent_obj, array $data, $a_parent_cmd = "", $a_template_context = "")
+	/**
+	 * ilCompetenceRecommenderConfigTableGUI constructor.
+	 *
+	 * @param $a_parent_obj
+	 * @param array $data the data to show
+	 * @param string $a_parent_cmd the command to set to parent_obj with onclick on action
+	 */
+	function __construct($a_parent_obj, array $data, $a_parent_cmd = "")
 	{
 		parent::__construct($a_parent_obj, $a_parent_cmd);
 
@@ -32,13 +40,12 @@ class ilCompetenceRecommenderConfigTableGUI extends ilTable2GUI
 
 		$this->setData($data);
 		$this->setLimit(10000);
-
-		include_once("./Services/UIComponent/AdvancedSelectionList/classes/class.ilAdvancedSelectionListGUI.php");
 	}
 
 	/**
-	 * Standard Version of Fill Row. Most likely to
-	 * be overwritten by derived class.
+	 * overwritten fillRow
+	 *
+	 * @param array $a_set one element of data array
 	 */
 	protected function fillRow($a_set)
 	{
@@ -54,9 +61,8 @@ class ilCompetenceRecommenderConfigTableGUI extends ilTable2GUI
 	 * Get action menu for each row
 	 *
 	 * @param string[] 	$actions
-	 * @param int 	$id
-	 *
-	 * @return ilAdvancedSelectionListGUI
+	 * @param int $id
+	 * @return string
 	 */
 	protected function getActionMenu(array $actions, $id) {
 		$alist = new ilAdvancedSelectionListGUI();
@@ -74,7 +80,7 @@ class ilCompetenceRecommenderConfigTableGUI extends ilTable2GUI
 	/**
 	 * Get entries for action menu
 	 *
-	 * @param string[] 	$a_set
+	 * @param string[] $a_set
 	 *
 	 * @return string[]
 	 */
@@ -84,6 +90,7 @@ class ilCompetenceRecommenderConfigTableGUI extends ilTable2GUI
 		$this->ctrl->setParameter($this->parent_obj, "profile_id", $a_set["id"]);
 		$this->addCommandToActions($actions, $this->lng->txt("ui_uihk_comprec_deactivate"), "activate_profile");
 		$this->addCommandToActions($actions, $this->lng->txt("ui_uihk_comprec_set_init_obj"), "set_init_obj");
+		$this->addCommandToActions($actions, $this->lng->txt("ui_uihk_comprec_delete_init_obj"), "delete_init_obj");
 
 		return $actions;
 	}
@@ -92,7 +99,7 @@ class ilCompetenceRecommenderConfigTableGUI extends ilTable2GUI
 	 * Add command to actions
 	 *
 	 * @param string[] 	&$actions
-	 * @param string 	$caption 	not translated lang var
+	 * @param string 	$caption
 	 * @param string 	$command
 	 *
 	 * @return void

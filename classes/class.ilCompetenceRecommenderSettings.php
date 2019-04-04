@@ -3,6 +3,8 @@
 /**
  * Class ilCompetenceRecommenderSettings
  *
+ * utils class for saving the settings into the database ui_uihk_comprec_config
+ *
  * @author Leonie Feldbusch <feldbusl@informatik.uni-freiburg.de>
  */
 class ilCompetenceRecommenderSettings
@@ -29,7 +31,9 @@ class ilCompetenceRecommenderSettings
 	}
 
 	/**
-	 * @param $a_keyword
+	 * Gets the value to a specific keyword
+	 *
+	 * @param string $a_keyword
 	 * @param null $a_user_id
 	 * @return string
 	 */
@@ -46,6 +50,8 @@ class ilCompetenceRecommenderSettings
 	}
 
 	/**
+	 * Deletes (if exists) a row in the database, depending on keyword and user
+	 *
 	 * @param string $a_keyword
 	 * @param null $a_user_id
 	 * @return bool
@@ -66,6 +72,8 @@ class ilCompetenceRecommenderSettings
 	}
 
 	/**
+	 * Sets the value to a specific keyword and user
+	 *
 	 * @param string $a_key
 	 * @param string $a_val
 	 * @param int|null $a_user_id

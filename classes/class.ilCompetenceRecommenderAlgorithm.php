@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 include_once("class.ilCompetenceRecommenderSettings.php");
 /**
- * Class ilCompetenceRecommenderConfigGUI
+ * Class ilCompetenceRecommenderAlgorithm
+ *
+ * utils class to compute data to show
  *
  * @author Leonie Feldbusch <feldbusl@informatik.uni-freiburg.de>
  */
@@ -30,6 +32,9 @@ class ilCompetenceRecommenderAlgorithm {
 	 */
 	protected $access;
 
+	/**
+	 * ilCompetenceRecommenderAlgorithm constructor.
+	 */
 	public function __construct()
 	{
 		global $DIC, $ilUser, $rbacsystem;
@@ -38,6 +43,9 @@ class ilCompetenceRecommenderAlgorithm {
 		$this->access = $rbacsystem;
 	}
 
+	/**
+	 * @return ilCompetenceRecommenderAlgorithm instance
+	 */
 	protected static function getInstance()
 	{
 		if (!self::$instance)
@@ -47,24 +55,38 @@ class ilCompetenceRecommenderAlgorithm {
 		return self::$instance;
 	}
 
+	/**
+	 * @return ilDB|ilDBInterface database of instance
+	 */
 	public static function getDatabaseObj()
 	{
 		$instance = self::getInstance();
 		return $instance->db;
 	}
 
+	/**
+	 * @return ilObjUser|ilUser|mixed current user
+	 */
 	public static function getUserObj()
 	{
 		$instance = self::getInstance();
 		return $instance->user;
 	}
 
+	/**
+	 * @return ilRBACAccessHandler|ilRbacSystem|null access object of instance
+	 */
 	public static function getAccessObj()
 	{
 		$instance = self::getInstance();
 		return $instance->access;
 	}
 
+	/**
+	 * Returns whether user has a profile or not
+	 *
+	 * @return bool
+	 */
 	public static function hasUserProfile()
 	{
 		$db = self::getDatabaseObj();
@@ -84,6 +106,11 @@ class ilCompetenceRecommenderAlgorithm {
 		return false;
 	}
 
+	/**
+	 * Returns all profiles of the user, that are set active in the plugin config
+	 *
+	 * @return array
+	 */
 	public static function getUserProfiles() {
 		$db = self::getDatabaseObj();
 		$user_id = self::getUserObj()->getId();
@@ -104,6 +131,11 @@ class ilCompetenceRecommenderAlgorithm {
 		return $profilearray;
 	}
 
+	/**
+	 * Returns whether user has reached all goals of all profiles
+	 *
+	 * @return bool
+	 */
 	public static function hasUserFinishedAll()
 	{
 		$db = self::getDatabaseObj();
@@ -134,6 +166,11 @@ class ilCompetenceRecommenderAlgorithm {
 		return true;
 	}
 
+	/**
+	 * Returns whether the user has material to do left or not
+	 *
+	 * @return bool
+	 */
 	public static function noResourcesLeft()
 	{
 		$competences = self::getAllCompetencesOfUserProfile();
@@ -148,7 +185,29 @@ class ilCompetenceRecommenderAlgorithm {
 		return true;
 	}
 
+	/**
+	 * Returns whether the user has a competence where he has not reached the goal but has data
+	 *
+	 * @return bool
+	 */
+	public static function noFormationdata()
+	{
+		$competences = self::getAllCompetencesOfUserProfile();
 
+		foreach ($competences as $competence) {
+			if ($competence["score"] < $competence["goal"] && $competence["score"] > 0) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Returns the initiation object for a specific profile or all initiation objects if profile_id is set to -1
+	 *
+	 * @param int $profile_id
+	 * @return array
+	 */
 	public static function getInitObjects($profile_id = -1) {
 		$profiles = self::getUserProfiles();
 		$settings = new ilCompetenceRecommenderSettings();
@@ -165,7 +224,12 @@ class ilCompetenceRecommenderAlgorithm {
 		return $ref_ids;
 	}
 
-
+	/**
+	 * Returns the data to show in the widget on the desktop. Standard amount is 3
+	 *
+	 * @param int $n
+	 * @return array
+	 */
 	public static function getDataForDesktop(int $n = 3) {
 		$allRefIds = array();
 		$competences = self::getAllCompetencesOfUserProfile();
@@ -185,6 +249,12 @@ class ilCompetenceRecommenderAlgorithm {
 		return $data;
 	}
 
+	/**
+	 * Returns all competences of the user or if n is set only the best n ones
+	 *
+	 * @param int $n
+	 * @return array
+	 */
 	public static function getAllCompetencesOfUserProfile(int $n = 0) {
 		$db = self::getDatabaseObj();
 		$user_id = self::getUserObj()->getId();
@@ -206,6 +276,14 @@ class ilCompetenceRecommenderAlgorithm {
 		return $sortedSkills;
 	}
 
+	/**
+	 * Returns all competences of a sepcific profile of the user or if n is set only the best n ones
+	 *
+	 * @param $profile
+	 * @param array $skillsToSort
+	 * @param int $n
+	 * @return array
+	 */
 	public static function getCompetencesToProfile($profile, $skillsToSort = array(), int $n = 0) {
 		$db = self::getDatabaseObj();
 
@@ -218,7 +296,7 @@ class ilCompetenceRecommenderAlgorithm {
 									WHERE spl.profile_id = '" . $profile["profile_id"] . "'");
 			$skills = $db->fetchAll($result);
 			foreach ($skills as $skill) {
-				// get data needed for Selfevaluations
+				// get data needed for selfevaluations
 				$childId = $skill["tref_id"];
 				$depth = 3;
 				while ($depth > 2) {
@@ -262,6 +340,12 @@ class ilCompetenceRecommenderAlgorithm {
 		return $skillsToSort;
 	}
 
+	/**
+	 * Sort the competences with standard sortation is diff
+	 *
+	 * @param array $competences
+	 * @return array the sorted $competences array
+	 */
 	public static function sortCompetences(array $competences) {
 		$sortation = $_GET["sortation"];
 		$valid_sortations = array('diff','percentage','lastUsed','oldest');
@@ -284,11 +368,23 @@ class ilCompetenceRecommenderAlgorithm {
 		return $competences;
 	}
 
+	/**
+	 * Returns only n competences of a users profile
+	 *
+	 * @param int $n
+	 * @return array
+	 */
 	public static function getNCompetencesOfUserProfile(int $n) {
 		$competences = self::getAllCompetencesOfUserProfile($n);
 		return $competences;
 	}
 
+	/**
+	 * Finds out the values to compute the score for a competence/skill and returns the score
+	 *
+	 * @param $skill
+	 * @return float|int|string|null the score
+	 */
 	private static function computeScore($skill)
 	{
 		$db = self::getDatabaseObj();
@@ -351,6 +447,18 @@ class ilCompetenceRecommenderAlgorithm {
 		return self::score($t_S, $t_M, $t_F, $scoreS, $scoreM, $scoreF, intval($dropout_value));
 	}
 
+	/**
+	 * The actual computation of the score
+	 *
+	 * @param int $t_S time since last selfevaluation
+	 * @param int $t_M time since last "messung"
+	 * @param int $t_F time since last "fremd"evaluation
+	 * @param int $scoreS the score of last selfevaluation
+	 * @param int $scoreM the score of last "messung"
+	 * @param int $scoreF the score of last "fremd"evaluation
+	 * @param int $dropout_value the value when to ignore data
+	 * @return float|int|string|null the score
+	 */
 	public static function score(int $t_S, int $t_M, int $t_F, int $scoreS, int $scoreM, int $scoreF, int $dropout_value = 0) {
 		$score = 0;
 
@@ -411,6 +519,12 @@ class ilCompetenceRecommenderAlgorithm {
 		return $score;
 	}
 
+	/**
+	 * Returns the date of the last formationdata of a user in a competence
+	 *
+	 * @param int $skill_id
+	 * @return int
+	 */
 	private static function getLastUsedDate(int $skill_id) {
 		$db = self::getDatabaseObj();
 		$user_id = self::getUserObj()->getId();
@@ -429,6 +543,12 @@ class ilCompetenceRecommenderAlgorithm {
 		return $date;
 	}
 
+	/**
+	 * Returns the resources of a competence for a user
+	 *
+	 * @param int $skill_id
+	 * @return array
+	 */
 	private static function getResourcesForCompetence(int $skill_id) {
 		$db = self::getDatabaseObj();
 		$access = self::getAccessObj();

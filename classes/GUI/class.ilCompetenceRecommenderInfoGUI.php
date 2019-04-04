@@ -4,6 +4,8 @@ declare(strict_types=1);
 /**
  * Class ilCompetenceRecommenderInfoGUI
  *
+ * Shows the Info Screen of the Recommender
+ *
  * @ilCtrl_isCalledBy ilCompetenceRecommenderInfoGUI: ilCompetenceRecommenderGUI
  */
 class ilCompetenceRecommenderInfoGUI
@@ -14,16 +16,16 @@ class ilCompetenceRecommenderInfoGUI
 	protected $ctrl;
 
 	/**
-	 * @var ilTemplate
+	 * @var \ilTemplate
 	 */
 	protected $tpl;
 
 	/**
-	 * @var ilLanguage
+	 * @var \ilLanguage
 	 */
 	protected $lng;
 
-	/** @var  ilUIFramework */
+	/** @var  \ilUIFramework */
 	protected $ui;
 
 	/**
@@ -41,9 +43,10 @@ class ilCompetenceRecommenderInfoGUI
 	}
 
 	/**
-	 * Delegate incoming comands.
+	 * Delegate incoming commands.
 	 *
 	 * @return 	void
+	 * @throws Exception if command not known
 	 */
 	public function executeCommand()
 	{
@@ -61,7 +64,7 @@ class ilCompetenceRecommenderInfoGUI
 	}
 
 	/**
-	 * Displays the settings form
+	 * Displays the info text set by a language variable
 	 *
 	 * @return	void
 	 */

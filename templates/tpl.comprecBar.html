@@ -66,6 +66,7 @@
         text-overflow:ellipsis;
     }
     .percentage_text{
+        color: white;
         position: absolute;
         margin: 0 2px;
         line-height: 30px;
@@ -118,9 +119,9 @@
                     "'width:" + (score/scale*100) + "%'" +
                     "></div>");
                 if (score > 0) {
-                    $('#innerbarchart{ID}').append("<div class='percentage_text' style='color:white'>" + Round.round(score / goal * 100, 2) + "% </div>");
+                    $('#innerbarchart{ID}').append("<div class='percentage_text'>" + Round.round(score / goal * 100, 2) + "% </div>");
                 } else {
-                    $('#goalbarchart{ID}').append("<div class='percentage_text' style='color:white'>" + Round.round(score / goal * 100, 2) + "% </div>");
+                    $('#goalbarchart{ID}').append("<div class='percentage_text'>" + Round.round(score / goal * 100, 2) + "% </div>");
                 }
             },
         };

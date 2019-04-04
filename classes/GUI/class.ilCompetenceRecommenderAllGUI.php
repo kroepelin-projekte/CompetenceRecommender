@@ -2,9 +2,15 @@
 declare(strict_types=1);
 
 include_once("./Services/Skill/classes/class.ilPersonalSkillsGUI.php");
+include_once("./Services/Skill/classes/class.ilSkillTreeNode.php");
+include_once("./Services/Skill/classes/class.ilVirtualSkillTree.php");
+include_once("./Services/Skill/classes/class.ilSkillTemplateReference.php");
+include_once("./Services/Skill/classes/class.ilSelfEvaluationSimpleTableGUI.php");
 
 /**
  * Class ilCompetenceRecommenderAllGUI
+ *
+ * Shows the All Screen of the Recommender
  *
  * @ilCtrl_isCalledBy ilCompetenceRecommenderAllGUI: ilCompetenceRecommenderGUI
  * @ilCtrl_Calls ilCompetenceRecommenderAllGUI: ilPersonalSkillsGUI
@@ -17,19 +23,19 @@ class ilCompetenceRecommenderAllGUI
 	protected $ctrl;
 
 	/**
-	 * @var ilTemplate
+	 * @var \ilTemplate
 	 */
 	protected $tpl;
 
 	/**
-	 * @var ilLanguage
+	 * @var \ilLanguage
 	 */
 	protected $lng;
 
-	/** @var  ilUIFramework */
+	/** @var  \ilUIFramework */
 	protected $ui;
 
-	/** @var  ilToolbarGUI */
+	/** @var  \ilToolbarGUI */
 	protected $toolbar;
 
 	/** @var  \ILIAS\DI\HTTPServices */
@@ -37,8 +43,6 @@ class ilCompetenceRecommenderAllGUI
 
 	/**
 	 * Constructor of the class ilDistributorTrainingsLanguagesGUI.
-	 *
-	 * @return 	void
 	 */
 	public function __construct()
 	{
@@ -52,9 +56,10 @@ class ilCompetenceRecommenderAllGUI
 	}
 
 	/**
-	 * Delegate incoming comands.
+	 * Delegate incoming commands.
 	 *
 	 * @return 	void
+	 * @throws Exception if command not known
 	 */
 	public function executeCommand()
 	{
@@ -88,6 +93,9 @@ class ilCompetenceRecommenderAllGUI
 		return;
 	}
 
+	/**
+	 * save the self-evaluation after submitting in the modal
+	 */
 	protected function saveEval() {
 		$user = ilCompetenceRecommenderAlgorithm::getUserObj()->getId();
 		$base_skill_id = $_GET["basic_skill_id"];
@@ -96,20 +104,28 @@ class ilCompetenceRecommenderAllGUI
 		$level_id = $_POST["se"];
 		ilPersonalSkill::saveSelfEvaluation($user, (int) $skill_id,
 			(int) $tref_id, (int) $base_skill_id, (int) $level_id);
-		ilUtil::sendSuccess($this->lng->txt("self_eval_saved"), true);
+		ilUtil::sendSuccess($this->lng->txt("ui_uihk_comprec_self_eval_saved"), true);
 		$this->ctrl->redirect($this);
 	}
 
 	/**
-	 * Displays the settings form
+	 * Shows the template with bars or a possibility to give data
+	 * Firstly it adds the toolbar and gets all saved data
 	 *
-	 * @return	void
+	 * @param string $viewmode the viewmode to show. Default is list, other is profile
+	 * @return void
 	 */
 	protected function showAll(string $viewmode = "list")
 	{
 		$user_id = ilCompetenceRecommenderAlgorithm::getUserObj()->getId();
-
 		$settings = new ilCompetenceRecommenderSettings();
+		$factory = $this->ui->factory();
+
+		$this->tpl->getStandardTemplate();
+		$this->tpl->setTitle($this->lng->txt('ui_uihk_comprec_plugin_title'));
+		$html = "";
+
+		// get selected profiles
 		if (isset($_GET["selected_profile"])) {
 			$settings->set("selected_profile", $_GET["selected_profile"], $user_id);
 			$showprofile = $_GET["selected_profile"];
@@ -120,22 +136,16 @@ class ilCompetenceRecommenderAllGUI
 		}
 		$showprofile != -1 ? $viewmode = "profiles" : $showprofile = -1;
 
-		$factory = $this->ui->factory();
-
-		$this->tpl->getStandardTemplate();
-		$this->tpl->setTitle($this->lng->txt('ui_uihk_comprec_plugin_title'));
-		$html = "";
-
+		// set the viewmode-control
 		$actions = array(
 			$this->lng->txt('ui_uihk_comprec_list') => $this->ctrl->getLinkTargetByClass(\ilCompetenceRecommenderAllGUI::class, "list"),
 			$this->lng->txt('ui_uihk_comprec_profiles') => $this->ctrl->getLinkTargetByClass(\ilCompetenceRecommenderAllGUI::class, "profiles")
 		);
-
 		$aria_label = "change_the_currently_displayed_mode";
 		$view_control = $factory->viewControl()->mode($actions, $aria_label)->withActive($this->lng->txt("ui_uihk_comprec_" . $viewmode));
 
+		// add the selector of profiles and set selected profile
 		$this->tpl->addJavaScript("./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/ProfileSelector.js");
-
 		$selectprofiles = new ilSelectInputGUI($this->lng->txt("profile"), "selected_profile");
 		$options = array(-1 => "alle anzeigen");
 		$profiles = ilCompetenceRecommenderAlgorithm::getUserProfiles();
@@ -145,6 +155,7 @@ class ilCompetenceRecommenderAllGUI
 		$selectprofiles->setOptions($options);
 		$selectprofiles->setValue($showprofile);
 
+		// add the sorter for sortation, standard if diff which is the best
 		$sortoptions = array(
 			'diff' => $this->lng->txt("ui_uihk_comprec_sort_best"),
 			'percentage' => $this->lng->txt("ui_uihk_comprec_sort_percentage"),
@@ -164,8 +175,8 @@ class ilCompetenceRecommenderAllGUI
 			->withTargetURL($this->http->request()->getRequestTarget(), 'sortation')
 			->withLabel($this->lng->txt('ui_uihk_comprec_sortation_label') . ": " . $sortoptions[$sortation]);
 
+		// get checkboxes for filtering
 		$this->tpl->addJavaScript("./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/CheckboxChecker.js");
-
 		if (isset($_GET["onlymaterial"])) {
 			$settings->set("onlymaterial", $_GET["onlymaterial"], $user_id);
 			$onlymaterial = $_GET["onlymaterial"];
@@ -177,7 +188,6 @@ class ilCompetenceRecommenderAllGUI
 		$checkbox_material = new ilCheckboxInputGUI($this->lng->txt("ui_uihk_comprec_onlymaterial"), "onlymaterial");
 		$checkbox_material->setOptionTitle($this->lng->txt("ui_uihk_comprec_onlymaterial"));
 		$checkbox_material->setChecked($onlymaterial == "1");
-
 		if (isset($_GET["withoutdata"])) {
 			$settings->set("withoutdata", $_GET["withoutdata"], $user_id);
 			$withoutdata = $_GET["withoutdata"];
@@ -189,7 +199,6 @@ class ilCompetenceRecommenderAllGUI
 		$checkbox_data = new ilCheckboxInputGUI($this->lng->txt("ui_uihk_comprec_withoutdata"),"withoutdata");
 		$checkbox_data->setOptionTitle($this->lng->txt("ui_uihk_comprec_withoutdata"));
 		$checkbox_data->setChecked($withoutdata == "1");
-
 		if (isset($_GET["notfinished"])) {
 			$settings->set("notfinished", $_GET["notfinished"], $user_id);
 			$notfinished = $_GET["notfinished"];
@@ -202,6 +211,7 @@ class ilCompetenceRecommenderAllGUI
 		$checkbox_finished->setOptionTitle($this->lng->txt("ui_uihk_comprec_notfinished"));
 		$checkbox_finished->setChecked($notfinished == "1");
 
+		// set toolbar
 		$this->toolbar->addComponent($view_control);
 		$this->toolbar->addSeparator();
 		$this->toolbar->addInputItem($selectprofiles);
@@ -212,25 +222,39 @@ class ilCompetenceRecommenderAllGUI
 		$this->toolbar->addInputItem($checkbox_data);
 		$this->toolbar->addInputItem($checkbox_finished);
 
+		// determine the viewmode and show bars accordingly
 		$checkboxarray = array("onlymaterial" => $onlymaterial, "withoutdata" => $withoutdata, "notfinished" => $notfinished);
 		if ($viewmode == "list" && $showprofile == -1) {
 			$html .= $this->showList($checkboxarray);
 		} else {
 			$html .= $this->showProfiles($showprofile, $checkboxarray);
 		}
+
+		// set the actual content
 		$this->tpl->setContent($html);
 		$this->tpl->show();
 		return;
 	}
 
+	/**
+	 * Shows the bars list-wise
+	 *
+	 * @param array $checked an array of the checkboxes with 0 if not checked and 1 if checked
+	 * @return string the bar-html
+	 * @throws ilTemplateException
+	 */
 	private function showList(array $checked) {
 		$html = '';
+
+		// show head (title of columns)
 		$atpl = new ilTemplate("./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/tpl.comprecBarColumnTitle.html", true, true);
 		$atpl->setVariable("NAME_HEAD", $this->lng->txt('ui_uihk_comprec_competence'));
 		$atpl->setVariable("BAR_HEAD", $this->lng->txt('ui_uihk_comprec_progress'));
 		$html .= $atpl->get();
 
+		// get data from algorithm
 		$competences = ilCompetenceRecommenderAlgorithm::getAllCompetencesOfUserProfile();
+		// show bars
 		foreach ($competences as $competence) {
 			if (($competence["score"] != 0 || ($_GET["withoutdata"] != 1 && $checked["withoutdata"] != 1))
 				&& !($competence["resources"] == array() && ($_GET["onlymaterial"] == 1 || $checked["onlymaterial"] == 1))
@@ -242,17 +266,28 @@ class ilCompetenceRecommenderAllGUI
 		return $html;
 	}
 
+	/**
+	 * Shows the bars profile-wise
+	 *
+	 * @param array $checked an array of the checkboxes with 0 if not checked and 1 if checked
+	 * @return string the bar-html
+	 * @throws ilTemplateException
+	 */
 	private function showProfiles($profile_id, array $checked) {
 		$renderer = $this->ui->renderer();
 		$factory = $this->ui->factory();
 
 		$html = '';
+
+		// get profiles the user has from algorithm
 		$profiles = ilCompetenceRecommenderAlgorithm::getUserProfiles();
 		foreach ($profiles as $profile) {
 			if ($profile["profile_id"] == $profile_id || $profile_id == -1) {
+				// get data from algorithm
 				$rawcontent = ilCompetenceRecommenderAlgorithm::getCompetencesToProfile($profile);
 				$sortedRaw = ilCompetenceRecommenderAlgorithm::sortCompetences($rawcontent);
 				$content = "";
+				// show bars
 				foreach ($sortedRaw as $competence) {
 					if (($competence["score"] != 0 || ($_GET["withoutdata"] != 1 && $checked["withoutdata"] != 1))
 						&& !($competence["resources"] == array() && ($_GET["onlymaterial"] == 1 || $checked["onlymaterial"] == 1))
@@ -268,18 +303,29 @@ class ilCompetenceRecommenderAllGUI
 		return $html;
 	}
 
+	/**
+	 * Sets the actual bar html
+	 *
+	 * @param $competence
+	 * @param string $profile_id
+	 * @return string
+	 * @throws ilTemplateException
+	 */
 	private function setBar($competence, string $profile_id = "") {
 		$renderer = $this->ui->renderer();
 		$factory = $this->ui->factory();
-
-		$settings = new ilCompetenceRecommenderSettings();
-		$dropout = $settings->get("dropout_input");
 
 		$html = '';
 		$score = $competence["score"];
 		$goalat = $competence["goal"];
 		$resourcearray = array();
 		$oldresourcearray = array();
+
+		// findout dropout-setting to know whether a warning has to be shown
+		$settings = new ilCompetenceRecommenderSettings();
+		$dropout = $settings->get("dropout_input");
+
+		// show bars
 		$btpl = new ilTemplate("./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/tpl.comprecBar.html", true, true);
 		$btpl->setVariable("TITLE", $competence["title"]);
 		$btpl->setVariable("ID", $profile_id."_".$competence["id"]);
@@ -295,6 +341,7 @@ class ilCompetenceRecommenderAllGUI
 			if ((time()-strtotime($competence["lastUsed"]))/86400 > $dropout && $dropout > 0) {
 				$btpl->setVariable("ALERTMESSAGE", $this->lng->txt("ui_uihk_comprec_alert_olddata"));
 			}
+			// find resources to show
 			foreach ($competence["resources"] as $resource) {
 				$obj_id = ilObject::_lookupObjectId($resource["id"]);
 				$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($resource["id"])));
@@ -342,6 +389,14 @@ class ilCompetenceRecommenderAllGUI
 		return $html;
 	}
 
+	/**
+	 * shows modal for self-evaluation
+	 *
+	 * @param $skill_id
+	 * @param $tref_id
+	 * @param $base_skill_id
+	 * @return \ILIAS\UI\Component\Legacy\Legacy
+	 */
 	private function getModalContent($skill_id, $tref_id, $base_skill_id) {
 		$factory = $this->ui->factory();
 
