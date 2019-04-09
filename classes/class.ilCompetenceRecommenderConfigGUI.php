@@ -236,7 +236,8 @@ class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI {
 		$this->tpl->setTitle($this->lng->txt("ui_uihk_comprec_init_obj_title"));
 
 		$initiationsobj = new ilRepositorySelectorExplorerGUI($this, "set_init_obj", $this, "save_init_obj", "root_id");
-		$initiationsobj->setClickableTypes(array("tst", "svy"));
+		//uncomment if only tests and survey are allowed as initiation object
+		//$initiationsobj->setClickableTypes(array("tst", "svy"));
 
 		$this->ctrl->setParameterByClass(ilCompetenceRecommenderConfigGUI::class, "profile_id", $_GET["profile_id"]);
 		if (!$initiationsobj->handleCommand())

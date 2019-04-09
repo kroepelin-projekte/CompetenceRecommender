@@ -1,6 +1,7 @@
 config_configuration#:#Konfiguration
 config_configuration_saved#:#Konfiguration gespeichert
 config_save#:#Speichern
+save#:#Speichern
 removeplugindataconfirm_cancel#:#Abbrechen
 removeplugindataconfirm_confirm_remove_data#:#Möchten Sie die %1$s-Daten auch entfernen? Allenfalls möchten Sie das %1$s-Plugin nur deaktivieren?
 removeplugindataconfirm_deactivate#:#%1$s-Plugin nur deaktivieren
@@ -22,13 +23,15 @@ detail_button#:#mehr Empfehlungen
 detail_button_nodata#:#mehr Anzeigen
 button_show_more#:#mehr Anzeigen
 info_link#:#Was bedeutet diese Box
-back_tab#:#Back to PD
+back_tab#:#Zurück zur Übersicht
 activities_tab#:#Aktivitäten
 all_tab#:#Alle Empfehlungen
 info_tab#:#Info
 info_text#:#Diese Ansicht wird über das von der Universität Freiburg entwickelte Competence-Recommender-Plugin generiert. Anhand von bereits bearbeiteten Aufgaben werden weitere Aufgaben und andere Materialien vorgeschlagen, die zum Erreichen des vorgegebenen Profilwerts benötigt werden. Nach Messungen, die durch das Lösen von Aufgaben ausgelöst werden, Selbsteinschätzungen und Fremdeinschätzungen werden die Fortschritte neu berechnet und mit Materialien als Lernempfehlungen angezeigt.
 old_resources_text#:#Materialien einer niedrigeren Kompetenzstufe
-last_used#:#Zuletzt bearbeitet:
+resources_hidden_text#:#Materialien der Kompetenz
+last_used#:#Letzte Änderung des Lernstands:
+selfevaltext#:#Generieren Sie neue Daten mit einer Selbsteinschätzung:
 config_dropout_title#:#Dropout-Zeit
 config_save#:#Speichern
 config_saved_active#:#Profil aktiviert.
@@ -53,8 +56,8 @@ profiles#:#Profile
 error#:#Es ist ein Fehler aufgetreten.
 sort_best#:# Beste
 sort_percentage#:#Prozent
-sort_lastUsed#:#Zuletzt bearbeitet - absteigend
-sort_oldest#:#Zuletzt bearbeitet - aufsteigend
+sort_lastUsed#:#Letzte Änderung - absteigend
+sort_oldest#:#Letzte Änderung - aufsteigend
 sortation_label#:#Sortiere nach
 profile#:#Profil
 state#:#Status
@@ -65,9 +68,11 @@ deactivate#:#Aktivieren/Deaktivieren
 set_init_obj#:#Initiationsobjekt setzen
 delete_init_obj#:#Initiationsobjekt löschen
 action#:#Aktion
-onlymaterial#:#mit Material
-withoutdata#:#mit Daten
-notfinished#:#nicht abgeschlossen
+showall#:#alle anzeigen
+onlymaterial#:#mit Lernempfehlungen
+withoutdata#:#Selbsteinschätzung erforderlich
+hasfinished#:#abgeschlossen
+selector_show_all#:#alle Profile anzeigen
 config_info#:#Nehmen Sie hier die Einstellungen für den Recommender vor. Damit die Lernenden eines Profils Empfehlungen bekommen können, muss das Profil aktiviert sein. Das Initiationsobjekt ist dazu da, dass Daten für die Empfehlungen erhoben werden können, es sollte also ein Test oder eine Umfrage sein, der Messungen für entsprechende Kompetenzen anlegt.
-number_material#:#Verfügbare Materialien
+number_material#:#Empfohlene Materialien
 alert_olddata#:#Die Daten sind bereits veraltet. Nach einer erneuten Bearbeitung werden alle vorhergehenden Daten nicht mehr berücksichtigt.
