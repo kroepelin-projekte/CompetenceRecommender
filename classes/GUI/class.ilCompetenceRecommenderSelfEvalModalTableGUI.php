@@ -73,6 +73,7 @@ class ilCompetenceRecommenderSelfEvalModalTableGUI extends ilTable2GUI
 		$this->setData($this->levels);
 		$this->setTitle($title);
 		$this->setLimit(9999);
+		$this->setId('selfevaltable');
 
 		$this->addColumn("", "", "", true);
 		$this->addColumn($this->lng->txt("ui_uihk_comprec_skmg_skill_level"));
@@ -83,8 +84,9 @@ class ilCompetenceRecommenderSelfEvalModalTableGUI extends ilTable2GUI
 		$this->disable("footer");
 		$this->setEnableTitle(true);
 
-		$this->addCommandButton("saveSelfEvaluation", $this->lng->txt("ui_uihk_comprec_save"));
+		//$this->addCommandButton("saveSelfEvaluation", $this->lng->txt("ui_uihk_comprec_save"));
 		$this->setFormAction($this->formAction($a_parent_obj));
+		$this->setFormName("selfevalform");
 	}
 
 	function formAction($a_parent_obj) {

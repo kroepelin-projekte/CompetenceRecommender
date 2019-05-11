@@ -80,7 +80,7 @@ class ilCompetenceRecommenderActivitiesGUI
 		$base_skill_id = $_GET["basic_skill_id"];
 		$skill_id = $_GET["skill_id"];
 		$tref_id = $_GET["tref_id"];
-		$level_id = $_POST["se"];
+		$level_id = $_GET["se"];
 		ilPersonalSkill::saveSelfEvaluation($user, (int) $skill_id,
 			(int) $tref_id, (int) $base_skill_id, (int) $level_id);
 		ilUtil::sendSuccess($this->lng->txt("ui_uihk_comprec_self_eval_saved"), true);
@@ -161,9 +161,11 @@ class ilCompetenceRecommenderActivitiesGUI
 			$btpl->setVariable("SELFEVALTEXT", ". " . $this->lng->txt('ui_uihk_comprec_selfevaltext'));
 			$modal = $factory->modal()
 				->roundtrip($this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent($competence["parent"], $competence["id"], $competence["base_id"]))
-				/*->withActionButtons([
-					$factory->button()->standard($this->lng->txt("ui_uihk_comprec_save"), $this->ctrl->getLinkTargetByClass(\ilCompetenceRecommenderAllGUI::class, "saveSelfEvaluation"))
-				])*/;
+				->withActionButtons([
+					$factory->button()->standard($this->lng->txt("ui_uihk_comprec_save"), "#")
+						->withOnLoadCode(function($id) {
+							return "$(\"#$id\").click(function() {url = window.location.href.replace('&cmd=post','&cmd=saveSelfEvaluation'); val = '&se='+document.getElementById(\"selfevalform\").elements['se'].value; window.location.href = url.replace('#',val);});";						})
+				]);
 			$modalbutton = $factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'), "")->withOnClick($modal->getShowSignal());
 			$btpl->setVariable("SELFEVALBUTTON", $renderer->render([$modalbutton, $modal]));
 			if ((time()-strtotime($competence["lastUsed"]))/86400 > $dropout && $dropout > 0) {
@@ -193,9 +195,11 @@ class ilCompetenceRecommenderActivitiesGUI
 				$text = $this->lng->txt('ui_uihk_comprec_no_resources');
 				$modal = $factory->modal()
 					->roundtrip($this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent($competence["parent"], $competence["id"], $competence["base_id"]))
-					/*->withActionButtons([
-						$factory->button()->standard($this->lng->txt("ui_uihk_comprec_save"), $this->ctrl->getLinkTargetByClass(\ilCompetenceRecommenderAllGUI::class, "saveSelfEvaluation"))
-					])*/;
+					->withActionButtons([
+						$factory->button()->standard($this->lng->txt("ui_uihk_comprec_save"), "#")
+							->withOnLoadCode(function($id) {
+								return "$(\"#$id\").click(function() {url = window.location.href.replace('&cmd=post','&cmd=saveSelfEvaluation'); val = '&se='+document.getElementById(\"selfevalform\").elements['se'].value; window.location.href = url.replace('#',val);});";						})
+					]);
 				$modalbutton = $factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'), "")->withOnClick($modal->getShowSignal());
 				$btpl->setVariable("RESOURCES", $text . " " . $renderer->render([$modalbutton, $modal]));
 			}
