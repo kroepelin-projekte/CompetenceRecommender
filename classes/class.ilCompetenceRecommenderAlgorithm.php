@@ -508,9 +508,9 @@ class ilCompetenceRecommenderAlgorithm {
 
 				$longdivisor = $sumS[0]*$sumM[1]*$sumF[1]+$sumS[1]*$sumM[0]*$sumF[1]+$sumS[1]*$sumM[1]*$sumF[0];
 				$mult = $sumS[1]*$sumM[1]*$sumF[1];
-				$scorePartS = bcdiv(strval($sumS[0] *  $mult * $scoreS), strval($sumS[1] * $longdivisor), 10);
-				$scorePartM = bcdiv(strval($sumM[0] *  $mult * $scoreM), strval($sumM[1] * $longdivisor), 10);
-				$scorePartF = bcdiv(strval($sumF[0] *  $mult * $scoreF), strval($sumF[1] * $longdivisor), 10);
+				$scorePartS = $sumS[0] *  $mult * $scoreS/ ($sumS[1] * $longdivisor);
+				$scorePartM = $sumM[0] *  $mult * $scoreM/ ($sumM[1] * $longdivisor);
+				$scorePartF = $sumF[0] *  $mult * $scoreF/ ($sumF[1] * $longdivisor);
 				$score = $scorePartS + $scorePartF + $scorePartM;
 				$score = round($score, 3);
 			}

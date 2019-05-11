@@ -746,6 +746,7 @@ class ComposerStaticInita448b5f6ceb6d1c30bdd45c83b234461
         'ilCompetenceRecommenderGUI' => __DIR__ . '/../..' . '/classes/GUI/class.ilCompetenceRecommenderGUI.php',
         'ilCompetenceRecommenderInfoGUI' => __DIR__ . '/../..' . '/classes/GUI/class.ilCompetenceRecommenderInfoGUI.php',
         'ilCompetenceRecommenderPlugin' => __DIR__ . '/../..' . '/classes/class.ilCompetenceRecommenderPlugin.php',
+        'ilCompetenceRecommenderSelfEvalModalTableGUI' => __DIR__ . '/../..' . '/classes/GUI/class.ilCompetenceRecommenderSelfEvalModalTableGUI.php',
         'ilCompetenceRecommenderSettings' => __DIR__ . '/../..' . '/classes/class.ilCompetenceRecommenderSettings.php',
         'ilCompetenceRecommenderUIHookGUI' => __DIR__ . '/../..' . '/classes/class.ilCompetenceRecommenderUIHookGUI.php',
         'phpDocumentor\\Reflection\\DocBlock' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlock.php',

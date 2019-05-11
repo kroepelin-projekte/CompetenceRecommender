@@ -677,6 +677,7 @@ return array(
     'ilCompetenceRecommenderGUI' => $baseDir . '/classes/GUI/class.ilCompetenceRecommenderGUI.php',
     'ilCompetenceRecommenderInfoGUI' => $baseDir . '/classes/GUI/class.ilCompetenceRecommenderInfoGUI.php',
     'ilCompetenceRecommenderPlugin' => $baseDir . '/classes/class.ilCompetenceRecommenderPlugin.php',
+    'ilCompetenceRecommenderSelfEvalModalTableGUI' => $baseDir . '/classes/GUI/class.ilCompetenceRecommenderSelfEvalModalTableGUI.php',
     'ilCompetenceRecommenderSettings' => $baseDir . '/classes/class.ilCompetenceRecommenderSettings.php',
     'ilCompetenceRecommenderUIHookGUI' => $baseDir . '/classes/class.ilCompetenceRecommenderUIHookGUI.php',
     'phpDocumentor\\Reflection\\DocBlock' => $vendorDir . '/phpdocumentor/reflection-docblock/src/DocBlock.php',
