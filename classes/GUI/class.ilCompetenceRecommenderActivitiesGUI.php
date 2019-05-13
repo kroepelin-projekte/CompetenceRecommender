@@ -80,11 +80,12 @@ class ilCompetenceRecommenderActivitiesGUI
 		$base_skill_id = $_GET["basic_skill_id"];
 		$skill_id = $_GET["skill_id"];
 		$tref_id = $_GET["tref_id"];
-		$level_id = $_GET["se"];
+		$level_id = $_POST["se"];
 		ilPersonalSkill::saveSelfEvaluation($user, (int) $skill_id,
 			(int) $tref_id, (int) $base_skill_id, (int) $level_id);
 		ilUtil::sendSuccess($this->lng->txt("ui_uihk_comprec_self_eval_saved"), true);
-		$this->showDashboard();
+		$this->ctrl->setCmd('show');
+		$this->ctrl->forwardCommand($this);
 	}
 
 	/**
@@ -145,6 +146,9 @@ class ilCompetenceRecommenderActivitiesGUI
 			$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'skill_id', $competence["parent"]);
 			$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'tref_id', $competence["id"]);
 			$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'basic_skill_id', $competence["base_id"]);
+			$this->ctrl->setParameter($this, 'skill_id', $competence["parent"]);
+			$this->ctrl->setParameter($this, 'tref_id', $competence["id"]);
+			$this->ctrl->setParameter($this, 'basic_skill_id', $competence["base_id"]);
 
 			$score = $competence["score"];
 			$goalat = $competence["goal"];
@@ -160,12 +164,7 @@ class ilCompetenceRecommenderActivitiesGUI
 			$btpl->setVariable("LASTUSEDDATE", $competence["lastUsed"]);
 			$btpl->setVariable("SELFEVALTEXT", ". " . $this->lng->txt('ui_uihk_comprec_selfevaltext'));
 			$modal = $factory->modal()
-				->roundtrip($this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent($competence["parent"], $competence["id"], $competence["base_id"]))
-				->withActionButtons([
-					$factory->button()->standard($this->lng->txt("ui_uihk_comprec_save"), "#")
-						->withOnLoadCode(function($id) {
-							return "$(\"#$id\").click(function() {url = window.location.href.replace('&cmd=post','&cmd=saveSelfEvaluation'); val = '&se='+document.getElementById(\"selfevalform\").elements['se'].value; window.location.href = url.replace('#',val);});";						})
-				]);
+				->roundtrip($this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent($competence["parent"], $competence["id"], $competence["base_id"]));
 			$modalbutton = $factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'), "")->withOnClick($modal->getShowSignal());
 			$btpl->setVariable("SELFEVALBUTTON", $renderer->render([$modalbutton, $modal]));
 			if ((time()-strtotime($competence["lastUsed"]))/86400 > $dropout && $dropout > 0) {
@@ -194,12 +193,7 @@ class ilCompetenceRecommenderActivitiesGUI
 			} else if ($score < $goalat) {
 				$text = $this->lng->txt('ui_uihk_comprec_no_resources');
 				$modal = $factory->modal()
-					->roundtrip($this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent($competence["parent"], $competence["id"], $competence["base_id"]))
-					->withActionButtons([
-						$factory->button()->standard($this->lng->txt("ui_uihk_comprec_save"), "#")
-							->withOnLoadCode(function($id) {
-								return "$(\"#$id\").click(function() {url = window.location.href.replace('&cmd=post','&cmd=saveSelfEvaluation'); val = '&se='+document.getElementById(\"selfevalform\").elements['se'].value; window.location.href = url.replace('#',val);});";						})
-					]);
+					->roundtrip($this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent($competence["parent"], $competence["id"], $competence["base_id"]));
 				$modalbutton = $factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'), "")->withOnClick($modal->getShowSignal());
 				$btpl->setVariable("RESOURCES", $text . " " . $renderer->render([$modalbutton, $modal]));
 			}
@@ -233,8 +227,7 @@ class ilCompetenceRecommenderActivitiesGUI
 	 * @param $base_skill_id
 	 * @return \ILIAS\UI\Component\Legacy\Legacy
 	 */
-	private function getModalContent($skill_id, $tref_id, $base_skill_id)
-	{
+	private function getModalContent($skill_id, $tref_id, $base_skill_id) {
 		$factory = $this->ui->factory();
 
 		$this->ctrl->saveParameter($skill_id, "skill_id");
@@ -244,22 +237,24 @@ class ilCompetenceRecommenderActivitiesGUI
 		// basic skill selection
 		$vtree = new ilVirtualSkillTree();
 		$vtref_id = 0;
-		if (ilSkillTreeNode::_lookupType((int)$skill_id) == "sktr") {
+		if (ilSkillTreeNode::_lookupType((int) $skill_id) == "sktr")
+		{
 			$vtref_id = $skill_id;
 			$skill_id = ilSkillTemplateReference::_lookupTemplateId($skill_id);
 		}
-		$bs = $vtree->getSubTreeForCSkillId($skill_id . ":" . $vtref_id, true);
+		$bs = $vtree->getSubTreeForCSkillId($skill_id.":".$vtref_id, true);
 
 
 		$options = array();
-		foreach ($bs as $b) {
+		foreach ($bs as $b)
+		{
 			$options[$b["skill_id"]] = ilSkillTreeNode::_lookupTitle($b["skill_id"]);
 		}
 
-		$cur_basic_skill_id = ((int)$_POST["basic_skill_id"] > 0)
-			? (int)$_POST["basic_skill_id"]
-			: (((int)$_GET["basic_skill_id"] > 0)
-				? (int)$_GET["basic_skill_id"]
+		$cur_basic_skill_id = ((int) $_POST["basic_skill_id"] > 0)
+			? (int) $_POST["basic_skill_id"]
+			: (((int) $_GET["basic_skill_id"] > 0)
+				? (int) $_GET["basic_skill_id"]
 				: key($options));
 
 		$this->ctrl->setParameter($this, "basic_skill_id", $cur_basic_skill_id);
@@ -267,8 +262,8 @@ class ilCompetenceRecommenderActivitiesGUI
 		$this->ctrl->setParameter($this, "tref_id", $tref_id);
 
 		// table
-		$tab = new ilSelfEvaluationSimpleTableGUI($this, "selfEvaluation",
-			(int)$skill_id, (int)$tref_id, $cur_basic_skill_id);
+		$tab = new ilCompetenceRecommenderSelfEvalModalTableGUI($this, "all",
+			(int) $skill_id, (int) $tref_id, $cur_basic_skill_id);
 		$html = $tab->getHTML();
 
 		$modalContent = $factory->legacy($html);
