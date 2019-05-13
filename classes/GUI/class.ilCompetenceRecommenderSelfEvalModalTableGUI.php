@@ -84,7 +84,7 @@ class ilCompetenceRecommenderSelfEvalModalTableGUI extends ilTable2GUI
 		$this->disable("footer");
 		$this->setEnableTitle(true);
 
-		//$this->addCommandButton("saveSelfEvaluation", $this->lng->txt("ui_uihk_comprec_save"));
+		$this->addCommandButton("saveSelfEvaluation", $this->lng->txt("ui_uihk_comprec_save"));
 		$this->setFormAction($this->formAction($a_parent_obj));
 		$this->setFormName("selfevalform");
 	}

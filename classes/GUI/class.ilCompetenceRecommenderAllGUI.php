@@ -84,6 +84,7 @@ class ilCompetenceRecommenderAllGUI
 				$this->showAll('profiles');
 				break;
 			case 'saveSelfEvaluation':
+			case 'post':
 				$this->saveEval();
 				break;
 			case 'filter_showall':
@@ -114,11 +115,12 @@ class ilCompetenceRecommenderAllGUI
 		$base_skill_id = $_GET["basic_skill_id"];
 		$skill_id = $_GET["skill_id"];
 		$tref_id = $_GET["tref_id"];
-		$level_id = $_GET["se"];
+		$level_id = $_POST["se"];
 		ilPersonalSkill::saveSelfEvaluation($user, (int) $skill_id,
 			(int) $tref_id, (int) $base_skill_id, (int) $level_id);
 		ilUtil::sendSuccess($this->lng->txt("ui_uihk_comprec_self_eval_saved"), true);
-		$this->showAll();
+		$this->ctrl->setCmd('all');
+		$this->ctrl->redirect($this);
 	}
 
 	/**
@@ -332,19 +334,13 @@ class ilCompetenceRecommenderAllGUI
 		$btpl->setVariable("ID", $profile_id."_".$competence["id"]);
 		$btpl->setVariable("SCORE", $score);
 		$btpl->setVariable("GOALAT", $goalat);
-		$btpl->setVariable("SCALE", $competence["scale"]);
+		$btpl->setVariable("SCALE", $competence["scale"]);;
 		if ($score > 0) {
 			$btpl->setVariable("LASTUSEDTEXT", $this->lng->txt('ui_uihk_comprec_last_used'));
 			$btpl->setVariable("LASTUSEDDATE", $competence["lastUsed"]);
 			$btpl->setVariable("SELFEVALTEXT", ". " . $this->lng->txt('ui_uihk_comprec_selfevaltext'));
 			$modal = $factory->modal()
-				->roundtrip($this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent($competence["parent"], $competence["id"], $competence["base_id"]))
-				->withActionButtons([
-					$factory->button()->standard($this->lng->txt("ui_uihk_comprec_save"), $this->ctrl->getLinkTargetByClass(\ilCompetenceRecommenderAllGUI::class, "saveSelfEvaluation"))
-						->withOnLoadCode(function($id) {
-							return
-								"$(\"#$id\").click(function() {url = window.location.href.replace('&cmd=post','&cmd=saveSelfEvaluation'); val = '&se='+document.getElementById(\"selfevalform\").elements['se'].value; window.location.href = url.replace('#',val);});";						})
-				]);
+				->roundtrip($this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent($competence["parent"], $competence["id"], $competence["base_id"]));
 			$modalbutton = $factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'), "")->withOnClick($modal->getShowSignal());
 			$btpl->setVariable("SELFEVALBUTTON", $renderer->render([$modalbutton, $modal]));
 			if ((time()-strtotime($competence["lastUsed"]))/86400 > $dropout && $dropout > 0) {
@@ -373,14 +369,7 @@ class ilCompetenceRecommenderAllGUI
 			} else if ($score < $goalat) {
 				$text = $this->lng->txt('ui_uihk_comprec_no_resources');
 				$modal = $factory->modal()
-					->roundtrip($this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent($competence["parent"], $competence["id"], $competence["base_id"]))
-					->withActionButtons([
-						$factory->button()->standard($this->lng->txt("ui_uihk_comprec_save"), $this->ctrl->getLinkTargetByClass(\ilCompetenceRecommenderAllGUI::class, "saveSelfEvaluation"))
-							->withOnLoadCode(function($id) {
-								return
-									"$(\"#$id\").click(function() { document.getElementById(\"selfevalform\").submit();});";
-							})
-					]);
+					->roundtrip($this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent($competence["parent"], $competence["id"], $competence["base_id"]));
 				$modalbutton = $factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'), "")->withOnClick($modal->getShowSignal());
 				$btpl->setVariable("RESOURCES", $text . " " . $renderer->render([$modalbutton, $modal]));
 			}
@@ -391,17 +380,12 @@ class ilCompetenceRecommenderAllGUI
 			}
 		} else {
 			// keine Formationsdaten
-			$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'skill_id', $competence["parent"]);
-			$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'tref_id', $competence["id"]);
-			$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'basic_skill_id', $competence["base_id"]);
+			$this->ctrl->setParameter($this, 'skill_id', $competence["parent"]);
+			$this->ctrl->setParameter($this, 'tref_id', $competence["id"]);
+			$this->ctrl->setParameter($this, 'basic_skill_id', $competence["base_id"]);
 			$text = $this->lng->txt('ui_uihk_comprec_no_formationdata');
 			$modal = $factory->modal()
-				->roundtrip($this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent($competence["parent"], $competence["id"], $competence["base_id"]))
-				->withActionButtons([
-					$factory->button()->standard($this->lng->txt("ui_uihk_comprec_save"), "#")
-						->withOnLoadCode(function($id) {
-							return "$(\"#$id\").click(function() {url = window.location.href.replace('&cmd=post','&cmd=saveSelfEvaluation'); val = '&se='+document.getElementById(\"selfevalform\").elements['se'].value; window.location.href = url.replace('#',val);});";						})
-					]);
+				->roundtrip($this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent($competence["parent"], $competence["id"], $competence["base_id"]));
 			$modalbutton = $factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'), "")->withOnClick($modal->getShowSignal());
 			$btpl->setVariable("RESOURCES", $text . " " . $renderer->render([$modalbutton, $modal]));
 			$btpl->setVariable("OLDRESOURCETEXT", $this->lng->txt('ui_uihk_comprec_resources_hidden_text'));
