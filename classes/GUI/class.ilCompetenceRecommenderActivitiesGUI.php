@@ -99,12 +99,13 @@ class ilCompetenceRecommenderActivitiesGUI
 		$renderer = $this->ui->renderer();
 		$factory = $this->ui->factory();
 
+		// standard <= 5 bars are shown. More with a button setting "num" in URL
+		isset($_GET["num"]) ? $n = $_GET["num"] : $n = 5;
+		$max_n = \ilCompetenceRecommenderAlgorithm::getNumberOfCompetencesForActivities();
+
 		$this->tpl->getStandardTemplate();
 		$this->tpl->setTitle($this->lng->txt('ui_uihk_comprec_plugin_title'));
 		$html = "";
-
-		// standard <= 5 bars are shown. More with a button setting "num" in URL
-		isset($_GET["num"]) ? $n = $_GET["num"] : $n = 5;
 
 		// findout dropout-setting to know whether a warning has to be shown
 		$settings = new ilCompetenceRecommenderSettings();
@@ -210,8 +211,10 @@ class ilCompetenceRecommenderActivitiesGUI
 		}
 
 		// set the show more button
-		$this->ctrl->setParameterByClass(ilCompetenceRecommenderActivitiesGUI::class, "num", $n+1);
-		$html .= $renderer->render($factory->button()->standard($this->lng->txt('ui_uihk_comprec_button_show_more'), $this->ctrl->getLinkTarget($this, "show")));
+		if ($n < $max_n) {
+			$this->ctrl->setParameterByClass(ilCompetenceRecommenderActivitiesGUI::class, "num", $n + 1);
+			$html .= $renderer->render($factory->button()->standard($this->lng->txt('ui_uihk_comprec_button_show_more'), $this->ctrl->getLinkTarget($this, "show")));
+		}
 
 		// show
 		$this->tpl->setContent($html);

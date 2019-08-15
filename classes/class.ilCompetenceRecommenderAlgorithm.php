@@ -83,6 +83,45 @@ class ilCompetenceRecommenderAlgorithm {
 	}
 
 	/**
+	 * Returns number of competences of profiles of the user
+	 *
+	 * @param $profile
+	 * @param array $skillsToSort
+	 * @param int $n
+	 * @return int
+	 */
+	public static function getNumberOfCompetencesForActivities()
+	{
+		$db = self::getDatabaseObj();
+		$user_id = self::getUserObj()->getId();
+
+		$skillsarray = array();
+
+		// get user profiles
+		$result = $db->query("SELECT profile_id FROM skl_profile_user WHERE user_id = '".$user_id."'");
+		$profiles = $db->fetchAll($result);
+
+		$profile_settings = new ilCompetenceRecommenderSettings();
+		foreach ($profiles as $profile) {
+			if ($profile_settings->get("checked_profile_" . $profile['profile_id']) == $profile['profile_id']) {
+				$result = $db->query("SELECT spl.level_id, spl.base_skill_id, spl.tref_id
+									FROM skl_profile_level AS spl
+									WHERE spl.profile_id = '" . $profile["profile_id"] . "'");
+				$skills = $db->fetchAll($result);
+				foreach ($skills as $skill) {
+					$profilegoal = $db->query("SELECT nr FROM skl_level WHERE skill_id = '" . $skill["base_skill_id"] . "' AND id = '" . $skill["level_id"] . "'");
+					$goal = $profilegoal->fetchAssoc();
+					$score = self::computeScore($skill["tref_id"]);
+					if ($score < $goal["nr"] && $score > 0) {
+						array_push($skillsarray, $skill);
+					}
+				}
+			}
+		}
+		return count($skillsarray);
+	}
+
+	/**
 	 * Returns whether user has a profile or not
 	 *
 	 * @return bool
@@ -156,7 +195,7 @@ class ilCompetenceRecommenderAlgorithm {
 					$profilegoal = $db->query("SELECT nr FROM skl_level WHERE skill_id = '" . $skill["base_skill_id"] . "' AND id = '" . $skill["level_id"] . "'");
 					$goal = $profilegoal->fetchAssoc();
 					$score = self::computeScore($skill["tref_id"]);
-					if ($score < $goal) {
+					if ($score < $goal["nr"]) {
 						return false;
 					}
 				}
@@ -236,7 +275,7 @@ class ilCompetenceRecommenderAlgorithm {
 
 		foreach ($competences as $competence) {
 			foreach ($competence["resources"] as $resource) {
-				if ($resource["level"] >= $competence["score"] && $competence["score"] < $competence["goal"] && $competence["score"] > 0) {
+				if ($resource["level"] > $competence["score"] && $competence["score"] < $competence["goal"] && $competence["score"] > 0) {
 					array_push($allRefIds, $resource);
 					break;
 				}

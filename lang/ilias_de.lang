@@ -14,7 +14,7 @@ plugin_title#:#Meine Lernempfehlungen
 no_formationdata#:#Es liegen leider noch zu wenig Daten vor, um Lernempfehlungen geben zu können. Sie können z.B. damit beginnen, zu den für Sie relevanten Kompetenzen eine Selbsteinschätzung vorzunehmen.
 no_formationdata_init_obj#:#Es liegen leider noch zu wenig Daten vor, um Lernempfehlungen geben zu können. Sie können z.B. damit beginnen, die für Sie vorgeschlagenen Startobjekte zu besuchen.
 self_eval#:#Selbsteinschätzung
-self_eval_saved#:#Selbsteinschätzung gespeichert
+self_eval_saved#:#Selbsteinschätzung gespeichert. Laden Sie gegebenenfalls die Seite neu.
 competence#:#Kompetenz
 progress#:#Fortschritt
 no_resources#:#Sie sollten sich verbessern. Wenn Sie sich besser fühlen können Sie hier eine Selbsteinschätzung machen:
@@ -48,7 +48,6 @@ use_select_info#:#Verwende dieses Profil für Empfehlungen an die Studierenden
 init_obj_label#:#Initiationsobjekt
 init_obj_info#:#Objekt, das den Studierenden empfohlen wird, wenn noch keine Formationsdaten vorhanden sind.
 init_obj_title#:#Auswahl des Initiationsobjekts
-self_eval_saved#:#Selbsteinschätzung gespeichert
 skmg_skill_level#:#Kompetenzausprägung
 skmg_no_skills#:#Keine Kompetenz
 list#:#Liste

@@ -70,10 +70,15 @@ class ilCompetenceRecommenderAllGUI
 		$settings = new ilCompetenceRecommenderSettings();
 		$viewmode = $settings->get("viewmode", $user_id);
 		if (isset($viewmode) && ($cmd == 'eval' || $cmd == 'all')) {$cmd = $viewmode;}
+		if ($_GET["sortation"] == null) {$this->ctrl->setParameterByClass(\ilCompetenceRecommenderAllGUI::class, "sortation", $settings->get('sortation', $user_id));}
 		switch ($cmd) {
 			case 'eval':
 			case 'all':
 				$this->showAll();
+				break;
+			case 'listnew':
+				$settings->set("selected_profile", "-1", $user_id);
+				$this->ctrl->redirect($this, 'list');
 				break;
 			case 'list':
 				$settings->set("viewmode", 'list', $user_id);
@@ -153,7 +158,7 @@ class ilCompetenceRecommenderAllGUI
 
 		// set the viewmode-control
 		$actions = array(
-			$this->lng->txt('ui_uihk_comprec_list') => $this->ctrl->getLinkTargetByClass(\ilCompetenceRecommenderAllGUI::class, "list"),
+			$this->lng->txt('ui_uihk_comprec_list') => $this->ctrl->getLinkTargetByClass(\ilCompetenceRecommenderAllGUI::class, "listnew"),
 			$this->lng->txt('ui_uihk_comprec_profiles') => $this->ctrl->getLinkTargetByClass(\ilCompetenceRecommenderAllGUI::class, "profiles")
 		);
 		$aria_label = "change_the_currently_displayed_mode";
