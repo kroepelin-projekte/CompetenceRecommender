@@ -83,6 +83,7 @@ class ilCompetenceRecommenderActivitiesGUI
 		$level_id = $_POST["se"];
 		ilPersonalSkill::saveSelfEvaluation($user, (int) $skill_id,
 			(int) $tref_id, (int) $base_skill_id, (int) $level_id);
+		sleep(1);
 		ilUtil::sendSuccess($this->lng->txt("ui_uihk_comprec_self_eval_saved"), true);
 		$this->ctrl->setCmd('show');
 		$this->ctrl->forwardCommand($this);

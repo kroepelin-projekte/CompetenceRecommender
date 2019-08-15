@@ -388,21 +388,25 @@ class ilCompetenceRecommenderAlgorithm {
 	public static function sortCompetences(array $competences) {
 		$sortation = $_GET["sortation"];
 		$valid_sortations = array('diff','percentage','lastUsed','oldest');
-		if (in_array($sortation, $valid_sortations)) {
+		// more dimensional sorting requires columns diff and name of skill (=title)
+		$diffsorter = array_column($competences, 'diff');
+		$titlesorter = array_column($competences, 'title');
+
+		if (in_array($sortation, $valid_sortations) && $sortation != 'diff') {
 			if ($sortation != 'oldest') {
 				$score_sorter = array_column($competences, $sortation);
 				if ($sortation != 'lastUsed') {
-					array_multisort($score_sorter, SORT_NUMERIC, SORT_ASC, $competences);
+					array_multisort($score_sorter, SORT_NUMERIC, SORT_ASC, $diffsorter, SORT_NUMERIC, SORT_ASC, $titlesorter, SORT_STRING, SORT_ASC, $competences);
 				} else {
-					array_multisort($score_sorter, SORT_STRING, SORT_ASC, $competences);
+					array_multisort($score_sorter, SORT_STRING, SORT_ASC, $diffsorter, SORT_NUMERIC, SORT_ASC, $titlesorter, SORT_STRING, SORT_ASC,$competences);
 				}
 			} else {
 				$score_sorter = array_column($competences, 'lastUsed');
-				array_multisort($score_sorter, SORT_STRING, SORT_DESC, $competences);
+				array_multisort($score_sorter, SORT_STRING, SORT_DESC, $diffsorter, SORT_NUMERIC, SORT_ASC, $titlesorter, SORT_STRING, SORT_ASC,$competences);
 			}
 		} else {
 			$score_sorter = array_column($competences, 'diff');
-			array_multisort($score_sorter, SORT_NUMERIC, SORT_ASC, $competences);
+			array_multisort($score_sorter, SORT_NUMERIC, SORT_ASC, $titlesorter, SORT_STRING, SORT_ASC, $competences);
 		}
 		return $competences;
 	}
