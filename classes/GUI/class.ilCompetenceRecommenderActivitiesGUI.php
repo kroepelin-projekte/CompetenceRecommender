@@ -85,8 +85,8 @@ class ilCompetenceRecommenderActivitiesGUI
 			(int) $tref_id, (int) $base_skill_id, (int) $level_id);
 		sleep(1);
 		ilUtil::sendSuccess($this->lng->txt("ui_uihk_comprec_self_eval_saved"), true);
-		$this->ctrl->setCmd('show');
-		$this->ctrl->forwardCommand($this);
+		$this->ctrl->clearParametersByClass(\ilCompetenceRecommenderActivitiesGUI::class);
+		$this->ctrl->redirect($this, "show");
 	}
 
 	/**
@@ -147,10 +147,10 @@ class ilCompetenceRecommenderActivitiesGUI
 			// set parameters for self eval
 			$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'skill_id', $competence["parent"]);
 			$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'tref_id', $competence["id"]);
-			$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'basic_skill_id', $competence["base_id"]);
+			$this->ctrl->setParameterByClass(ilPersonalSkillsGUI::class, 'basic_skill_id', $competence["base_skill"]);
 			$this->ctrl->setParameter($this, 'skill_id', $competence["parent"]);
 			$this->ctrl->setParameter($this, 'tref_id', $competence["id"]);
-			$this->ctrl->setParameter($this, 'basic_skill_id', $competence["base_id"]);
+			$this->ctrl->setParameter($this, 'basic_skill_id', $competence["base_skill"]);
 
 			$score = $competence["score"];
 			$goalat = $competence["goal"];
@@ -166,7 +166,7 @@ class ilCompetenceRecommenderActivitiesGUI
 			$btpl->setVariable("LASTUSEDDATE", $competence["lastUsed"]);
 			$btpl->setVariable("SELFEVALTEXT", ". " . $this->lng->txt('ui_uihk_comprec_selfevaltext'));
 			$modal = $factory->modal()
-				->roundtrip($this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent($competence["parent"], $competence["id"], $competence["base_id"]));
+				->roundtrip($this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent($competence["parent"], $competence["id"], $competence["base_skill"]));
 			$modalbutton = $factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'), "")->withOnClick($modal->getShowSignal());
 			$btpl->setVariable("SELFEVALBUTTON", $renderer->render([$modalbutton, $modal]));
 			if ((time()-strtotime($competence["lastUsed"]))/86400 > $dropout && $dropout > 0) {
@@ -195,7 +195,7 @@ class ilCompetenceRecommenderActivitiesGUI
 			} else if ($score < $goalat) {
 				$text = $this->lng->txt('ui_uihk_comprec_no_resources');
 				$modal = $factory->modal()
-					->roundtrip($this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent($competence["parent"], $competence["id"], $competence["base_id"]));
+					->roundtrip($this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent($competence["parent"], $competence["id"], $competence["base_skill"]));
 				$modalbutton = $factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'), "")->withOnClick($modal->getShowSignal());
 				$btpl->setVariable("RESOURCES", $text . " " . $renderer->render([$modalbutton, $modal]));
 			}
@@ -260,6 +260,7 @@ class ilCompetenceRecommenderActivitiesGUI
 			: (((int) $_GET["basic_skill_id"] > 0)
 				? (int) $_GET["basic_skill_id"]
 				: key($options));
+		if ($tref_id == 0) {$cur_basic_skill_id = $base_skill_id;}
 
 		$this->ctrl->setParameter($this, "basic_skill_id", $cur_basic_skill_id);
 		$this->ctrl->setParameter($this, "skill_id", $skill_id);

@@ -65,7 +65,11 @@ class ilCompetenceRecommenderSelfEvalModalTableGUI extends ilTable2GUI
 
 		// build title
 		$stree = new ilSkillTree();
-		$path = $stree->getPathFull($this->tref_id);
+		if ($this->tref_id != 0) {
+			$path = $stree->getPathFull($this->tref_id);
+		} else {
+			$path = $stree->getPathFull($this->basic_skill_id);
+		}
 		$title = $path[count($path) - 1]["title"];
 
 		parent::__construct($a_parent_obj, $a_parent_cmd);
