@@ -619,7 +619,8 @@ class ilCompetenceRecommenderAlgorithm {
 								FROM skl_user_has_level AS suhl
 								JOIN skl_level AS sl ON suhl.level_id = sl.id
 								WHERE suhl.user_id ='" . $user_id . "' 
-								AND suhl.".$use_id." ='" . $skill_id . "'");
+								AND suhl.".$use_id." ='" . $skill_id . "'
+								ORDER BY suhl.status_date DESC");
 
 		$date = $lastUsedDate->fetchAssoc()["status_date"];
 		if (!isset($date)) {
