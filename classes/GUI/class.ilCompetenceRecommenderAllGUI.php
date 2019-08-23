@@ -357,7 +357,7 @@ class ilCompetenceRecommenderAllGUI
 				$obj_id = ilObject::_lookupObjectId($resource["id"]);
 				$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($resource["id"])));
 				$image = $factory->image()->standard(ilObject::_getIcon($obj_id), "Icon");
-				$card = $factory->card($link, $image);
+				$card = $factory->card()->standard($link, $image);
 				if ($resource["level"] > $score) {
 					array_push($resourcearray, $card);
 				} else {
@@ -400,7 +400,7 @@ class ilCompetenceRecommenderAllGUI
 				$obj_id = ilObject::_lookupObjectId($resource["id"]);
 				$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($resource["id"])));
 				$image = $factory->image()->standard(ilObject::_getIcon($obj_id), "Icon");
-				$card = $factory->card($link, $image);
+				$card = $factory->card()->standard($link, $image);
 				array_push($oldresourcearray, $card);
 			};
 			$deck = $factory->deck($oldresourcearray);

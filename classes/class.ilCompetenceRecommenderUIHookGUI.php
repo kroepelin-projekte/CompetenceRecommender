@@ -136,7 +136,7 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 				$obj_id = ilObject::_lookupObjectId($row["id"]);
 				$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($row["id"])));
 				$image = $factory->image()->standard(ilObject::_getIcon($obj_id), "Icon");
-				$card = $factory->card($link, $image)->withSections(array($factory->legacy($row["title"])));
+				$card = $factory->card()->standard($link, $image)->withSections(array($factory->legacy($row["title"])));
 				array_push($allcards, $card);
 			};
 
@@ -150,7 +150,7 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 						$obj_id = ilObject::_lookupObjectId($object["id"]);
 						$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($object["id"])));
 						$image = $factory->image()->standard(ilObject::_getIcon($obj_id), "Icon");
-						$card = $factory->card($link, $image)->withSections(array($factory->legacy($object["title"])));
+						$card = $factory->card()->standard($link, $image)->withSections(array($factory->legacy($object["title"])));
 						array_push($allcards, $card);
 					}
 					$deck = $factory->deck($allcards);
@@ -170,7 +170,7 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 						$obj_id = ilObject::_lookupObjectId($object["id"]);
 						$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($object["id"])));
 						$image = $factory->image()->standard(ilObject::_getIcon($obj_id), "Icon");
-						$card = $factory->card($link, $image)->withSections(array($factory->legacy($object["title"])));
+						$card = $factory->card()->standard($link, $image)->withSections(array($factory->legacy($object["title"])));
 						array_push($allcards, $card);
 					}
 					$deck = $factory->deck($allcards);
