@@ -96,7 +96,8 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 		$a_par = []): array 
 	{
 		if ($a_comp == "Services/PersonalDesktop" && $a_part == "center_column") {
-			if (ilCompetenceRecommenderAlgorithm::hasUserProfile() && !\ilCompetenceRecommenderAlgorithm::hasUserFinishedAll()) {
+			// change if recommender should disappear when user has finished all
+			if (ilCompetenceRecommenderAlgorithm::hasUserProfile()) { //&& !\ilCompetenceRecommenderAlgorithm::hasUserFinishedAll()) {
 				return ["mode" => ilUIHookPluginGUI::PREPEND, "html" => $this->pdRecommendation()];
 			}
 		}

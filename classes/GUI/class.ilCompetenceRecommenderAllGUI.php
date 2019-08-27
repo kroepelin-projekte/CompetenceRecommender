@@ -337,7 +337,9 @@ class ilCompetenceRecommenderAllGUI
 		// show bars
 		$btpl = new ilTemplate("./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/tpl.comprecBar.html", true, true);
 		$btpl->setVariable("TITLE", $competence["title"]);
-		$btpl->setVariable("ID", $profile_id."_".$competence["id"]);
+		if ($competence["id"] == 0) {$id = $profile_id."_".$competence["base_skill"];}
+		else {$id = $profile_id."_".$competence["id"];}
+		$btpl->setVariable("ID", $id);
 		$btpl->setVariable("SCORE", $score);
 		$btpl->setVariable("GOALAT", $goalat);
 		$btpl->setVariable("SCALE", $competence["scale"]);;
