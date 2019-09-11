@@ -171,7 +171,7 @@ class ilCompetenceRecommenderAllGUI
 		$options = array(-1 => $this->lng->txt("ui_uihk_comprec_selector_show_all"));
 		$profiles = ilCompetenceRecommenderAlgorithm::getUserProfiles();
 		foreach ($profiles as $profile) {
-			$options[$profile["profile_id"]] = $profile["title"];
+			$options[$profile["id"]] = $profile["title"];
 		}
 		$selectprofiles->setOptions($options);
 		$selectprofiles->setValue($showprofile);
@@ -286,7 +286,7 @@ class ilCompetenceRecommenderAllGUI
 		// get profiles the user has from algorithm
 		$profiles = ilCompetenceRecommenderAlgorithm::getUserProfiles();
 		foreach ($profiles as $profile) {
-			if ($profile["profile_id"] == $profile_id || $profile_id == -1) {
+			if ($profile["id"] == $profile_id || $profile_id == -1) {
 				// get data from algorithm
 				$rawcontent = ilCompetenceRecommenderAlgorithm::getCompetencesToProfile($profile);
 				$sortedRaw = ilCompetenceRecommenderAlgorithm::sortCompetences($rawcontent);
@@ -297,7 +297,7 @@ class ilCompetenceRecommenderAllGUI
 						&& (($competence["resources"] != array() && $competence["score"] < $competence["goal"] && $competence["score"] > 0) || $checked["onlymaterial"] != 1)
 						&& ($competence["score"] >= $competence["goal"] || $checked["hasfinished"] != 1)
 					) {
-						$content .= $this->setBar($competence, $profile["profile_id"]);
+						$content .= $this->setBar($competence, $profile["id"]);
 					}
 				}
 				$panel = $factory->panel()->standard($profile["title"], $factory->legacy($content));
