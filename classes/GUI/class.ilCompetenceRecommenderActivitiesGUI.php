@@ -158,6 +158,7 @@ class ilCompetenceRecommenderActivitiesGUI
 			$oldresourcearray = array();
 			$btpl = new ilTemplate("./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/tpl.comprecBar.html", true, true);
 			$btpl->setVariable("TITLE", $competence["title"]);
+			$btpl->setVariable("DESCRIPTION", $competence["description"]);
 			if ($competence["id"] == 0) {$id = $competence["base_skill"];}
 			else {$id = $competence["id"];}
 			$btpl->setVariable("ID", $id);

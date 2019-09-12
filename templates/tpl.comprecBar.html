@@ -65,6 +65,15 @@
         white-space: nowrap;
         text-overflow:ellipsis;
     }
+    .description{
+        position: absolute;
+        top: 60px;
+        line-height: 20px;
+        left: 30px;
+        width: 32%;
+        text-align: left;
+        font-size: small;
+    }
     .percentage_text{
         color: white;
         position: absolute;
@@ -139,11 +148,13 @@
             $( '#resources{ID}' ).hide();
             $( '#collapseold{ID}on' ).hide();
             $( '#oldresourcecontent{ID}' ).hide();
+            $( '#description{ID}' ).hide();
 
             $( '#row{ID}' ).click( function() {
                 $( '#resources{ID}' ).toggle();
                 $( '#collapse{ID}on' ).toggle();
                 $( '#collapse{ID}off' ).toggle();
+                $( '#description{ID}' ).toggle();
             });
 
             $( '#oldresources{ID}' ).click( function() {
@@ -162,6 +173,7 @@
         <div id="collapse{ID}off" class="glyph"> {COLLAPSE} </div>
         <div class='title'>{TITLE}</div>
         <div class="subtitle">{NUMBEROFMATERIAL}</div>
+        <div id="description{ID}" class="description">{DESCRIPTION}</div>
         <div id="{ID}" class="barchart">
             <div class="scale_bar"></div>
         </div>

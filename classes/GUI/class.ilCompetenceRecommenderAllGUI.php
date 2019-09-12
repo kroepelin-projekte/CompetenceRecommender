@@ -342,7 +342,8 @@ class ilCompetenceRecommenderAllGUI
 		$btpl->setVariable("ID", $id);
 		$btpl->setVariable("SCORE", $score);
 		$btpl->setVariable("GOALAT", $goalat);
-		$btpl->setVariable("SCALE", $competence["scale"]);;
+		$btpl->setVariable("SCALE", $competence["scale"]);
+		$btpl->setVariable("DESCRIPTION", $competence["description"]);
 		if ($score > 0) {
 			$btpl->setVariable("LASTUSEDTEXT", $this->lng->txt('ui_uihk_comprec_last_used'));
 			$btpl->setVariable("LASTUSEDDATE", $competence["lastUsed"]);
