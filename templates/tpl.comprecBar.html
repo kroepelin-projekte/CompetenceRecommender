@@ -67,12 +67,11 @@
     }
     .description{
         position: absolute;
-        top: 60px;
+        top: 40px;
         line-height: 20px;
         left: 30px;
         width: 32%;
         text-align: left;
-        font-size: small;
     }
     .percentage_text{
         color: white;
@@ -154,6 +153,7 @@
                 $( '#resources{ID}' ).toggle();
                 $( '#collapse{ID}on' ).toggle();
                 $( '#collapse{ID}off' ).toggle();
+                $( '#numberOfMaterial{ID}' ).toggle();
                 $( '#description{ID}' ).toggle();
             });
 
@@ -172,7 +172,7 @@
         <div id="collapse{ID}on" class="glyph"> {COLLAPSEON} </div>
         <div id="collapse{ID}off" class="glyph"> {COLLAPSE} </div>
         <div class='title'>{TITLE}</div>
-        <div class="subtitle">{NUMBEROFMATERIAL}</div>
+        <div id="numberOfMaterial{ID}" class="subtitle">{NUMBEROFMATERIAL}</div>
         <div id="description{ID}" class="description">{DESCRIPTION}</div>
         <div id="{ID}" class="barchart">
             <div class="scale_bar"></div>
