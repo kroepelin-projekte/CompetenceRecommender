@@ -379,6 +379,7 @@ class ilCompetenceRecommenderAlgorithm {
 		else {$score = self::computeScore($skill["base_skill_id"], true);}
 		if ($n == 0 || ($score != 0 && $score < $goal["nr"])) {
 			if ($skill["tref_id"] == 0) {
+				//set everything a step down (-1) for that the percentage of the lowest step is 0%
 				$skillsToSort[$skill["base_skill_id"]] = array(
 					"id" => $skill["tref_id"],
 					"base_skill" => $skill["base_skill_id"],
@@ -386,13 +387,15 @@ class ilCompetenceRecommenderAlgorithm {
 					"title" => $skill['title'],
 					"description" => ilSkillTreeNode::_lookupDescription($skill["base_skill_id"]),
 					"lastUsed" => self::getLastUsedDate(intval($skill["base_skill_id"]),true),
-					"score" => $score,
-					"diff" => $score == 0 ? 1 - $goal["nr"] / $levelcount : $score / $goal["nr"],
-					"goal" => $goal["nr"],
-					"percentage" => $score / $goal["nr"],
-					"scale" => $levelcount,
+					"existsdata" => ($score != 0),
+					"score" => $score == 0 ? $score = 0 : $score = $score - 1,
+					"diff" => $score == 0 ? 1 - ($goal["nr"]-1) / ($levelcount-1) : ($score-1) / ($goal["nr"]-1),
+					"goal" => $goal["nr"] - 1,
+					"percentage" => ($score-1) / ($goal["nr"]-1),
+					"scale" => $levelcount-1,
 					"resources" => self::getResourcesForCompetence(intval($skill["base_skill_id"]), true));
 			} else if (!isset($skillsToSort[$skill["tref_id"]])) {
+				//set everything a step down (-1) for that the percentage of the lowest step is 0%
 				$skillsToSort[$skill["tref_id"]] = array(
 					"id" => $skill["tref_id"],
 					"base_skill" => $skill["base_skill_id"],
@@ -400,16 +403,18 @@ class ilCompetenceRecommenderAlgorithm {
 					"title" => $skill['title'],
 					"description" => ilSkillTreeNode::_lookupDescription($skill["base_skill_id"]),
 					"lastUsed" => self::getLastUsedDate(intval($skill["tref_id"])),
-					"score" => $score,
-					"diff" => $score == 0 ? 1 - $goal["nr"] / $levelcount : $score / $goal["nr"],
-					"goal" => $goal["nr"],
-					"percentage" => $score / $goal["nr"],
-					"scale" => $levelcount,
+					"existsdata" => ($score != 0),
+					"score" => $score == 0 ? $score = 0 : $score = $score - 1,
+					"diff" => $score == 0 ? 1 - ($goal["nr"]-1) / ($levelcount-1) : ($score-1) / ($goal["nr"]-1),
+					"goal" => $goal["nr"] - 1,
+					"percentage" => ($score-1) / ($goal["nr"]-1),
+					"scale" => $levelcount-1,
 					"resources" => self::getResourcesForCompetence(intval($skill["tref_id"])));
 			} else if ($goal["nr"] > $skillsToSort[$skill["tref_id"]]["goal"]) {
 				// if several profiles with same skill take maximum
-				$skillsToSort[$skill["tref_id"]]["goal"] = $goal["nr"];
-				$skillsToSort[$skill["tref_id"]]["percentage"] = $score / $goal["nr"];
+				$skillsToSort[$skill["tref_id"]]["goal"] = $goal["nr"]-1;
+				$skillsToSort[$skill["tref_id"]]["percentage"] = ($score-1) / ($goal["nr"]-1);
+				$skillsToSort[$skill["tref_id"]]["diff"] = ($score == 0 ? 1 - ($goal["nr"]-1) / ($levelcount-1) : ($score-1) / ($goal["nr"]-1));
 			}
 		}
 		return $skillsToSort;

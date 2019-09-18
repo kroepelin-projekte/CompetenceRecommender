@@ -340,6 +340,7 @@ class ilCompetenceRecommenderAllGUI
 		if ($competence["id"] == 0) {$id = $profile_id."_".$competence["base_skill"];}
 		else {$id = $profile_id."_".$competence["id"];}
 		$btpl->setVariable("ID", $id);
+		$btpl->setVariable("EXISTSDATA", $competence["existsdata"]);
 		$btpl->setVariable("SCORE", $score);
 		$btpl->setVariable("GOALAT", $goalat);
 		$btpl->setVariable("SCALE", $competence["scale"]);
