@@ -49,7 +49,7 @@ init_obj_label#:#Initiationsobjekt
 init_obj_info#:#Objekt, das den Studierenden empfohlen wird, wenn noch keine Formationsdaten vorhanden sind.
 init_obj_title#:#Auswahl des Initiationsobjekts
 skmg_skill_level#:#Kompetenzausprägung
-skmg_no_skills#:#Keine Kompetenz
+skmg_no_skills#:#Keine Kompetenzausprägung ausgewählt
 list#:#Liste
 profiles#:#Profile
 error#:#Es ist ein Fehler aufgetreten.
@@ -75,3 +75,4 @@ selector_show_all#:#alle Profile anzeigen
 config_info#:#Nehmen Sie hier die Einstellungen für den Recommender vor. Damit die Lernenden eines Profils Empfehlungen bekommen können, muss das Profil aktiviert sein. Das Initiationsobjekt ist dazu da, dass Daten für die Empfehlungen erhoben werden können, es sollte also ein Test oder eine Umfrage sein, der Messungen für entsprechende Kompetenzen anlegt.
 number_material#:#Empfohlene Materialien
 alert_olddata#:#Die Daten sind bereits veraltet. Nach einer erneuten Bearbeitung werden alle vorhergehenden Daten nicht mehr berücksichtigt.
+zero_percent_no_data#:#Es liegen noch keine Daten vor.

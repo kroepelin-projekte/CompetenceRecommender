@@ -141,7 +141,7 @@
                 if (score > 0 || existsdata === 1) {
                     $('#innerbarchart{ID}').append("<div class='percentage_text'>" + Round.round(score / goal * 100, 2) + "% </div>");
                 } else {
-                    $('#goalbarchart{ID}').append("<div class='percentage_text'>" + Round.round(score / goal * 100, 2) + "% </div>");
+                    $('#goalbarchart{ID}').append("<div class='percentage_text'> {NODATAYET} </div>");
                 }
             },
         };

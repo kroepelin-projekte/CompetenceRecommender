@@ -76,3 +76,4 @@ selector_show_all#:#- show learning recommendations for all profiles -
 config_info#:#You can configure the learning recommender here. Users will only see the learning recommender if the respective competence profile was activated here. The start object is used to generate formation data if no data is present yet for a user.
 number_material#:#Recommended objects: 
 alert_olddata#:#The data for this competence is outdated.
+zero_percent_no_data#:#No data found.

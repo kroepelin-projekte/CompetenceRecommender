@@ -163,6 +163,7 @@ class ilCompetenceRecommenderActivitiesGUI
 			else {$id = $competence["id"];}
 			$btpl->setVariable("ID", $id);
 			$btpl->setVariable("EXISTSDATA", $competence["existsdata"]);
+			$btpl->setVariable("NODATAYET", $this->lng->txt('ui_uihk_comprec_zero_percent_no_data'));
 			$btpl->setVariable("SCORE", $score);
 			$btpl->setVariable("GOALAT", $goalat);
 			$btpl->setVariable("SCALE", $competence["scale"]);
