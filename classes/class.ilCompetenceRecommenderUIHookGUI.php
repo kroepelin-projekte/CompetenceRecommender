@@ -141,7 +141,7 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 				array_push($allcards, $card);
 			};
 
-			$deck = $factory->deck($allcards);
+			$deck = $factory->deck($allcards)->withNormalCardsSize();
 			$renderedobjects = $renderer->render($deck);
 		} else {
 			if (\ilCompetenceRecommenderAlgorithm::noFormationdata()) {
@@ -154,7 +154,7 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 						$card = $factory->card()->standard($link, $image)->withSections(array($factory->legacy($object["title"])));
 						array_push($allcards, $card);
 					}
-					$deck = $factory->deck($allcards);
+					$deck = $factory->deck($allcards)->withNormalCardsSize();
 					$renderedobjects = $this->lng->txt('ui_uihk_comprec_no_formationdata_init_obj') . "<br />" .$renderer->render($deck);
 				} else {
 					$renderedobjects = $this->lng->txt('ui_uihk_comprec_no_formationdata') . " " . $renderer->render($factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'),
@@ -174,7 +174,7 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 						$card = $factory->card()->standard($link, $image)->withSections(array($factory->legacy($object["title"])));
 						array_push($allcards, $card);
 					}
-					$deck = $factory->deck($allcards);
+					$deck = $factory->deck($allcards)->withNormalCardsSize();
 					$renderedobjects = $this->lng->txt('ui_uihk_comprec_no_formationdata_init_obj') . "<br />" . $renderer->render($deck);
 				} else {
 					$renderedobjects = $this->lng->txt('ui_uihk_comprec_no_formationdata') . " " . $renderer->render($factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'),
