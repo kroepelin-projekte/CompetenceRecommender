@@ -231,7 +231,7 @@ class ilCompetenceRecommenderAlgorithm {
 		$competences = self::getAllCompetencesOfUserProfile();
 
 		foreach ($competences as $competence) {
-			if ($competence["score"] < $competence["goal"] && $competence["score"] > 0) {
+			if ($competence["score"] < $competence["goal"] && $competence["existsdata"]) {
 				return false;
 			}
 		}
@@ -272,7 +272,7 @@ class ilCompetenceRecommenderAlgorithm {
 
 		foreach ($competences as $competence) {
 			foreach ($competence["resources"] as $resource) {
-				if ($resource["level"] > $competence["score"] && $competence["score"] < $competence["goal"] && $competence["score"] > 0) {
+				if ($resource["level"] > $competence["score"] && $competence["score"] < $competence["goal"] && $competence["existsdata"]) {
 					array_push($allRefIds, $resource);
 					break;
 				}
@@ -664,7 +664,7 @@ class ilCompetenceRecommenderAlgorithm {
 								WHERE id ='".$value["level_id"]."'");
 			$levelnumber = $level->fetchAssoc();
 			if ($access->checkAccessOfUser($user, 'read', $value["rep_ref_id"])) {
-				array_push($refIds, array("id" => $value["rep_ref_id"], "title" => $value["title"], "level" => $levelnumber["nr"]));
+				array_push($refIds, array("id" => $value["rep_ref_id"], "title" => $value["title"], "level" => ($levelnumber["nr"]-1)));
 			}
 		}
 

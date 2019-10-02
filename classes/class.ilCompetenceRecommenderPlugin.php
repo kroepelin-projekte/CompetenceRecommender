@@ -53,5 +53,6 @@ class ilCompetenceRecommenderPlugin extends ilUserInterfaceHookPlugin {
 	 */
 	protected function deleteData()/*: void*/ {
 		self::dic()->database()->dropTable("ui_uihk_comprec_config");
+		self::dic()->database()->dropTable("ui_uihk_comprec_config_seq");
 	}
 }
