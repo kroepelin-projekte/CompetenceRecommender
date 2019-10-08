@@ -11,43 +11,43 @@ removeplugindataconfirm_msg_kept_data#:#Die %1$s-Daten wurden behalten
 removeplugindataconfirm_msg_removed_data#:#Die %1$s-Daten wurden auch entfernt
 removeplugindataconfirm_remove_data#:#Entferne %1$s-Daten
 plugin_title#:#Meine Lernempfehlungen
-no_formationdata#:#Es liegen leider noch zu wenig Daten vor, um Lernempfehlungen geben zu können. Sie können z.B. damit beginnen, zu den für Sie relevanten Kompetenzen eine Selbsteinschätzung vorzunehmen.
-no_formationdata_init_obj#:#Es liegen leider noch zu wenig Daten vor, um Lernempfehlungen geben zu können. Sie können z.B. damit beginnen, die für Sie vorgeschlagenen Startobjekte zu besuchen.
+no_formationdata#:#Es liegen leider noch zu wenig Daten vor, um Lernempfehlungen geben zu können. <br/>Sie können z.B. damit beginnen, zu den für Sie relevanten Kompetenzen eine Selbsteinschätzung vorzunehmen.<br/>
+no_formationdata_init_obj#:#Es liegen leider noch zu wenig Daten vor, um Lernempfehlungen geben zu können. Sie können z.B. damit beginnen, die für Sie vorgeschlagenen Startobjekte zu besuchen.<br/>
 self_eval#:#Selbsteinschätzung
 self_eval_saved#:#Selbsteinschätzung gespeichert.
 competence#:#Kompetenz
 progress#:#Fortschritt
-no_resources#:#Sie sollten sich verbessern. Wenn Sie sich besser fühlen können Sie hier eine Selbsteinschätzung machen:
+no_resources#:#Sie sollten sich verbessern. Wenn Sie denken, Sie haben sich verbessert, können Sie hier eine Selbsteinschätzung machen:
 resources#:#Materialien, mit denen Sie sich verbessern können
-detail_button#:#mehr Empfehlungen
-detail_button_nodata#:#mehr Anzeigen
-button_show_more#:#mehr Anzeigen
+detail_button#:#mehr Empfehlungen anzeigen
+detail_button_nodata#:#mehr anzeigen
+button_show_more#:#mehr anzeigen
 info_link#:#Was bedeutet diese Box
 back_tab#:#Zurück zur Übersicht
-activities_tab#:#Aktivitäten
+activities_tab#:#Dashboard
 all_tab#:#Alle Empfehlungen
 info_tab#:#Info
-info_text#:#Diese Ansicht wird über das von der Universität Freiburg entwickelte Competence-Recommender-Plugin generiert. Anhand von bereits bearbeiteten Aufgaben werden weitere Aufgaben und andere Materialien vorgeschlagen, die zum Erreichen des vorgegebenen Profilwerts benötigt werden. Nach Messungen, die durch das Lösen von Aufgaben ausgelöst werden, Selbsteinschätzungen und Fremdeinschätzungen werden die Fortschritte neu berechnet und mit Materialien als Lernempfehlungen angezeigt.
+info_text#:#Der „Competence Recommender“ ist eine Plugin-Erweiterung des ILIAS-LMS, das an der Universität Freiburg im Rahmen des BMBF geförderten Projektes „kosmic“ entwickelt wurde. Es bildet eine Übersicht über die im System erfassten Lernstände eines Nutzers, bezogen auf hinterlegte zu erreichende Kompetenzen (learning outcomes), z.B. im Rahmen von Kursen. <br /><br />Das Plugin aktiviert sich, sobald du einen Kurs besuchst, in dem die Lehrperson ein sogenanntes „Kompetenzprofil“ angelegt hat, in dem definiert wird, welche Inhalte im Kurs zu bearbeiten und welche Lernziele in welcher Verständnistiefe (Kompetenzniveaus) zu erreichen sind. Die erreichten Kompetenzniveaus können auf drei Arten im System erfasst werden: A) Du schätzt dich selbst ein, wie fit du in der jeweiligen Kompetenz bist, B) Du absolvierst einen elektronischen, automatisch korrigierten Test in ILIAS, oder C) ein Tutor/eine Lehrperson trägt das Lernergebnis (z.B. im Rahmen einer mündlichen Prüfung) als Fremdeinschätzung in deinem Profil ein. <br /><br />Und so arbeitet der Recommender: <br />Die unterschiedlichen Kompetenzmessungen werden zu gleichen Teilen miteinander verrechnet und die Gewichtung wird zusätzlich über die Zeit verringert. Die Selbsteinschätzung kann jederzeit über den Button „Selbsteinschätzung“ vorgenommen und wiederholt werden.  Die Messung bringt Daten in das System, indem Testfragen an ihre jeweiligen Kompetenzen gekoppelt werden. Je besser man abschneidet, desto höher die resultierende Kompetenz.. Bei Beendigung der Bearbeitung eines Materials (z.B. eines Lernmoduls) wird die hinterlegte Stufe des Materials per Fremdeinschätzung zugewiesen.<br /><br />Mit den zusammengetragenen Ergebnissen greift nun der „Learning Recommender“, indem er das von dir erreichte Niveau (Messung per Test oder Fremdeinschätzung), bzw. auf Basis deiner Selbsteinschätzung prüft, ob du die von der Lehrperson definierte Kompetenzstufe bereits erreicht hast, oder nicht. Sofern es noch Potential zur Verbesserung gibt, schlägt dir der Recommender verfügbare Lernressourcen vor. Dies kann ein Lernmodul oder ein weiterer Test sein.
 old_resources_text#:#Materialien einer niedrigeren Kompetenzstufe
 resources_hidden_text#:#Materialien der Kompetenz
 last_used#:#Letzte Änderung des Lernstands:
-selfevaltext#:#Generieren Sie neue Daten mit einer Selbsteinschätzung:
+selfevaltext#:#<br/>Sie können eine Selbsteinschätzung zu dieser Kompetenz vornehmen, um die Lernempfehlungen zu verbessern:
 config_dropout_title#:#Dropout-Zeit
 config_save#:#Speichern
 config_saved_active#:#Profil aktiviert.
 config_saved_inactive#:#Profil deaktiviert.
 profile_config#:#Profilkonfiguration
 dropout_input_label#:#Dropout-Zeit
-dropout_input_info#:#Zeit in Tagen, nach denen Formationsdaten nicht mehr in der Scoreberechnung verwendet werden. 0 wenn kein Dropout passieren soll
+dropout_input_info#:#Zeit in Tagen, nach denen Formationsdaten nicht mehr in der Scoreberechnung verwendet werden. 0, wenn kein Dropout passieren soll
 dropout_save#:#Dropout gespeichert.
 dropout_failure#:#Dropout muss eine ganze Zahl größer oder gleich 0 sein.
 profile_select_label#:#Profil
 profile_select_info#:#Profil zur Konfiguration auswählen
 use_select_label#:#Profil in Recommender verwenden
 use_select_info#:#Verwende dieses Profil für Empfehlungen an die Studierenden
-init_obj_label#:#Initiationsobjekt
+init_obj_label#:#Startobjekt
 init_obj_info#:#Objekt, das den Studierenden empfohlen wird, wenn noch keine Formationsdaten vorhanden sind.
-init_obj_title#:#Auswahl des Initiationsobjekts
+init_obj_title#:#Auswahl des Startobjekts
 skmg_skill_level#:#Kompetenzausprägung
 skmg_no_skills#:#Keine Kompetenzausprägung ausgewählt
 list#:#Liste
@@ -64,15 +64,15 @@ active#:#Aktiv
 inactive#:#Inaktiv
 cancel#:#Abbrechen
 deactivate#:#Aktivieren/Deaktivieren
-set_init_obj#:#Initiationsobjekt setzen
-delete_init_obj#:#Initiationsobjekt löschen
+set_init_obj#:#Startobjekt setzen
+delete_init_obj#:#Startobjekt löschen
 action#:#Aktion
-showall#:#alle anzeigen
-onlymaterial#:#mit Lernempfehlungen
-withoutdata#:#Selbsteinschätzung erforderlich
-hasfinished#:#abgeschlossen
-selector_show_all#:#alle Profile anzeigen
-config_info#:#Nehmen Sie hier die Einstellungen für den Recommender vor. Damit die Lernenden eines Profils Empfehlungen bekommen können, muss das Profil aktiviert sein. Das Initiationsobjekt ist dazu da, dass Daten für die Empfehlungen erhoben werden können, es sollte also ein Test oder eine Umfrage sein, der Messungen für entsprechende Kompetenzen anlegt.
+showall#:#[alle anzeigen]
+onlymaterial#:#[mit Lernempfehlungen]
+withoutdata#:#[Selbsteinschätzung erforderlich]
+hasfinished#:#[abgeschlossen]
+selector_show_all#:#- Empfehlungen aller Profile anzeigen -
+config_info#:#Nehmen Sie hier die Einstellungen für den Recommender vor. Damit die Lernenden eines Profils Empfehlungen bekommen können, muss das Profil aktiviert sein. Das Startobjekt ist dazu da, dass Daten für die Empfehlungen erhoben werden können, es sollte also ein Test oder eine Umfrage sein, der Messungen für entsprechende Kompetenzen anlegt.
 number_material#:#Empfohlene Materialien
 alert_olddata#:#Die Daten sind bereits veraltet. Nach einer erneuten Bearbeitung werden alle vorhergehenden Daten nicht mehr berücksichtigt.
 zero_percent_no_data#:#Es liegen noch keine Daten vor.

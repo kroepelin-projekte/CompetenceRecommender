@@ -7,17 +7,17 @@ removeplugindataconfirm_confirm_remove_data#:#Would you like to delete the %1$s 
 removeplugindataconfirm_deactivate#:#Deactivate the %1$s plugin
 removeplugindataconfirm_data#:#%1$s data
 removeplugindataconfirm_keep_data#:#Keep %1$s data
-removeplugindataconfirm_msg_kept_data#:#%1$s data have not been deleted
-removeplugindataconfirm_msg_removed_data#:#%1$s data have been deleted
+removeplugindataconfirm_msg_kept_data#:#%1$s data has not been deleted
+removeplugindataconfirm_msg_removed_data#:#%1$s data has been deleted
 removeplugindataconfirm_remove_data#:#Delete %1$s data
 plugin_title#:#My Learning Recommendations
-no_formationdata#:#Currently, there is too little data in order to give learning recommendations for you. You might want to start by doing a self-assessment for the competences assigned to your profile.<br />
+no_formationdata#:#Currently, there is too little data in order to give learning recommendations for you. <br/> You might want to start by doing a self-evaluation for the competences assigned to your profile.<br />
 no_formationdata_init_obj#:#Currently, there is too little data in order to give learning recommendations for you. You might want to start by working on the suggested 'start object'.<br />
-self_eval#:#Self-assessment
-self_eval_saved#:#Self-assessment has been saved
+self_eval#:#Self-evaluation
+self_eval_saved#:#Self-evaluation has been saved
 competence#:#Competence
 progress#:#Progress
-no_resources#:#You should improve on this competence. If you think you've made progress, you may do a self-assessment:
+no_resources#:#You should improve on this competence. If you think you've made progress, you may do a self-evaluation:
 resources#:#Learning material that helps you improve in this field
 detail_button#:#More Recommendations
 detail_button_nodata#:#Show more
@@ -27,11 +27,11 @@ back_tab#:#back to Overview
 activities_tab#:#Dashboard
 all_tab#:#All Recommendations
 info_tab#:#Info
-info_text#:#The learning recommendations which are shown here are produced by the Competence Recommender. It was developed by the University of Freiburg as a plugin for the learning management software ILIAS. By doing self-evaluations, by working through tests, excercises and learning modules, data is gathered that is used to suggest learning material that fits your need as well as possible.
+info_text#:#The Competence Recommender is a plugin for ILIAS which was developed in the context of the BMBF project "kosmic" at the University of Freiburg. It serves as an overview of the competences (learning outcomes) the user is assigned to, e.g. by being member of a course. <br/><br/>The plugin is activated as soon as you join a course in which the tutor has assigned a "competence profile" in which is defined what content you are supposed to work with and which competence level you are supposed to reach. These competence levels can be put into the system in three ways: A) you self-evaluate yourself on the competence, B) you work through an ILIAS-test object, or C) a tutor assesses your learning result (e.g. from an oral examination). <br/><br/>How to work with the recommender? <br/>Die different ways of creating data are averaged and weighted over time. Earlier results count less than current ones. The self-evaluation may be made via the button "self-evaluation" at any time. The measurement transfers data into the system by linking test questions to their respective competence. The better your result is the higher the resulting competence. Upon finishing working through a material (e.g. a learning module) the assigned levels of the material is assigned via assessment.<br/><br/>The results are used by the Learning Recommender which compares your goal level with your current level. If you are supposed to improve the Competence Recommender will suggest an available learning ressource.   
 old_resources_text#:#Learning material assigned to a lower competence level
 resources_hidden_text#:#Learning material assigned to this competence
 last_used#:#Latest change of learning progress:
-selfevaltext#:#<br/>You can do a self-assessment for the competence in order to improve the learning recommendation: 
+selfevaltext#:#<br/>You can do a self-evaluation for the competence in order to improve the learning recommendation: 
 config_dropout_title#:#Dropout Time 
 config_save#:#Save 
 config_saved_active#:#Profile has been activated.
@@ -48,7 +48,7 @@ use_select_info#:#Users who are assigned to this profile will see learning recom
 init_obj_label#:#Start object
 init_obj_info#:#Object which is recommended to the user if no formation data is available.
 init_obj_title#:#Selection of the start object
-self_eval_saved#:#Self-assessment has been saved.
+self_eval_saved#:#Self-evaluation has been saved.
 skmg_skill_level#:#Competence Level 
 skmg_no_skills#:#No competence level selected.
 list#:#List
@@ -70,7 +70,7 @@ delete_init_obj#:# Deassign start object
 action#:#Action
 showall#:#[show all]
 onlymaterial#:#[with learning recommendation]
-withoutdata#:#[self-assessment necessary]
+withoutdata#:#[self-evaluation necessary]
 hasfinished#:#[finished]
 selector_show_all#:#- show learning recommendations for all profiles - 
 config_info#:#You can configure the learning recommender here. Users will only see the learning recommender if the respective competence profile was activated here. The start object is used to generate formation data if no data is present yet for a user.
