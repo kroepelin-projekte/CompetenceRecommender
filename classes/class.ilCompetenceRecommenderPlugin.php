@@ -51,8 +51,8 @@ class ilCompetenceRecommenderPlugin extends ilUserInterfaceHookPlugin {
 	/**
 	 * @inheritdoc
 	 */
-	protected function deleteData()/*: void*/ {
-		self::dic()->database()->dropTable("ui_uihk_comprec_config");
-		self::dic()->database()->dropTable("ui_uihk_comprec_config_seq");
+	protected function afterUninstall()/*: void*/ {
+		global $DIC;
+		$DIC->database()->dropTable("ui_uihk_comprec_config");
 	}
 }
