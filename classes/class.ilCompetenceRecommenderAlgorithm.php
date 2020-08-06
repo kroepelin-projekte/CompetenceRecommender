@@ -490,7 +490,7 @@ class ilCompetenceRecommenderAlgorithm {
 								WHERE suhl.user_id ='" . $user_id . "' 
 								AND suhl.". $use_id ." ='" . $skill . "'
 								AND suhl.self_eval = '0'
-								AND (suhl.trigger_obj_type = 'crs' OR suhl.trigger_obj_type = 'svy')
+								AND (suhl.trigger_obj_type = 'crs' OR suhl.trigger_obj_type = 'svy' OR suhl.trigger_obj_type = 'lm')
 								ORDER BY suhl.status_date DESC");
 		$resultLastMessung = $db->query("SELECT suhl.level_id, sl.nr, suhl.status_date
 								FROM skl_user_has_level AS suhl
@@ -498,8 +498,7 @@ class ilCompetenceRecommenderAlgorithm {
 								WHERE suhl.user_id ='" . $user_id . "' 
 								AND suhl.". $use_id ." ='" . $skill . "'
 								AND suhl.self_eval = '0'
-								AND suhl.trigger_obj_type != 'crs'
-								AND suhl.trigger_obj_type != 'svy'
+								AND suhl.trigger_obj_type = 'tst'
 								ORDER BY suhl.status_date DESC");
 
 		// last value of user levels
