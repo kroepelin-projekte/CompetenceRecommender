@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-include_once("./Services/PersonalDesktop/classes/class.ilPersonalDesktopGUI.php");
+include_once("./Services/Dashboard/classes/class.ilDashboardGUI.php");
 
 include_once("class.ilCompetenceRecommenderActivitiesGUI.php");
 include_once("class.ilCompetenceRecommenderAllGUI.php");
