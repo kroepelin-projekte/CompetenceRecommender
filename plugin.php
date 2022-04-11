@@ -7,7 +7,7 @@
  */
 
 $id = "comprec";
-$version = "1.0.1";
+$version = "1.1.0";
 $ilias_min_version = "7.0";
 $ilias_max_version = "7.99";
 $responsible = "Leonie Feldbusch";

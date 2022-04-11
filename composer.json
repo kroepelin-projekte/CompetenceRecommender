@@ -1,28 +1,32 @@
 {
-  "name": "feldbusl/Plugins/CompetenceRecommender",
-  "description": "",
-  "type": "project",
+  "name": "fluxapps/competence-recommender",
+  "version": "1.1.0",
+  "description": "ILIAS Plugin Competence Recommender",
   "keywords": [
-    "ILIAS",
-    "Plugin"
+    "ilias",
+    "competence-recommender",
+    "fluxlabs"
   ],
+  "homepage": "https://fluxlabs.ch",
   "authors": [
     {
       "name": "Leonie Feldbusch",
       "email": "feldbusl@informatik.uni-freiburg.de",
       "role": "Developer"
+    },
+    {
+      "name": "fluxlabs ag",
+      "email": "support@fluxlabs.ch",
+      "role": "Developer, Maintainer"
     }
   ],
   "support": {
-    "email": "feldbusl@informatik.uni-freiburg.de"
+    "email": "support@fluxlabs.ch"
   },
   "require": {
-    "php": ">=7.0"
+    "php": ">=7.4"
   },
   "autoload": {
-    "psr-4": {
-      "feldbusl\\Plugins\\CompetenceRecommender\\": "src/"
-    },
     "classmap": [
       "classes/"
     ]
