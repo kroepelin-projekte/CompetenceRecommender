@@ -10,7 +10,7 @@ $id = "comprec";
 $version = "1.1.0";
 $ilias_min_version = "7.0";
 $ilias_max_version = "7.99";
-$responsible = "Leonie Feldbusch";
-$responsible_mail = "feldbusl@informatik.uni-freiburg.de";
+$responsible = "fluxlabs ag";
+$responsible_mail = "support@fluxlabs.ch";
 
 ?>
