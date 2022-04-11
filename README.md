@@ -46,7 +46,7 @@ The plugin recommends resources to the learners for their progress, depending on
 The plugin was developed by Leonie Feldbusch at the University of Freiburg in her thesis 2019 and is 
 now maintained by fluxlabs ag. 
 
-### Maintainer
+### Maintainer & Developer
 * https://fluxlabs.ch, support@fluxlabs.ch
 
 ## Contributing :purple_heart:
