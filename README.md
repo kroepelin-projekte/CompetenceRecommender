@@ -11,22 +11,17 @@ Run the following commands:
 ```bash
 mkdir -p Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/
 cd Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/
-git clone https://github.com/feldbusl/CompetenceRecommender.git
+git clone https://github.com/fluxapps/CompetenceRecommender.git
 ```
 
 Update and activate the plugin in the ILIAS Plugin Administration
 
 ### Dependencies (Already exists in `vendor`)
-* ILIAS 5.4
+* ILIAS 7
 * compRoles patch of Leifos
-* PHP >=7.0
+* PHP >=7.4
 * [composer](https://getcomposer.org)
 * PHPUnit ^7
-
-On error run the following commands in the CompetenceRecommender directory for updating:
-``` bash
-composer update
-```
 
 ## Usage
 The plugin recommends resources to the learners for their progress, depending on which profile they have and their skill-level.
@@ -48,7 +43,19 @@ The plugin recommends resources to the learners for their progress, depending on
 * in the tabs, the students can switch to an information page
 
 ## Development information
-The plugin was developed by Leonie Feldbusch at the University of Freiburg in her thesis 2019.
+The plugin was developed by Leonie Feldbusch at the University of Freiburg in her thesis 2019 and is 
+now maintained by fluxlabs ag. 
 
 ### Maintainer
-* Leonie Feldbusch (feldbusl@informatik.uni-freiburg.de)
+* https://fluxlabs.ch, support@fluxlabs.ch
+
+## Contributing :purple_heart:
+Please ...
+1. ... register an account at https://git.fluxlabs.ch
+2. ... create pull requests :fire:
+
+## Adjustment suggestions / bug reporting :feet:
+Please ...
+1. ... register an account at https://git.fluxlabs.ch
+2. ... ask us for a Service Level Agreement: support@fluxlabs.ch :kissing_heart:
+3. ... Read and create issues

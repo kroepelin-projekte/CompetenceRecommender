@@ -12,9 +12,6 @@ include_once("./Services/Skill/classes/class.ilSelfEvaluationSimpleTableGUI.php"
  *
  * Shows the Activities Screen (Main Screen) of the Recommender
  *
- * @ilCtrl_isCalledBy ilCompetenceRecommenderActivitiesGUI: ilCompetenceRecommenderGUI
- * @ilCtrl_Calls ilCompetenceRecommenderAllGUI: ilPersonalSkillsGUI
- *
  */
 class ilCompetenceRecommenderActivitiesGUI
 {
