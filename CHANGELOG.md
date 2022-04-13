@@ -1,5 +1,8 @@
 # Changelog
 
+## [1.1.2]
+- fix: show on dashboard
+
 ## [1.1.1]
 - change: README
 
