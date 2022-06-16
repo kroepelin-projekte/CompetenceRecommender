@@ -142,7 +142,7 @@ class ilCompetenceRecommenderAllGUI
 		$settings = new ilCompetenceRecommenderSettings();
 		$factory = $this->ui->factory();
 
-		$this->tpl->getStandardTemplate();
+		$this->tpl->loadStandardTemplate();
 		$this->tpl->setTitle($this->lng->txt('ui_uihk_comprec_plugin_title'));
 		$html = "";
 
@@ -236,7 +236,7 @@ class ilCompetenceRecommenderAllGUI
 
 		// set the actual content
 		$this->tpl->setContent($html);
-		$this->tpl->show();
+		$this->tpl->printToStdout();
 		return;
 	}
 
@@ -411,10 +411,10 @@ class ilCompetenceRecommenderAllGUI
 			$deck = $factory->deck($oldresourcearray);
 			$btpl->setVariable("OLDRESOURCES", $renderer->render($deck));
 		}
-		$btpl->setVariable("COLLAPSEONRESOURCE", $renderer->render($factory->glyph()->collapse()));
-		$btpl->setVariable("COLLAPSERESOURCE", $renderer->render($factory->glyph()->expand()));
-		$btpl->setVariable("COLLAPSEON", $renderer->render($factory->glyph()->collapse()));
-		$btpl->setVariable("COLLAPSE", $renderer->render($factory->glyph()->expand()));
+		$btpl->setVariable("COLLAPSEONRESOURCE", $renderer->render($factory->symbol()->glyph()->collapse()));
+		$btpl->setVariable("COLLAPSERESOURCE", $renderer->render($factory->symbol()->glyph()->expand()));
+		$btpl->setVariable("COLLAPSEON", $renderer->render($factory->symbol()->glyph()->collapse()));
+		$btpl->setVariable("COLLAPSE", $renderer->render($factory->symbol()->glyph()->expand()));
 		$html .= $btpl->get();
 		return $html;
 	}
