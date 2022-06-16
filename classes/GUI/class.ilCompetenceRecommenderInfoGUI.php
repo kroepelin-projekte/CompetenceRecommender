@@ -70,11 +70,11 @@ class ilCompetenceRecommenderInfoGUI
 	 */
 	protected function showInfo()
 	{
-		$this->tpl->getStandardTemplate();
+		$this->tpl->loadStandardTemplate();
 		$this->tpl->setTitle($this->lng->txt('ui_uihk_comprec_plugin_title'));
 
 		$this->tpl->setContent($this->lng->txt('ui_uihk_comprec_info_text'));
-		$this->tpl->show();
+		$this->tpl->printToStdout();
 		return;
 	}
 }
