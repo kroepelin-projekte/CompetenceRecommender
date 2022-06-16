@@ -158,7 +158,7 @@ class ilCompetenceRecommenderGUI {
 	protected function setTabs()
 	{
 		// Tabs
-		$this->tabs->setBack2Target($this->lng->txt('ui_uihk_comprec_back_tab'), $this->ctrl->getLinkTargetByClass("ilDashboardGUI::class"));
+		$this->tabs->setBack2Target($this->lng->txt('ui_uihk_comprec_back_tab'), $this->ctrl->getLinkTargetByClass(ilDashboardGUI::class));
 		$this->tabs->addTab('show', $this->lng->txt('ui_uihk_comprec_activities_tab'), $this->ctrl->getLinkTargetByClass(ilCompetenceRecommenderActivitiesGUI::class));
 		$this->tabs->addTab('all', $this->lng->txt('ui_uihk_comprec_all_tab'), $this->ctrl->getLinkTargetByClass(ilCompetenceRecommenderAllGUI::class));
 		$this->tabs->addTab('info', $this->lng->txt('ui_uihk_comprec_info_tab'), $this->ctrl->getLinkTargetByClass(ilCompetenceRecommenderInfoGUI::class));
