@@ -101,7 +101,7 @@ class ilCompetenceRecommenderActivitiesGUI
 		isset($_GET["num"]) ? $n = $_GET["num"] : $n = 5;
 		$max_n = \ilCompetenceRecommenderAlgorithm::getNumberOfCompetencesForActivities();
 
-		$this->tpl->getStandardTemplate();
+		$this->tpl->loadStandardTemplate();
 		$this->tpl->setTitle($this->lng->txt('ui_uihk_comprec_plugin_title'));
 		$html = "";
 
