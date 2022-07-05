@@ -548,6 +548,10 @@ class ilCompetenceRecommenderAlgorithm {
 	public static function score(int $t_S, int $t_M, int $t_F, int $scoreS, int $scoreM, int $scoreF, int $dropout_value = 0) {
 		$score = 0;
 
+        return max($scoreS, $scoreM, $scoreF);
+
+
+		/*
 		($t_M < $t_S && $t_M != 0) ? $t_minimum = $t_M : $t_minimum = $t_S;
 		($t_F < $t_minimum && $t_F != 0) ? $t_minimum = $t_F : $t_minimum = $t_minimum;
 
@@ -602,7 +606,7 @@ class ilCompetenceRecommenderAlgorithm {
 			}
 		}
 
-		return $score;
+		return $score;*/
 	}
 
 	/**
