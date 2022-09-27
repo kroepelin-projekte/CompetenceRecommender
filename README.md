@@ -1,5 +1,14 @@
 # Competence Recommender
 
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/fluxapps/competencerecommender?style=flat-square)
+![GitHub closed issues](https://img.shields.io/github/issues-closed/fluxapps/competencerecommender?style=flat-square&color=success)
+[![GitHub issues](https://img.shields.io/github/issues/fluxapps/competencerecommender?style=flat-square&color=yellow)](https://github.com/fluxapps/competencerecommender/issues)
+![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/fluxapps/competencerecommender?style=flat-square&color=success)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/fluxapps/competencerecommender?style=flat-square&color=yellow)
+[![GitHub forks](https://img.shields.io/github/forks/fluxapps/competencerecommender?style=flat-square&color=blueviolet)](https://github.com/fluxapps/competencerecommender/network)
+[![GitHub stars](https://img.shields.io/github/stars/fluxapps/competencerecommender?style=flat-square&color=blueviolet)](https://github.com/fluxapps/competencerecommender/stargazers)
+[![GitHub license](https://img.shields.io/github/license/fluxapps/competencerecommender?style=flat-square)](https://github.com/fluxapps/Vcompetencerecommender/blob/main/LICENSE.md)
+
 ## Installation
 
 ### Install CompetenceRecommender-Plugin
@@ -46,11 +55,5 @@ The plugin recommends resources to the learners for their progress, depending on
 The plugin was developed by Leonie Feldbusch at the University of Freiburg in her thesis 2019 and is 
 now maintained by fluxlabs ag. 
 
-### Maintainer & Developer
-* https://fluxlabs.ch, support@fluxlabs.ch
-
-## Contributing :purple_heart:
-Please create pull requests :fire:
-
-## Adjustment suggestions / bug reporting :feet:
-Please Read and create issues
+## Maintenance
+fluxlabs ag, support@fluxlabs.ch
