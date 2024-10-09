@@ -2,10 +2,6 @@
 
 declare(strict_types=1);
 
-// todo entfernen?
-/*include_once("Services/Table/classes/class.ilTable2GUI.php");
-include_once("./Services/UIComponent/AdvancedSelectionList/classes/class.ilAdvancedSelectionListGUI.php");*/
-
 /**
  * TableGUI class for listing the profiles and their settings
  *

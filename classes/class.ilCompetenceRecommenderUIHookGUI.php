@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-// todo entfernen?
-/*require_once __DIR__ . "/../vendor/autoload.php";
-
-include_once("GUI/class.ilCompetenceRecommenderGUI.php");
-include_once("class.ilCompetenceRecommenderAlgorithm.php");*/
-
 /**
  * Class ilCompetenceRecommenderUIHookGUI
  *
@@ -19,9 +13,6 @@ include_once("class.ilCompetenceRecommenderAlgorithm.php");*/
  */
 class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI
 {
-    // todo entfernen?
-	// public const PLUGIN_CLASS_NAME = ilCompetenceRecommenderPlugin::class;
-
 	protected ilCtrl $ctrl;
 	protected ilLanguage $lng;
 	protected ilTabsGUI $tabs;

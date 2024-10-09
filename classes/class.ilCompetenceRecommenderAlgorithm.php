@@ -2,10 +2,6 @@
 
 declare(strict_types=1);
 
-// todo entfernen?
-/*include_once("class.ilCompetenceRecommenderSettings.php");
-include_once("./Services/Skill/classes/class.ilSkillProfile.php");*/
-
 /**
  * Class ilCompetenceRecommenderAlgorithm
  *

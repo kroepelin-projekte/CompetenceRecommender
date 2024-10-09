@@ -26,7 +26,7 @@ git clone https://github.com/fluxapps/CompetenceRecommender.git
 Update and activate the plugin in the ILIAS Plugin Administration
 
 ### Dependencies (Already exists in `vendor`)
-* ILIAS 7
+* ILIAS 8/9
 * compRoles patch of Leifos
 * PHP >=7.4
 * [composer](https://getcomposer.org)

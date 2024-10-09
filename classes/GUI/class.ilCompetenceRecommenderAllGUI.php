@@ -2,14 +2,6 @@
 
 declare(strict_types=1);
 
-// todo entfernen?
-/*include_once("./Services/Skill/classes/class.ilPersonalSkillsGUI.php");
-include_once("./Services/Skill/classes/class.ilSkillTreeNode.php");
-include_once("./Services/Skill/classes/class.ilVirtualSkillTree.php");
-include_once("./Services/Skill/classes/class.ilSkillTemplateReference.php");
-include_once("./Services/Skill/classes/class.ilSelfEvaluationSimpleTableGUI.php");
-include_once("class.ilCompetenceRecommenderSelfEvalModalTableGUI.php");*/
-
 /**
  * Class ilCompetenceRecommenderAllGUI
  *

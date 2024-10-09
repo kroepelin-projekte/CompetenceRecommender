@@ -2,12 +2,7 @@
 
 /* Copyright (c) 1998-2011 ILIAS open source, Extended GPL, see docs/LICENSE */
 
-// todo entfernen?
-/*include_once("./Services/Table/classes/class.ilTable2GUI.php");
-
-include_once("./Services/Skill/classes/class.ilSkillTree.php");
-include_once("./Services/Skill/classes/class.ilSkillTreeNodeFactory.php");
-include_once("./Services/Skill/classes/class.ilPersonalSkill.php");*/
+declare(strict_types=1);
 
 /**
  * Self evaluation, based on ilSelfEvaluationSimpleTableGUI but better usable for modal

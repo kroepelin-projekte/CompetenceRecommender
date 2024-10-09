@@ -1,14 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see https://github.com/ILIAS-eLearning/ILIAS/tree/trunk/docs/LICENSE */
 
-// todo entfernen?
-/*require_once __DIR__ . "/../vendor/autoload.php";
-include_once("./Services/Repository/classes/class.ilRepositorySelectorExplorerGUI.php");
-include_once("GUI/class.ilCompetenceRecommenderConfigTableGUI.php");
-include_once("class.ilCompetenceRecommenderSettings.php");*/
+declare(strict_types=1);
 
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;

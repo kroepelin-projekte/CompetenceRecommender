@@ -2,13 +2,6 @@
 
 declare(strict_types=1);
 
-// todo entfernen?
-/*include_once("./Services/Dashboard/classes/class.ilDashboardGUI.php");
-
-include_once("class.ilCompetenceRecommenderActivitiesGUI.php");
-include_once("class.ilCompetenceRecommenderAllGUI.php");
-include_once("class.ilCompetenceRecommenderInfoGUI.php");*/
-
 /**
  * Class ilCompetenceRecommenderGUI
  *

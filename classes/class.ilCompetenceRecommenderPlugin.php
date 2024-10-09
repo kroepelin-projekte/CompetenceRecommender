@@ -2,23 +2,17 @@
 
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see https://github.com/ILIAS-eLearning/ILIAS/tree/trunk/docs/LICENSE */
 
-// todo entfernen?
-// require_once __DIR__ . "/../vendor/autoload.php";
+declare(strict_types=1);
 
 /**
  * Class ilCompetenceRecommenderPlugin
  *
  * @author Leonie Feldbusch <feldbusl@informatik.uni-freiburg.de>
  */
-class ilCompetenceRecommenderPlugin extends ilUserInterfaceHookPlugin {
+class ilCompetenceRecommenderPlugin extends ilUserInterfaceHookPlugin
+{
+    public const PLUGIN_ID = "comprec";
 
-    // todo entfernen?
-/*	const PLUGIN_ID = "comprec";
-	const PLUGIN_NAME = "CompetenceRecommender";
-	const PLUGIN_CLASS_NAME = self::class;*/
-	/**
-	 * @var self|null
-	 */
 	protected static ?ilCompetenceRecommenderPlugin $instance = null;
 
 	/**
@@ -28,7 +22,7 @@ class ilCompetenceRecommenderPlugin extends ilUserInterfaceHookPlugin {
     {
 		if (is_null(self::$instance)) {
             global $DIC;
-			self::$instance = new self($DIC->database(), $DIC['component.repository'], 'comprec');
+			self::$instance = new self($DIC->database(), $DIC['component.repository'], self::PLUGIN_ID);
 		}
 
 		return self::$instance;
