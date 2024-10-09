@@ -90,7 +90,7 @@ class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI
     {
 		$result = $this->db->query("SELECT id, title FROM skl_profile");
 		$profiles = $this->db->fetchAll($result);
-		$profileArray = array();
+		$profileArray = [];
 		foreach ($profiles as $profile) {
 			$profileArray[$profile["id"]] = array("id" => $profile["id"], "title" => $profile["title"]);
 		}
@@ -198,7 +198,7 @@ class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI
 
 		$html .= $form->getHTML();
 
-		$tabledata = array();
+		$tabledata = [];
 		foreach ($available_profiles as $profile) {
 			$active = $old_data->get("checked_profile_".$profile["id"]);
 			$active == $profile["id"] ? $profile["active"] = $this->lng->txt("ui_uihk_comprec_active") : $profile["active"] = $this->lng->txt("ui_uihk_comprec_inactive");

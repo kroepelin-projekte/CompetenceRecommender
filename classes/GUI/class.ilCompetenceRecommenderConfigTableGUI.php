@@ -89,7 +89,7 @@ class ilCompetenceRecommenderConfigTableGUI extends ilTable2GUI
      */
 	protected function getActionMenuEntries($a_set): array
 	{
-		$actions = array();
+		$actions = [];
 		$this->ctrl->setParameter($this->parent_obj, "profile_id", $a_set["id"]);
 		$this->addCommandToActions($actions, $this->lng->txt("ui_uihk_comprec_deactivate"), "activate_profile");
 		$this->addCommandToActions($actions, $this->lng->txt("ui_uihk_comprec_set_init_obj"), "set_init_obj");

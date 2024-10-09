@@ -88,10 +88,10 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI
 				ilCompetenceRecommenderGUI::class], 'show')));
 
 		$data = \ilCompetenceRecommenderAlgorithm::getDataForDesktop();
-		$allcards = array();
+		$allcards = [];
 
 		// if data, show resources, else show init_obj or self-eval
-		if ($data != array()) {
+		if (!is_array($data)) {
 			foreach ($data as $row) {
 				$obj_id = ilObject::_lookupObjectId($row["id"]);
 				$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($row["id"])));
@@ -105,7 +105,7 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI
 		} else {
 			if (\ilCompetenceRecommenderAlgorithm::noFormationdata()) {
 				$init_obj = \ilCompetenceRecommenderAlgorithm::getInitObjects();
-				if ($init_obj != array()) {
+				if (!is_array($init_obj)) {
 					foreach ($init_obj as $object) {
 						$obj_id = ilObject::_lookupObjectId($object["id"]);
 						$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($object["id"])));
@@ -116,16 +116,24 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI
 					$deck = $factory->deck($allcards)->withNormalCardsSize();
 					$renderedobjects = $this->lng->txt('ui_uihk_comprec_no_formationdata_init_obj') . "<br />" .$renderer->render($deck);
 				} else {
-					$renderedobjects = $this->lng->txt('ui_uihk_comprec_no_formationdata') . " " . $renderer->render($factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'),
-							$this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class, ilCompetenceRecommenderGUI::class], 'eval')));
+					$renderedobjects = $this->lng->txt('ui_uihk_comprec_no_formationdata')
+                        . " "
+                        . $renderer->render($factory->button()->standard(
+                            $this->lng->txt('ui_uihk_comprec_self_eval'),
+							$this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class, ilCompetenceRecommenderGUI::class], 'eval'))
+                        );
 					// overwrite button
-					$button = $renderer->render($factory->button()
-						->standard($this->lng->txt('ui_uihk_comprec_detail_button_nodata'), $this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class,
-							ilCompetenceRecommenderGUI::class], 'show')));
+					$button = $renderer->render(
+                        $factory->button()->standard(
+                            $this->lng->txt('ui_uihk_comprec_detail_button_nodata'),
+                            $this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class,
+							ilCompetenceRecommenderGUI::class], 'show')
+                        )
+                    );
 				}
 			} else if (!\ilCompetenceRecommenderAlgorithm::noResourcesLeft()) {
 				$init_obj = \ilCompetenceRecommenderAlgorithm::getInitObjects();
-				if ($init_obj != array()) {
+				if (!is_array($init_obj)) {
 					foreach ($init_obj as $object) {
 						$obj_id = ilObject::_lookupObjectId($object["id"]);
 						$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($object["id"])));
@@ -142,15 +150,21 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI
 					$button = $renderer->render($factory->button()
 						->standard($this->lng->txt('ui_uihk_comprec_detail_button_nodata'), $this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class,
 							ilCompetenceRecommenderGUI::class], 'show')));
-
 				}
 			} else {
-				$renderedobjects = $this->lng->txt('ui_uihk_comprec_no_resources') . " " . $renderer->render($factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'),
-						$this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class, ilCompetenceRecommenderGUI::class], 'eval')));
+				$renderedobjects = $this->lng->txt('ui_uihk_comprec_no_resources')
+                    . " "
+                    . $renderer->render($factory->button()->standard(
+                        $this->lng->txt('ui_uihk_comprec_self_eval'),
+						$this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class, ilCompetenceRecommenderGUI::class], 'eval'))
+                    );
 				// overwrite button
-				$button = $renderer->render($factory->button()
-					->standard($this->lng->txt('ui_uihk_comprec_detail_button_nodata'), $this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class,
-						ilCompetenceRecommenderGUI::class], 'show')));
+				$button = $renderer->render(
+                    $factory->button()->standard($this->lng->txt('ui_uihk_comprec_detail_button_nodata'),
+                        $this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class,
+						ilCompetenceRecommenderGUI::class], 'show')
+                    )
+                );
 			}
 		}
 

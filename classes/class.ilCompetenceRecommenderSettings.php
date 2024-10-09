@@ -34,9 +34,9 @@ class ilCompetenceRecommenderSettings
 	 *
 	 * @param string $a_keyword
 	 * @param int|null $a_user_id
-	 * @return string
+	 * @return null|string
 	 */
-	public function get(string $a_keyword, ?int $a_user_id = null): string
+	public function get(string $a_keyword, ?int $a_user_id = null): ?string
 	{
 		if ($a_user_id == null) {
 			$query = "SELECT * FROM ui_uihk_comprec_config WHERE name ='" . $a_keyword . "'";

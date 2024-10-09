@@ -226,24 +226,23 @@ class ilCompetenceRecommenderActivitiesGUI
     {
 		$factory = $this->ui->factory();
 
+        // todo prüfen und wofür ist das?
 		$this->ctrl->saveParameter($skill_id, "skill_id");
 		$this->ctrl->saveParameter($base_skill_id, "basic_skill_id");
 		$this->ctrl->saveParameter($tref_id, "tref_id");
 
 		// basic skill selection
-		$vtree = new ilVirtualSkillTree();// todo tree id fehlt
+		$vtree = new ilVirtualSkillTree($tref_id);// todo tree id fehlt
 		$vtref_id = 0;
-		if (ilSkillTreeNode::_lookupType((int) $skill_id) == "sktr")
-		{
+		if (ilSkillTreeNode::_lookupType((int) $skill_id) == "sktr") {
 			$vtref_id = $skill_id;
 			$skill_id = ilSkillTemplateReference::_lookupTemplateId($skill_id);
 		}
 		$bs = $vtree->getSubTreeForCSkillId($skill_id.":".$vtref_id, true);
 
 
-		$options = array();
-		foreach ($bs as $b)
-		{
+		$options = [];
+		foreach ($bs as $b) {
 			$options[$b["skill_id"]] = ilSkillTreeNode::_lookupTitle($b["skill_id"]);
 		}
 
@@ -259,8 +258,13 @@ class ilCompetenceRecommenderActivitiesGUI
 		$this->ctrl->setParameter($this, "tref_id", $tref_id);
 
 		// table
-		$tab = new ilCompetenceRecommenderSelfEvalModalTableGUI($this, "all",
-			(int) $skill_id, (int) $tref_id, $cur_basic_skill_id);
+		$tab = new ilCompetenceRecommenderSelfEvalModalTableGUI(
+            $this,
+            "all",
+			(int) $skill_id,
+            (int) $tref_id,
+            $cur_basic_skill_id
+        );
 		$html = $tab->getHTML();
 
 		$modalContent = $factory->legacy($html);

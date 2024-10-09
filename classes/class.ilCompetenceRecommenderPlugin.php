@@ -28,7 +28,7 @@ class ilCompetenceRecommenderPlugin extends ilUserInterfaceHookPlugin {
     {
 		if (is_null(self::$instance)) {
             global $DIC;
-			self::$instance = new self($DIC->database(), $DIC['component.repository'], '');
+			self::$instance = new self($DIC->database(), $DIC['component.repository'], 'comprec');
 		}
 
 		return self::$instance;

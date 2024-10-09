@@ -84,7 +84,7 @@ class ilCompetenceRecommenderAlgorithm
 		$db = self::getDatabaseObj();
 		$user_id = self::getUserObj()->getId();
 
-		$skillsarray = array();
+		$skillsarray = [];
 
 		// get user profiles
 		$profiles = ilSkillProfile::getProfilesOfUser($user_id);
@@ -142,7 +142,7 @@ class ilCompetenceRecommenderAlgorithm
 		$db = self::getDatabaseObj();
 		$user_id = self::getUserObj()->getId();
 
-		$profilearray = array();
+		$profilearray = [];
 
 		// get user profiles
 		$profiles = ilSkillProfile::getProfilesOfUser($user_id);
@@ -237,7 +237,7 @@ class ilCompetenceRecommenderAlgorithm
     {
 		$profiles = self::getUserProfiles();
 		$settings = new ilCompetenceRecommenderSettings();
-		$ref_ids = array();
+		$ref_ids = [];
 
 		foreach ($profiles as $profile) {
 			if ($profile_id == -1 || $profile_id == $profile["id"]) {
@@ -258,7 +258,7 @@ class ilCompetenceRecommenderAlgorithm
 	 */
 	public static function getDataForDesktop(int $n = 3): array
     {
-		$allRefIds = array();
+		$allRefIds = [];
 		$competences = self::getAllCompetencesOfUserProfile();
 
 		foreach ($competences as $competence) {
@@ -289,7 +289,7 @@ class ilCompetenceRecommenderAlgorithm
 
 		// get user profiles
 		$profiles = ilSkillProfile::getProfilesOfUser($user_id);
-		$skillsToSort = array();
+		$skillsToSort = [];
 
 		foreach ($profiles as $profile) {
 			$skillsToSort = self::getCompetencesToProfile($profile, $skillsToSort, $n);
@@ -311,7 +311,7 @@ class ilCompetenceRecommenderAlgorithm
      * @param int $n
      * @return array
      */
-	public static function getCompetencesToProfile(array $profile, array $skillsToSort = array(), int $n = 0): array
+	public static function getCompetencesToProfile(array $profile, array $skillsToSort = [], int $n = 0): array
     {
 		$db = self::getDatabaseObj();
 
@@ -649,7 +649,7 @@ class ilCompetenceRecommenderAlgorithm
 		$access = self::getAccessObj();
 		$user = self::getUserObj()->getId();
 
-		$refIds = array();
+		$refIds = [];
 		if (!$wo_template) {
 			$result = $db->query("SELECT ssr.rep_ref_id,ssr.tref_id,ssr.level_id,stn.title 
 								FROM skl_skill_resource AS ssr 

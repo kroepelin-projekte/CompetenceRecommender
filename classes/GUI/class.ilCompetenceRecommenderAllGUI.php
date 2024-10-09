@@ -433,7 +433,7 @@ class ilCompetenceRecommenderAllGUI
 		$this->ctrl->saveParameter($tref_id, "tref_id");
 
 		// basic skill selection
-		$vtree = new ilVirtualSkillTree();// todo parameter
+		$vtree = new ilVirtualSkillTree($tref_id);// todo parameter
 		$vtref_id = 0;
 		if (ilSkillTreeNode::_lookupType((int) $skill_id) == "sktr")
 		{
@@ -443,7 +443,7 @@ class ilCompetenceRecommenderAllGUI
 		$bs = $vtree->getSubTreeForCSkillId($skill_id.":".$vtref_id, true);
 
 
-		$options = array();
+		$options = [];
 		foreach ($bs as $b)
 		{
 			$options[$b["skill_id"]] = ilSkillTreeNode::_lookupTitle($b["skill_id"]);
