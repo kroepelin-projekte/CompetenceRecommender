@@ -1,11 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
-include_once("./Services/Dashboard/classes/class.ilDashboardGUI.php");
+// todo entfernen?
+/*include_once("./Services/Dashboard/classes/class.ilDashboardGUI.php");
 
 include_once("class.ilCompetenceRecommenderActivitiesGUI.php");
 include_once("class.ilCompetenceRecommenderAllGUI.php");
-include_once("class.ilCompetenceRecommenderInfoGUI.php");
+include_once("class.ilCompetenceRecommenderInfoGUI.php");*/
 
 /**
  * Class ilCompetenceRecommenderGUI
@@ -17,45 +19,29 @@ include_once("class.ilCompetenceRecommenderInfoGUI.php");
  * @ilCtrl_isCalledBy ilCompetenceRecommenderGUI: ilCompetenceRecommenderUIHookGUI, ilUIPluginRouterGUI
  * @ilCtrl_Calls ilCompetenceRecommenderGUI: ilCompetenceRecommenderActivitiesGUI, ilCompetenceRecommenderAllGUI, ilCompetenceRecommenderInfoGUI
  */
-class ilCompetenceRecommenderGUI {
+class ilCompetenceRecommenderGUI
+{
+    // todo entfernen?
+	// const PLUGIN_CLASS_NAME = ilCompetenceRecommenderPlugin::class;
 
-	const PLUGIN_CLASS_NAME = ilCompetenceRecommenderPlugin::class;
+    protected ilCtrl $ctrl;
+    protected ilTabsGUI $tabs;
+    public ilGlobalTemplateInterface $tpl;
+    public ilCompetenceRecommenderPlugin $pl;
+	protected ilLanguage $lng;
+    public ilDBInterface $db;
 
-    /** @var  \ilCtrl */
-    protected $ctrl;
-
-    /** @var  \ilTabsGUI */
-    protected $tabs;
-
-    /** @var  \ilTemplate */
-    public $tpl;
-
-	/** @var  \ilCompetenceRecommenderPlugin */
-    public $pl;
-
-	/**
-	 * @var \ilLanguage
-	 */
-	protected $lng;
-
-	/** @var  \ilUIFramework */
-	public $ui;
-
-	/** @var  \ilDB */
-	public $db;
-
-	/**
+    /**
 	 * CompetenceRecommenderGUI constructor
 	 */
 	public function __construct() {
-		global $ilCtrl, $ilTabs, $tpl, $DIC;
-        $this->ctrl = $ilCtrl;
-        $this->tabs = $ilTabs;
-        $this->tpl = $tpl;
-		$this->ui = $DIC->ui();
+		global $DIC;
+        $this->ctrl = $DIC->ctrl();
+        $this->tabs = $DIC->tabs();
+        $this->tpl = $DIC->ui()->mainTemplate();
 		$this->db = $DIC->database();
 		$this->pl = ilCompetenceRecommenderPlugin::getInstance();
-		$this->lng = $DIC['lng'];
+		$this->lng = $DIC->language();
 	}
 
 	/**
@@ -64,10 +50,13 @@ class ilCompetenceRecommenderGUI {
 	 * @return bool
 	 * @throws Exception if command is not known
 	 */
-	public function executeCommand()/*: void*/ {
+	public function executeCommand(): void
+    {
 		if (!$this->pl->isActive()) {
-			ilUtil::sendFailure('Activate Plugin first', true);
-			ilUtil::redirect('index.php');
+            $this->tpl->setOnScreenMessage('failure', 'Activate Plugin first', true);
+
+            // todo testen
+            $this->ctrl->redirectToURL('index.php');
 		}
 		$cmd = ($this->ctrl->getCmd()) ? $this->ctrl->getCmd() : $this->getStandardCommand();
 		$this->setTabs();
@@ -100,16 +89,14 @@ class ilCompetenceRecommenderGUI {
 						break;
 				}
 		}
-		return true;
 	}
-
 
 	/**
 	 * Get standard command.
 	 *
 	 * @return 	string
 	 */
-	public function getStandardCommand()
+	public function getStandardCommand(): string
 	{
 		return 'dashboard';
 	}
@@ -117,9 +104,10 @@ class ilCompetenceRecommenderGUI {
 	/**
 	 * forwards to standard view, made by the activities gui
 	 *
+     * @return void
 	 * @throws ilCtrlException
 	 */
-	protected function forwardShow()
+	protected function forwardShow(): void
 	{
 		$this->tabs->activateTab("show");
 		$gui = new \ilCompetenceRecommenderActivitiesGUI();
@@ -129,9 +117,10 @@ class ilCompetenceRecommenderGUI {
 	/**
 	 * forwards to all view, made by the all gui
 	 *
-	 * @throws ilCtrlException
+     * @return void
+     * @throws ilCtrlException
 	 */
-	protected function forwardAll()
+	protected function forwardAll(): void
 	{
 		$this->tabs->activateTab("all");
 		$gui = new \ilCompetenceRecommenderAllGUI();
@@ -141,9 +130,10 @@ class ilCompetenceRecommenderGUI {
 	/**
 	 * forwards to info view, made by the info gui
 	 *
+     * @return void
 	 * @throws ilCtrlException
 	 */
-	protected function forwardInfo()
+	protected function forwardInfo(): void
 	{
 		$this->tabs->activateTab("info");
 		$gui = new \ilCompetenceRecommenderInfoGUI();
@@ -155,7 +145,7 @@ class ilCompetenceRecommenderGUI {
 	 *
 	 * @return 	void
 	 */
-	protected function setTabs()
+	protected function setTabs(): void
 	{
 		// Tabs
 		$this->tabs->setBack2Target($this->lng->txt('ui_uihk_comprec_back_tab'), $this->ctrl->getLinkTargetByClass(ilDashboardGUI::class));

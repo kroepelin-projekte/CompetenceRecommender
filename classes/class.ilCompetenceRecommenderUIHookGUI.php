@@ -1,10 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
-require_once __DIR__ . "/../vendor/autoload.php";
+// todo entfernen?
+/*require_once __DIR__ . "/../vendor/autoload.php";
 
 include_once("GUI/class.ilCompetenceRecommenderGUI.php");
-include_once("class.ilCompetenceRecommenderAlgorithm.php");
+include_once("class.ilCompetenceRecommenderAlgorithm.php");*/
 
 /**
  * Class ilCompetenceRecommenderUIHookGUI
@@ -15,60 +17,26 @@ include_once("class.ilCompetenceRecommenderAlgorithm.php");
  *
  * @ilCtrl_Calls ilCompetenceRecommenderUIHookGUI: ilCompetenceRecommenderGUI
  */
-class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
+class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI
+{
+    // todo entfernen?
+	// public const PLUGIN_CLASS_NAME = ilCompetenceRecommenderPlugin::class;
 
-	const PLUGIN_CLASS_NAME = ilCompetenceRecommenderPlugin::class;
+	protected ilCtrl $ctrl;
+	protected ilLanguage $lng;
+	protected ilTabsGUI $tabs;
+	protected ilHelpGUI $help;
+	protected ilToolbarGUI $toolbar;
+    protected ilAccessHandler $access;
+    protected \ILIAS\DI\UIServices $ui;
+    protected ilDBInterface $db;
+    protected ilCompetenceRecommenderPlugin $pl;
 
-	/**
-	 * @var \ilCtrl
-	 */
-	protected $ctrl;
-
-	/**
-	 * @var \ilLanguage
-	 */
-	protected $lng;
-
-	/**
-	 * @var \ilTabsGUI
-	 */
-	protected $tabs;
-
-	/**
-	 * @var \ilHelpGUI
-	 */
-	protected $help;
-
-	/**
-	 * @var \ilToolbarGUI
-	 */
-	protected $toolbar;
-
-	/**
-	 * @var \ilAccessHandler
-	 */
-	var $access;
-
-	/**
-	 * @var \ilUIFramework
-	 */
-	var $ui;
-
-	/**
-	 * @var \ilDB
-	 */
-	var $db;
-
-	/**
-	 * @var \ilCompetenceRecommenderPlugin
-	 */
-	var $pl;
-
-
-	/**
+    /**
 	 * ilCompetenceRecommenderUIHookGUI constructor
 	 */
-	public function __construct() {
+	public function __construct()
+    {
 		global $DIC;
 
 		$this->ctrl = $DIC->ctrl();
@@ -77,9 +45,7 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 		$this->ui = $DIC->ui();
 		$this->db = $DIC->database();
 		$this->pl = ilCompetenceRecommenderPlugin::getInstance();
-		$this->pl->includeClass("GUI/class.ilCompetenceRecommenderGUI.php");
 	}
-
 
 	/**
 	 * Sets the Recommendation to the Personal Desktop
@@ -90,10 +56,7 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 	 *
 	 * @return array
 	 */
-	public function getHTML(/*string*/
-		$a_comp, /*string*/
-		$a_part, /*array*/
-		$a_par = []): array 
+	public function getHTML(string $a_comp, /*array*/ $a_part, /*array*/ $a_par = []): array
 	{
 		if ($a_comp == "Services/Dashboard" && $a_part == "center_column") {
 			// change if recommender should disappear when user has finished all
@@ -104,16 +67,12 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 		return [ "mode" => ilUIHookPluginGUI::KEEP, "html" => "" ];
 	}
 
-	function modifyGUI($a_comp, $a_part, $a_par = array())
-	{
-	}
-
 	/**
 	* write on personal desktop
 	*
 	* @return string HTML of div
 	*/
-	function pdRecommendation()
+	private function pdRecommendation(): string
 	{
 		$renderer = $this->ui->renderer();
 		$factory = $this->ui->factory();
@@ -138,7 +97,7 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 				$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($row["id"])));
 				$image = $factory->image()->standard(ilObject::_getIcon($obj_id), "Icon");
 				$card = $factory->card()->standard($link, $image)->withSections(array($factory->legacy($row["title"])));
-				array_push($allcards, $card);
+				$allcards[] = $card;
 			};
 
 			$deck = $factory->deck($allcards)->withNormalCardsSize();
@@ -152,7 +111,7 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 						$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($object["id"])));
 						$image = $factory->image()->standard(ilObject::_getIcon($obj_id), "Icon");
 						$card = $factory->card()->standard($link, $image)->withSections(array($factory->legacy($object["title"])));
-						array_push($allcards, $card);
+						$allcards[] = $card;
 					}
 					$deck = $factory->deck($allcards)->withNormalCardsSize();
 					$renderedobjects = $this->lng->txt('ui_uihk_comprec_no_formationdata_init_obj') . "<br />" .$renderer->render($deck);
@@ -172,7 +131,7 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI {
 						$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($object["id"])));
 						$image = $factory->image()->standard(ilObject::_getIcon($obj_id), "Icon");
 						$card = $factory->card()->standard($link, $image)->withSections(array($factory->legacy($object["title"])));
-						array_push($allcards, $card);
+						$allcards[] = $card;
 					}
 					$deck = $factory->deck($allcards)->withNormalCardsSize();
 					$renderedobjects = $this->lng->txt('ui_uihk_comprec_no_formationdata_init_obj') . "<br />" . $renderer->render($deck);

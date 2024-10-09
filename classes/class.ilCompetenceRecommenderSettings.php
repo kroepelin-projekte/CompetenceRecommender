@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Class ilCompetenceRecommenderSettings
  *
@@ -9,15 +11,12 @@
  */
 class ilCompetenceRecommenderSettings
 {
-	/**
-	 * @var ilDB
-	 */
-	protected $db;
+	protected ilDBInterface $db;
 
 	/**
 	 * Initialize settings
 	 */
-	function __construct()
+	public function __construct()
 	{
 		global $DIC;
 
@@ -34,10 +33,10 @@ class ilCompetenceRecommenderSettings
 	 * Gets the value to a specific keyword
 	 *
 	 * @param string $a_keyword
-	 * @param null $a_user_id
+	 * @param int|null $a_user_id
 	 * @return string
 	 */
-	function get(string $a_keyword, $a_user_id = null)
+	public function get(string $a_keyword, ?int $a_user_id = null): string
 	{
 		if ($a_user_id == null) {
 			$query = "SELECT * FROM ui_uihk_comprec_config WHERE name ='" . $a_keyword . "'";
@@ -53,10 +52,10 @@ class ilCompetenceRecommenderSettings
 	 * Deletes (if exists) a row in the database, depending on keyword and user
 	 *
 	 * @param string $a_keyword
-	 * @param null $a_user_id
+	 * @param int|null $a_user_id
 	 * @return bool
 	 */
-	function delete(string $a_keyword, $a_user_id = null)
+	public function delete(string $a_keyword, ?int $a_user_id = null): bool
 	{
 		$ilDB = $this->db;
 
@@ -79,7 +78,7 @@ class ilCompetenceRecommenderSettings
 	 * @param int|null $a_user_id
 	 * @return bool
 	 */
-	function set(string $a_key, string $a_val, $a_user_id = null)
+	public function set(string $a_key, string $a_val, ?int $a_user_id = null): bool
 	{
 		$ilDB = $this->db;
 
@@ -95,5 +94,4 @@ class ilCompetenceRecommenderSettings
 
 		return true;
 	}
-
 }

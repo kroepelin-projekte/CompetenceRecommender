@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -10,45 +11,30 @@ declare(strict_types=1);
  */
 class ilCompetenceRecommenderInfoGUI
 {
-	/**
-	 * @var \ilCtrl
-	 */
-	protected $ctrl;
+	protected ilCtrl $ctrl;
+	protected ilGlobalTemplateInterface $tpl;
+	protected ilLanguage $lng;
 
-	/**
-	 * @var \ilTemplate
-	 */
-	protected $tpl;
-
-	/**
-	 * @var \ilLanguage
-	 */
-	protected $lng;
-
-	/** @var  \ilUIFramework */
-	protected $ui;
-
-	/**
+    /**
 	 * Constructor of the class ilDistributorTrainingsLanguagesGUI.
 	 *
-	 * @return 	void
+	 * @return void
 	 */
 	public function __construct()
 	{
 		global $DIC;
-		$this->tpl = $DIC['tpl'];
-		$this->lng = $DIC['lng'];
-		$this->ctrl = $DIC['ilCtrl'];
-		$this->ui = $DIC->ui();
+		$this->tpl = $DIC->ui()->mainTemplate();
+		$this->lng = $DIC->language();
+		$this->ctrl = $DIC->get('ctrl');
 	}
 
 	/**
 	 * Delegate incoming commands.
 	 *
-	 * @return 	void
+	 * @return void
 	 * @throws Exception if command not known
 	 */
-	public function executeCommand()
+	public function executeCommand(): void
 	{
 		$cmd = $this->ctrl->getCmd('info');
 		switch ($cmd) {
@@ -59,22 +45,19 @@ class ilCompetenceRecommenderInfoGUI
 				throw new Exception("ilCompetenceRecommenderInfoGUI: Unknown command: ".$cmd);
 				break;
 		}
-
-		return;
-	}
+    }
 
 	/**
 	 * Displays the info text set by a language variable
 	 *
 	 * @return	void
 	 */
-	protected function showInfo()
+	protected function showInfo(): void
 	{
 		$this->tpl->loadStandardTemplate();
 		$this->tpl->setTitle($this->lng->txt('ui_uihk_comprec_plugin_title'));
 
 		$this->tpl->setContent($this->lng->txt('ui_uihk_comprec_info_text'));
 		$this->tpl->printToStdout();
-		return;
 	}
 }

@@ -2,11 +2,12 @@
 
 /* Copyright (c) 1998-2011 ILIAS open source, Extended GPL, see docs/LICENSE */
 
-include_once("./Services/Table/classes/class.ilTable2GUI.php");
+// todo entfernen?
+/*include_once("./Services/Table/classes/class.ilTable2GUI.php");
 
 include_once("./Services/Skill/classes/class.ilSkillTree.php");
 include_once("./Services/Skill/classes/class.ilSkillTreeNodeFactory.php");
-include_once("./Services/Skill/classes/class.ilPersonalSkill.php");
+include_once("./Services/Skill/classes/class.ilPersonalSkill.php");*/
 
 /**
  * Self evaluation, based on ilSelfEvaluationSimpleTableGUI but better usable for modal
@@ -17,35 +18,26 @@ include_once("./Services/Skill/classes/class.ilPersonalSkill.php");
  */
 class ilCompetenceRecommenderSelfEvalModalTableGUI extends ilTable2GUI
 {
-	/**
-	 * @var ilCtrl
-	 */
-	protected $ctrl;
-
-	/**
-	 * @var ilAccessHandler
-	 */
-	protected $access;
-
-	/**
-	 * @var ilObjUser
-	 */
-	protected $user;
+	protected ilCtrl $ctrl;
+	protected ilAccessHandler $access;
+	protected ilObjUser $user;
 
 	protected $top_skill_id;
 	protected $tref_id;
 	protected $basic_skill_id;
 	protected $cur_level_id;
 	protected $skill;
-	protected $parent_obj;
 	protected $levels;
 
 	/**
 	 * Constructor
 	 */
-	function __construct($a_parent_obj, $a_parent_cmd, $a_top_skill_id, $a_tref_id,
-						 $a_basic_skill_id)
-	{
+	public function __construct($a_parent_obj,
+								 $a_parent_cmd,
+								 $a_top_skill_id,
+								 $a_tref_id,
+								 $a_basic_skill_id
+	) {
 		global $DIC;
 
 		$this->ctrl = $DIC->ctrl();
@@ -93,22 +85,26 @@ class ilCompetenceRecommenderSelfEvalModalTableGUI extends ilTable2GUI
 		$this->setFormName("selfevalform");
 	}
 
-	function formAction($a_parent_obj) {
+	/**
+	 * @param $a_parent_obj
+	 * @return string
+	 * @throws ilCtrlException
+	 */
+	public function formAction($a_parent_obj): string
+	{
 		return $this->ctrl->getFormAction($a_parent_obj);
 	}
 
 	/**
 	 * Get levels
 	 *
-	 * @param
-	 * @return
+	 * @return array
 	 */
-	function getLevels()
+	function getLevels(): array
 	{
 		$this->skill = ilSkillTreeNodeFactory::getInstance($this->basic_skill_id);
 		$levels[] = array("id" => 0, "description" => $this->lng->txt("ui_uihk_comprec_skmg_no_skills"));
-		foreach ($this->skill->getLevelData() as $k => $v)
-		{
+		foreach ($this->skill->getLevelData() as $k => $v) {
 			$levels[] = $v;
 		}
 
@@ -117,11 +113,13 @@ class ilCompetenceRecommenderSelfEvalModalTableGUI extends ilTable2GUI
 
 	/**
 	 * Fill table row
+	 *
+	 * @param array $a_set
+	 * @return void
 	 */
-	protected function fillRow($a_set)
-	{
-		if ($this->cur_level_id == $a_set["id"])
-		{
+	protected function fillRow(array $a_set): void
+    {
+		if ($this->cur_level_id == $a_set["id"]) {
 			$this->tpl->setVariable("CHECKED", "checked='checked'");
 		}
 
@@ -130,6 +128,4 @@ class ilCompetenceRecommenderSelfEvalModalTableGUI extends ilTable2GUI
 		$this->tpl->setVariable("TXT_SKILL", $a_set["title"]);
 		$this->tpl->setVariable("TXT_SKILL_DESC", $a_set["description"]);
 	}
-
 }
-?>

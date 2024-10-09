@@ -1,8 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
-include_once("class.ilCompetenceRecommenderSettings.php");
-include_once("./Services/Skill/classes/class.ilSkillProfile.php");
+// todo entfernen?
+/*include_once("class.ilCompetenceRecommenderSettings.php");
+include_once("./Services/Skill/classes/class.ilSkillProfile.php");*/
+
 /**
  * Class ilCompetenceRecommenderAlgorithm
  *
@@ -11,73 +14,58 @@ include_once("./Services/Skill/classes/class.ilSkillProfile.php");
  * @author Leonie Feldbusch <feldbusl@informatik.uni-freiburg.de>
  */
 
-class ilCompetenceRecommenderAlgorithm {
+class ilCompetenceRecommenderAlgorithm
+{
+	protected static ilCompetenceRecommenderAlgorithm $instance;
+	protected ilDBInterface $db;
+	protected ilRbacSystem $access;
+    private ilObjUser $user;
 
-	/**
-	 * @var \ilCompetenceRecommenderAlgorithm
-	 */
-	protected static $instance;
 
-	/**
-	 * @var \ilDB
-	 */
-	protected $db;
-
-	/**
-	 * @var \ilUser
-	 */
-	protected $user;
-
-	/**
-	 * @var \ilRBACAccessHandler
-	 */
-	protected $access;
-
-	/**
+    /**
 	 * ilCompetenceRecommenderAlgorithm constructor.
 	 */
 	public function __construct()
 	{
 		global $DIC, $ilUser, $rbacsystem;
 		$this->db = $DIC->database();
-		$this->user = $ilUser;
+		$this->user = $DIC->user();
 		$this->access = $rbacsystem;
 	}
 
 	/**
 	 * @return ilCompetenceRecommenderAlgorithm instance
 	 */
-	protected static function getInstance()
+	protected static function getInstance(): ilCompetenceRecommenderAlgorithm
 	{
-		if (!self::$instance)
-		{
+		if (!self::$instance) {
 			self::$instance = new self;
 		}
 		return self::$instance;
 	}
 
 	/**
-	 * @return ilDB|ilDBInterface database of instance
+	 * @return ilDBInterface database of instance
 	 */
-	public static function getDatabaseObj()
+	public static function getDatabaseObj(): ilDBInterface
 	{
 		$instance = self::getInstance();
 		return $instance->db;
 	}
 
 	/**
-	 * @return ilObjUser|ilUser|mixed current user
+	 * @return ilObjUser current user
 	 */
-	public static function getUserObj()
+	public static function getUserObj(): ilObjUser
 	{
 		$instance = self::getInstance();
 		return $instance->user;
 	}
 
 	/**
-	 * @return ilRBACAccessHandler|ilRbacSystem|null access object of instance
+	 * @return ilRbacSystem access object of instance
 	 */
-	public static function getAccessObj()
+	public static function getAccessObj(): ilRbacSystem
 	{
 		$instance = self::getInstance();
 		return $instance->access;
@@ -91,7 +79,7 @@ class ilCompetenceRecommenderAlgorithm {
 	 * @param int $n
 	 * @return int
 	 */
-	public static function getNumberOfCompetencesForActivities()
+	public static function getNumberOfCompetencesForActivities(): int
 	{
 		$db = self::getDatabaseObj();
 		$user_id = self::getUserObj()->getId();
@@ -113,7 +101,7 @@ class ilCompetenceRecommenderAlgorithm {
 					$goal = $profilegoal->fetchAssoc();
 					$score = self::computeScore($skill["tref_id"]);
 					if ($score < $goal["nr"] && $score > 0) {
-						array_push($skillsarray, $skill);
+						$skillsarray[] = $skill;
 					}
 				}
 			}
@@ -126,7 +114,7 @@ class ilCompetenceRecommenderAlgorithm {
 	 *
 	 * @return bool
 	 */
-	public static function hasUserProfile()
+	public static function hasUserProfile(): bool
 	{
 		$db = self::getDatabaseObj();
 		$user_id = self::getUserObj()->getId();
@@ -149,7 +137,8 @@ class ilCompetenceRecommenderAlgorithm {
 	 *
 	 * @return array
 	 */
-	public static function getUserProfiles() {
+	public static function getUserProfiles(): array
+    {
 		$db = self::getDatabaseObj();
 		$user_id = self::getUserObj()->getId();
 
@@ -161,7 +150,7 @@ class ilCompetenceRecommenderAlgorithm {
 		$profile_settings = new ilCompetenceRecommenderSettings();
 		foreach ($profiles as $profile) {
 			if ($profile_settings->get("checked_profile_".$profile['id']) == $profile['id']) {
-				array_push($profilearray, $profile);
+				$profilearray[] = $profile;
 			}
 		}
 
@@ -173,7 +162,7 @@ class ilCompetenceRecommenderAlgorithm {
 	 *
 	 * @return bool
 	 */
-	public static function hasUserFinishedAll()
+	public static function hasUserFinishedAll(): bool
 	{
 		$db = self::getDatabaseObj();
 		$user_id = self::getUserObj()->getId();
@@ -207,7 +196,7 @@ class ilCompetenceRecommenderAlgorithm {
 	 *
 	 * @return bool
 	 */
-	public static function noResourcesLeft()
+	public static function noResourcesLeft(): bool
 	{
 		$competences = self::getAllCompetencesOfUserProfile();
 
@@ -226,7 +215,7 @@ class ilCompetenceRecommenderAlgorithm {
 	 *
 	 * @return bool
 	 */
-	public static function noFormationdata()
+	public static function noFormationdata(): bool
 	{
 		$competences = self::getAllCompetencesOfUserProfile();
 
@@ -244,7 +233,8 @@ class ilCompetenceRecommenderAlgorithm {
 	 * @param int $profile_id
 	 * @return array
 	 */
-	public static function getInitObjects($profile_id = -1) {
+	public static function getInitObjects(int $profile_id = -1): array
+    {
 		$profiles = self::getUserProfiles();
 		$settings = new ilCompetenceRecommenderSettings();
 		$ref_ids = array();
@@ -253,7 +243,7 @@ class ilCompetenceRecommenderAlgorithm {
 			if ($profile_id == -1 || $profile_id == $profile["id"]) {
 				$ref_id = $settings->get("init_obj_" . $profile["id"]);
 				if (is_numeric($ref_id)) {
-					array_push($ref_ids, array("id" => $ref_id, "title" => $profile["title"]));
+					$ref_ids[] = array("id" => $ref_id, "title" => $profile["title"]);
 				}
 			}
 		}
@@ -266,7 +256,8 @@ class ilCompetenceRecommenderAlgorithm {
 	 * @param int $n
 	 * @return array
 	 */
-	public static function getDataForDesktop(int $n = 3) {
+	public static function getDataForDesktop(int $n = 3): array
+    {
 		$allRefIds = array();
 		$competences = self::getAllCompetencesOfUserProfile();
 
@@ -291,7 +282,8 @@ class ilCompetenceRecommenderAlgorithm {
 	 * @param int $n
 	 * @return array
 	 */
-	public static function getAllCompetencesOfUserProfile(int $n = 0) {
+	public static function getAllCompetencesOfUserProfile(int $n = 0): array
+    {
 		$db = self::getDatabaseObj();
 		$user_id = self::getUserObj()->getId();
 
@@ -311,15 +303,16 @@ class ilCompetenceRecommenderAlgorithm {
 		return $sortedSkills;
 	}
 
-	/**
-	 * Returns all competences of a sepcific profile of the user or if n is set only the best n ones
-	 *
-	 * @param $profile
-	 * @param array $skillsToSort
-	 * @param int $n
-	 * @return array
-	 */
-	public static function getCompetencesToProfile($profile, $skillsToSort = array(), int $n = 0) {
+    /**
+     * Returns all competences of a sepcific profile of the user or if n is set only the best n ones
+     *
+     * @param array $profile
+     * @param array $skillsToSort
+     * @param int $n
+     * @return array
+     */
+	public static function getCompetencesToProfile(array $profile, array $skillsToSort = array(), int $n = 0): array
+    {
 		$db = self::getDatabaseObj();
 
 		$profile_settings = new ilCompetenceRecommenderSettings();
@@ -345,15 +338,16 @@ class ilCompetenceRecommenderAlgorithm {
 		return $skillsToSort;
 	}
 
-	/**
-	 * Gets the skill data for skills with templates and without templates.
-	 *
-	 * @param $skill
-	 * @param $skillsToSort
-	 * @param $n
-	 * @return array
-	 */
-	private static function getSkillData($skill, $skillsToSort, $n) {
+    /**
+     * Gets the skill data for skills with templates and without templates.
+     *
+     * @param array $skill
+     * @param array $skillsToSort
+     * @param int $n
+     * @return array
+     */
+	private static function getSkillData(array $skill, array $skillsToSort, int $n): array
+    {
 		$db = self::getDatabaseObj();
 
 		// get data needed for selfevaluations
@@ -426,7 +420,8 @@ class ilCompetenceRecommenderAlgorithm {
 	 * @param array $competences
 	 * @return array the sorted $competences array
 	 */
-	public static function sortCompetences(array $competences) {
+	public static function sortCompetences(array $competences): array
+    {
 		$sortation = $_GET["sortation"];
 		$valid_sortations = array('diff','percentage','lastUsed','oldest');
 		// more dimensional sorting requires columns diff and name of skill (=title)
@@ -458,18 +453,20 @@ class ilCompetenceRecommenderAlgorithm {
 	 * @param int $n
 	 * @return array
 	 */
-	public static function getNCompetencesOfUserProfile(int $n) {
+	public static function getNCompetencesOfUserProfile(int $n): array
+    {
 		$competences = self::getAllCompetencesOfUserProfile($n);
 		return $competences;
 	}
 
-	/**
-	 * Finds out the values to compute the score for a competence/skill and returns the score
-	 *
-	 * @param $skill
-	 * @return float|int|string|null the score
-	 */
-	private static function computeScore($skill, $wo_template=false)
+    /**
+     * Finds out the values to compute the score for a competence/skill and returns the score
+     *
+     * @param string $skill
+     * @param bool $wo_template
+     * @return float|int|string|null the score
+     */
+	private static function computeScore(string $skill, bool $wo_template = false)/*: float|int|string|null*/
 	{
 		$db = self::getDatabaseObj();
 		$user_id = self::getUserObj()->getId();
@@ -545,7 +542,8 @@ class ilCompetenceRecommenderAlgorithm {
 	 * @param int $dropout_value the value when to ignore data
 	 * @return float|int|string|null the score
 	 */
-	public static function score(int $t_S, int $t_M, int $t_F, int $scoreS, int $scoreM, int $scoreF, int $dropout_value = 0) {
+	public static function score(int $t_S, int $t_M, int $t_F, int $scoreS, int $scoreM, int $scoreF, int $dropout_value = 0)/*: float|int|string|null*/
+    {
 		$score = 0;
 
         return max($scoreS, $scoreM, $scoreF);
@@ -609,13 +607,15 @@ class ilCompetenceRecommenderAlgorithm {
 		return $score;*/
 	}
 
-	/**
-	 * Returns the date of the last formationdata of a user in a competence
-	 *
-	 * @param int $skill_id
-	 * @return int
-	 */
-	private static function getLastUsedDate(int $skill_id, bool $wo_template=false) {
+    /**
+     * Returns the date of the last formationdata of a user in a competence
+     *
+     * @param int $skill_id
+     * @param bool $wo_template
+     * @return string
+     */
+	private static function getLastUsedDate(int $skill_id, bool $wo_template=false): string // todo string?
+    {
 		$db = self::getDatabaseObj();
 		$user_id = self::getUserObj()->getId();
 
@@ -636,13 +636,15 @@ class ilCompetenceRecommenderAlgorithm {
 		return $date;
 	}
 
-	/**
-	 * Returns the resources of a competence for a user
-	 *
-	 * @param int $skill_id
-	 * @return array
-	 */
-	private static function getResourcesForCompetence(int $skill_id, bool $wo_template=false) {
+    /**
+     * Returns the resources of a competence for a user
+     *
+     * @param int $skill_id
+     * @param bool $wo_template
+     * @return array
+     */
+	private static function getResourcesForCompetence(int $skill_id, bool $wo_template=false): array
+    {
 		$db = self::getDatabaseObj();
 		$access = self::getAccessObj();
 		$user = self::getUserObj()->getId();
@@ -667,7 +669,7 @@ class ilCompetenceRecommenderAlgorithm {
 								WHERE id ='".$value["level_id"]."'");
 			$levelnumber = $level->fetchAssoc();
 			if ($access->checkAccessOfUser($user, 'read', $value["rep_ref_id"])) {
-				array_push($refIds, array("id" => $value["rep_ref_id"], "title" => $value["title"], "level" => ($levelnumber["nr"]-1)));
+				$refIds[] = array("id" => $value["rep_ref_id"], "title" => $value["title"], "level" => ($levelnumber["nr"] - 1));
 			}
 		}
 

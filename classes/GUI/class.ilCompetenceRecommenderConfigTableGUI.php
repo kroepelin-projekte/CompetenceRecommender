@@ -1,7 +1,10 @@
 <?php
+
 declare(strict_types=1);
-include_once("Services/Table/classes/class.ilTable2GUI.php");
-include_once("./Services/UIComponent/AdvancedSelectionList/classes/class.ilAdvancedSelectionListGUI.php");
+
+// todo entfernen?
+/*include_once("Services/Table/classes/class.ilTable2GUI.php");
+include_once("./Services/UIComponent/AdvancedSelectionList/classes/class.ilAdvancedSelectionListGUI.php");*/
 
 /**
  * TableGUI class for listing the profiles and their settings
@@ -47,8 +50,8 @@ class ilCompetenceRecommenderConfigTableGUI extends ilTable2GUI
 	 *
 	 * @param array $a_set one element of data array
 	 */
-	protected function fillRow($a_set)
-	{
+	protected function fillRow($a_set): void
+    {
 		$this->tpl->setVariable("PROFILE_NAME", $a_set["title"]);
 		$this->tpl->setVariable("ACTIVE", $a_set["active"]);
 		$this->tpl->setVariable("INIT_OBJ", $a_set["init_obj"]);
@@ -64,27 +67,27 @@ class ilCompetenceRecommenderConfigTableGUI extends ilTable2GUI
 	 * @param int $id
 	 * @return string
 	 */
-	protected function getActionMenu(array $actions, $id) {
+	protected function getActionMenu(array $actions, int $id): string
+    {
 		$alist = new ilAdvancedSelectionListGUI();
-		$alist->setId($id);
+		$alist->setId((string) $id);
 		$alist->setListTitle($this->lng->txt("actions"));
 
-		foreach($actions as $caption => $cmd)
-		{
+		foreach($actions as $caption => $cmd) {
 			$alist->addItem($caption, "", $cmd);
 		}
 
 		return $alist->getHTML();
 	}
 
-	/**
-	 * Get entries for action menu
-	 *
-	 * @param string[] $a_set
-	 *
-	 * @return string[]
-	 */
-	protected function getActionMenuEntries($a_set)
+    /**
+     * Get entries for action menu
+     *
+     * @param $a_set
+     * @return array
+     * @throws ilCtrlException
+     */
+	protected function getActionMenuEntries($a_set): array
 	{
 		$actions = array();
 		$this->ctrl->setParameter($this->parent_obj, "profile_id", $a_set["id"]);
@@ -104,8 +107,8 @@ class ilCompetenceRecommenderConfigTableGUI extends ilTable2GUI
 	 *
 	 * @return void
 	 */
-	protected function addCommandToActions(array &$actions, $caption, $command) {
-		$actions[$caption] =
-			$this->ctrl->getLinkTarget($this->parent_obj, $command);
+	protected function addCommandToActions(array &$actions, $caption, $command): void
+    {
+		$actions[$caption] = $this->ctrl->getLinkTarget($this->parent_obj, $command);
 	}
 }

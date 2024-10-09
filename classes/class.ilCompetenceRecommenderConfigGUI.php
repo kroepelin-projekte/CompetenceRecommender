@@ -1,11 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see https://github.com/ILIAS-eLearning/ILIAS/tree/trunk/docs/LICENSE */
 
-require_once __DIR__ . "/../vendor/autoload.php";
+// todo entfernen?
+/*require_once __DIR__ . "/../vendor/autoload.php";
 include_once("./Services/Repository/classes/class.ilRepositorySelectorExplorerGUI.php");
 include_once("GUI/class.ilCompetenceRecommenderConfigTableGUI.php");
-include_once("class.ilCompetenceRecommenderSettings.php");
+include_once("class.ilCompetenceRecommenderSettings.php");*/
+
+use ILIAS\UI\Factory;
+use ILIAS\UI\Renderer;
 
 /**
  * Class ilCompetenceRecommenderConfigGUI
@@ -13,40 +19,18 @@ include_once("class.ilCompetenceRecommenderSettings.php");
  * @author Leonie Feldbusch <feldbusl@informatik.uni-freiburg.de>
  *
  * @ilCtrl_Calls ilCompetenceRecommenderConfigGUI: ilCompetenceRecommenderConfigTableGUI
+ * @ilCtrl_IsCalledBy ilCompetenceRecommenderConfigGUI: ilObjComponentSettingsGUI
  */
-class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI {
+class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI
+{
+	protected ilCtrl $ctrl;
+	protected ilGlobalPageTemplate $tpl;
+	protected ilLanguage $lng;
+	protected ilDBInterface $db;
+	protected Renderer $renderer;
+	protected Factory $factory;
 
-	/**
-	 * @var \ilCtrl
-	 */
-	protected $ctrl;
-
-	/**
-	 * @var \ilTemplate
-	 */
-	protected $tpl;
-
-	/**
-	 * @var \ilLanguage
-	 */
-	protected $lng;
-
-	/**
-	 * @var \ilDB
-	 */
-	protected $db;
-
-	/**
-	 * @var \ilRenderer
-	 */
-	protected $renderer;
-
-	/**
-	 * @var \ilRendererFactory
-	 */
-	protected $factory;
-
-	/**
+    /**
 	 * Constructor of the class ilDistributorTrainingsConfigGUI.
 	 *
 	 * @return 	void
@@ -59,7 +43,6 @@ class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI {
 		$this->lng = $DIC['lng'];
 		$this->ctrl = $DIC->ctrl();
 		$this->db = $DIC->database();
-		$this->user = $DIC->user();
 		$this->renderer = $DIC->ui()->renderer();
 		$this->factory = $DIC->ui()->factory();
 	}
@@ -70,8 +53,8 @@ class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI {
 	 * @param string $cmd
 	 * @throws Exception if command not known
 	 */
-	public function performCommand($cmd)
-	{
+	public function performCommand($cmd): void
+    {
 		$cmd = $this->ctrl->getCmd("configure");
 		switch ($cmd) {
 			case "configure":
@@ -103,7 +86,8 @@ class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI {
 	 *
 	 * @return array
 	 */
-	private function profiles() {
+	private function profiles(): array
+    {
 		$result = $this->db->query("SELECT id, title FROM skl_profile");
 		$profiles = $this->db->fetchAll($result);
 		$profileArray = array();
@@ -116,14 +100,15 @@ class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI {
 	/**
 	 * saves the dropout value if it is an integer value >= 0
 	 */
-	private function saveDropout() {
+	private function saveDropout(): void
+    {
 		$value = $_POST["dropout_input"];
 		if (is_numeric($value) && $value >= 0) {
 			$save_settings = new ilCompetenceRecommenderSettings();
 			$save_settings->set("dropout_input", strval(floor($value)));
-			ilUtil::sendInfo($this->lng->txt("ui_uihk_comprec_dropout_save"));
+            $this->tpl->setOnScreenMessage('info', $this->lng->txt("ui_uihk_comprec_dropout_save"));
 		} else {
-			ilUtil::sendFailure($this->lng->txt("ui_uihk_comprec_dropout_failure"));
+            $this->tpl->setOnScreenMessage('failure', $this->lng->txt("ui_uihk_comprec_dropout_failure"));
 		}
 		$this->showConfig();
 	}
@@ -131,15 +116,16 @@ class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI {
 	/**
 	 * sets the profile to active or inactive
 	 */
-	private function saveProfile() {
+	private function saveProfile(): void
+    {
 		$selected_profile = $_GET["profile_id"];
 		$save_settings = new ilCompetenceRecommenderSettings();
 		if ($save_settings->get("checked_profile_".$selected_profile) != $selected_profile) {
 			$save_settings->set("checked_profile_" . $selected_profile, $selected_profile);
-			ilUtil::sendSuccess($this->lng->txt("ui_uihk_comprec_config_saved_active"));
+            $this->tpl->setOnScreenMessage('success', $this->lng->txt("ui_uihk_comprec_config_saved_active"));
 		} else {
 			$save_settings->delete("checked_profile_".$selected_profile);
-			ilUtil::sendSuccess($this->lng->txt("ui_uihk_comprec_config_saved_inactive"));
+            $this->tpl->setOnScreenMessage('success', $this->lng->txt("ui_uihk_comprec_config_saved_inactive"));
 		}
 		$this->showConfig();
 	}
@@ -147,17 +133,16 @@ class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI {
 	/**
 	 * Save initiation object for profile
 	 */
-	function saveResource()
+	public function saveResource(): void
 	{
 		$ref_id = (int) $_GET["root_id"];
 		$selected_profile = $_GET["profile_id"];
-		if ($ref_id > 0 && isset($selected_profile))
-		{
+		if ($ref_id > 0 && isset($selected_profile)) {
 			$save_input = new ilCompetenceRecommenderSettings();
-			$save_input->set("init_obj_".$selected_profile, $ref_id);
-			ilUtil::sendSuccess($this->lng->txt("msg_obj_modified"), true);
+			$save_input->set("init_obj_".$selected_profile, (string) $ref_id);
+            $this->tpl->setOnScreenMessage('success', $this->lng->txt("msg_obj_modified"), true);
 		} else {
-			ilUtil::sendFailure($this->lng->txt("ui_uihk_comprec_error"));
+            $this->tpl->setOnScreenMessage('failure', $this->lng->txt("ui_uihk_comprec_error"));
 		}
 
 		$this->showConfig();
@@ -166,16 +151,16 @@ class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI {
 	/**
 	 * Deletes initiation object for profile
 	 */
-	function deleteResource()
+	function deleteResource(): void
 	{
 		$selected_profile = $_GET["profile_id"];
 		if (isset($selected_profile))
 		{
 			$del_obj = new ilCompetenceRecommenderSettings();
 			$del_obj->delete("init_obj_".$selected_profile);
-			ilUtil::sendSuccess($this->lng->txt("msg_obj_modified"), true);
+            $this->tpl->setOnScreenMessage('success', $this->lng->txt("msg_obj_modified"), true);
 		} else {
-			ilUtil::sendFailure($this->lng->txt("ui_uihk_comprec_error"));
+            $this->tpl->setOnScreenMessage('failure', $this->lng->txt("ui_uihk_comprec_error"));
 		}
 
 		$this->showConfig();
@@ -184,7 +169,8 @@ class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI {
 	/**
 	 * Shows the main configuration page
 	 */
-	private function showConfig() {
+	private function showConfig(): void
+    {
 		$this->tpl->addJavascript("Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/ProfileSelector.js");
 
 		$available_profiles = $this->profiles();
@@ -216,9 +202,9 @@ class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI {
 		foreach ($available_profiles as $profile) {
 			$active = $old_data->get("checked_profile_".$profile["id"]);
 			$active == $profile["id"] ? $profile["active"] = $this->lng->txt("ui_uihk_comprec_active") : $profile["active"] = $this->lng->txt("ui_uihk_comprec_inactive");
-			$init_obj_id = ilObject::_lookupObjectId($old_data->get("init_obj_".$profile["id"]));
+			$init_obj_id = ilObject::_lookupObjectId((int) $old_data->get("init_obj_".$profile["id"]));
 			$profile["init_obj"] = ilObject::_lookupTitle($init_obj_id);
-			array_push($tabledata, $profile);
+			$tabledata[] = $profile;
 		}
 
 		// sets the table for the configuration
@@ -232,7 +218,8 @@ class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI {
 	/**
 	 * shows the repository object picker
 	 */
-	private function repobj() {
+	private function repobj(): void
+    {
 		$this->tpl->setTitle($this->lng->txt("ui_uihk_comprec_init_obj_title"));
 
 		$initiationsobj = new ilRepositorySelectorExplorerGUI($this, "set_init_obj", $this, "save_init_obj", "root_id");

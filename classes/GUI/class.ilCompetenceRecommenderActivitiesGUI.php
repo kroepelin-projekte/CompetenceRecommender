@@ -1,47 +1,35 @@
 <?php
+
 declare(strict_types=1);
 
-include_once("./Services/Skill/classes/class.ilPersonalSkillsGUI.php");
+// todo entfernen?
+/*include_once("./Services/Skill/classes/class.ilPersonalSkillsGUI.php");
 include_once("./Services/Skill/classes/class.ilSkillTreeNode.php");
 include_once("./Services/Skill/classes/class.ilVirtualSkillTree.php");
 include_once("./Services/Skill/classes/class.ilSkillTemplateReference.php");
-include_once("./Services/Skill/classes/class.ilSelfEvaluationSimpleTableGUI.php");
+include_once("./Services/Skill/classes/class.ilSelfEvaluationSimpleTableGUI.php");*/
 
 /**
  * Class ilCompetenceRecommenderActivitiesGUI
  *
  * Shows the Activities Screen (Main Screen) of the Recommender
- *
  */
 class ilCompetenceRecommenderActivitiesGUI
 {
-	/**
-	 * @var \ilCtrl
-	 */
-	protected $ctrl;
+	protected ilCtrl $ctrl;
+	protected ilGlobalTemplateInterface $tpl;
+	protected ilLanguage $lng;
+    private \ILIAS\DI\UIServices $ui;
 
-	/**
-	 * @var \ilTemplate
-	 */
-	protected $tpl;
-
-	/**
-	 * @var \ilLanguage
-	 */
-	protected $lng;
-
-	/** @var \ilUIFramework */
-	protected $ui;
-
-	/**
+    /**
 	 * Constructor of the class ilDistributorTrainingsLanguagesGUI.
 	 */
 	public function __construct()
 	{
 		global $DIC;
-		$this->tpl = $DIC['tpl'];
-		$this->lng = $DIC['lng'];
-		$this->ctrl = $DIC['ilCtrl'];
+		$this->tpl = $DIC->ui()->mainTemplate();
+		$this->lng = $DIC->language();
+		$this->ctrl = $DIC->ctrl();
 		$this->ui = $DIC->ui();
 	}
 
@@ -51,7 +39,7 @@ class ilCompetenceRecommenderActivitiesGUI
 	 * @return 	void
 	 * @throws Exception if command not known
 	 */
-	public function executeCommand()
+	public function executeCommand(): void
 	{
 		$cmd = $this->ctrl->getCmd('show');
 		switch ($cmd) {
@@ -65,14 +53,16 @@ class ilCompetenceRecommenderActivitiesGUI
 				throw new Exception("ilCompetenceRecommenderActivitiesGUI: Unknown command: ".$cmd);
 				break;
 		}
-
-		return;
 	}
 
-	/**
-	 * save the self-evaluation after submitting in the modal
-	 */
-	protected function saveEval() {
+    /**
+     *  save the self-evaluation after submitting in the modal
+     *
+     * @return void
+     * @throws ilCtrlException
+     */
+	protected function saveEval(): void
+    {
 		$user = ilCompetenceRecommenderAlgorithm::getUserObj()->getId();
 		$base_skill_id = $_GET["basic_skill_id"];
 		$skill_id = $_GET["skill_id"];
@@ -81,7 +71,7 @@ class ilCompetenceRecommenderActivitiesGUI
 		ilPersonalSkill::saveSelfEvaluation($user, (int) $skill_id,
 			(int) $tref_id, (int) $base_skill_id, (int) $level_id);
 		sleep(1);
-		ilUtil::sendSuccess($this->lng->txt("ui_uihk_comprec_self_eval_saved"), true);
+        $this->tpl->setOnScreenMessage('success', $this->lng->txt("ui_uihk_comprec_self_eval_saved"), true);
 		$this->ctrl->clearParametersByClass(\ilCompetenceRecommenderActivitiesGUI::class);
 		$this->ctrl->redirect($this, "show");
 	}
@@ -92,7 +82,7 @@ class ilCompetenceRecommenderActivitiesGUI
 	 * @return void
 	 * @throws ilTemplateException
 	 */
-	protected function showDashboard()
+	protected function showDashboard(): void
 	{
 		$renderer = $this->ui->renderer();
 		$factory = $this->ui->factory();
@@ -121,7 +111,7 @@ class ilCompetenceRecommenderActivitiesGUI
 					$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($object["id"])));
 					$image = $factory->image()->standard(ilObject::_getIcon($obj_id), "Icon");
 					$card = $factory->card()->standard($link, $image);
-					array_push($resourcearray, $card);
+					$resourcearray[] = $card;
 				}
 				$deck = $factory->deck($resourcearray);
 				$text = $this->lng->txt('ui_uihk_comprec_no_formationdata_init_obj');
@@ -181,9 +171,9 @@ class ilCompetenceRecommenderActivitiesGUI
 				$image = $factory->image()->standard(ilObject::_getIcon($obj_id), "Icon");
 				$card = $factory->card()->standard($link, $image);
 				if ($resource["level"] > $score) {
-					array_push($resourcearray, $card);
+					$resourcearray[] = $card;
 				} else {
-					array_push($oldresourcearray, $card);
+					$oldresourcearray[] = $card;
 				}
 			};
 			// show number of materials as text
@@ -222,7 +212,6 @@ class ilCompetenceRecommenderActivitiesGUI
 		// show
 		$this->tpl->setContent($html);
 		$this->tpl->printToStdout();
-		return;
 	}
 
 	/**
@@ -233,7 +222,8 @@ class ilCompetenceRecommenderActivitiesGUI
 	 * @param $base_skill_id
 	 * @return \ILIAS\UI\Component\Legacy\Legacy
 	 */
-	private function getModalContent($skill_id, $tref_id, $base_skill_id) {
+	private function getModalContent($skill_id, $tref_id, $base_skill_id): \ILIAS\UI\Component\Legacy\Legacy
+    {
 		$factory = $this->ui->factory();
 
 		$this->ctrl->saveParameter($skill_id, "skill_id");
@@ -241,7 +231,7 @@ class ilCompetenceRecommenderActivitiesGUI
 		$this->ctrl->saveParameter($tref_id, "tref_id");
 
 		// basic skill selection
-		$vtree = new ilVirtualSkillTree();
+		$vtree = new ilVirtualSkillTree();// todo tree id fehlt
 		$vtref_id = 0;
 		if (ilSkillTreeNode::_lookupType((int) $skill_id) == "sktr")
 		{

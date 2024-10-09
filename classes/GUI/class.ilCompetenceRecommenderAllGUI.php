@@ -1,12 +1,14 @@
 <?php
+
 declare(strict_types=1);
 
-include_once("./Services/Skill/classes/class.ilPersonalSkillsGUI.php");
+// todo entfernen?
+/*include_once("./Services/Skill/classes/class.ilPersonalSkillsGUI.php");
 include_once("./Services/Skill/classes/class.ilSkillTreeNode.php");
 include_once("./Services/Skill/classes/class.ilVirtualSkillTree.php");
 include_once("./Services/Skill/classes/class.ilSkillTemplateReference.php");
 include_once("./Services/Skill/classes/class.ilSelfEvaluationSimpleTableGUI.php");
-include_once("class.ilCompetenceRecommenderSelfEvalModalTableGUI.php");
+include_once("class.ilCompetenceRecommenderSelfEvalModalTableGUI.php");*/
 
 /**
  * Class ilCompetenceRecommenderAllGUI
@@ -18,39 +20,23 @@ include_once("class.ilCompetenceRecommenderSelfEvalModalTableGUI.php");
  */
 class ilCompetenceRecommenderAllGUI
 {
-	/**
-	 * @var \ilCtrl
-	 */
-	protected $ctrl;
+	protected ilCtrl $ctrl;
+	protected ilGlobalTemplateInterface $tpl;
+	protected ilLanguage $lng;
+    private \ILIAS\DI\UIServices $ui;
+    protected ilToolbarGUI $toolbar;
+    private \ILIAS\HTTP\Services $http;
 
-	/**
-	 * @var \ilTemplate
-	 */
-	protected $tpl;
 
-	/**
-	 * @var \ilLanguage
-	 */
-	protected $lng;
-
-	/** @var  \ilUIFramework */
-	protected $ui;
-
-	/** @var  \ilToolbarGUI */
-	protected $toolbar;
-
-	/** @var  \ILIAS\DI\HTTPServices */
-	protected $http;
-
-	/**
+    /**
 	 * Constructor of the class ilDistributorTrainingsLanguagesGUI.
 	 */
 	public function __construct()
 	{
 		global $DIC;
-		$this->tpl = $DIC['tpl'];
-		$this->lng = $DIC['lng'];
-		$this->ctrl = $DIC['ilCtrl'];
+		$this->tpl = $DIC->ui()->mainTemplate();
+		$this->lng = $DIC->language();
+		$this->ctrl = $DIC->ctrl();
 		$this->ui = $DIC->ui();
 		$this->toolbar = $DIC->toolbar();
 		$this->http = $DIC->http();
@@ -62,7 +48,7 @@ class ilCompetenceRecommenderAllGUI
 	 * @return 	void
 	 * @throws Exception if command not known
 	 */
-	public function executeCommand()
+	public function executeCommand(): void
 	{
 		$cmd = $this->ctrl->getCmd('all');
 		$user_id = ilCompetenceRecommenderAlgorithm::getUserObj()->getId();
@@ -102,20 +88,28 @@ class ilCompetenceRecommenderAllGUI
 				throw new Exception("ilCompetenceRecommenderAllGUI: Unknown command: ".$cmd);
 				break;
 		}
+    }
 
-		return;
-	}
-
-	protected function filterCmd($cmd) {
+    /**
+     * @param $cmd
+     * @return void
+     * @throws ilCtrlException
+     */
+	protected function filterCmd($cmd): void
+    {
 		$filter_array = explode("_", $cmd);
 		$this->ctrl->setParameterByClass(\ilCompetenceRecommenderAllGUI::class, $filter_array[0], $filter_array[1]);
 		$this->ctrl->redirect($this, "all");
 	}
 
-	/**
-	 * save the self-evaluation after submitting in the modal
-	 */
-	protected function saveEval() {
+    /**
+     * save the self-evaluation after submitting in the modal
+     *
+     * @return void
+     * @throws ilCtrlException
+     */
+	protected function saveEval(): void
+    {
 		$user = ilCompetenceRecommenderAlgorithm::getUserObj()->getId();
 		$base_skill_id = $_GET["basic_skill_id"];
 		$skill_id = $_GET["skill_id"];
@@ -124,7 +118,7 @@ class ilCompetenceRecommenderAllGUI
 		ilPersonalSkill::saveSelfEvaluation($user, (int) $skill_id,
 			(int) $tref_id, (int) $base_skill_id, (int) $level_id);
 		sleep(1);
-		ilUtil::sendSuccess($this->lng->txt("ui_uihk_comprec_self_eval_saved"), true);
+        $this->tpl->setOnScreenMessage('success', $this->lng->txt("ui_uihk_comprec_self_eval_saved"), true);
 		$this->ctrl->clearParametersByClass(\ilCompetenceRecommenderAllGUI::class);
 		$this->ctrl->redirect($this, "all");
 	}
@@ -136,7 +130,7 @@ class ilCompetenceRecommenderAllGUI
 	 * @param string $viewmode the viewmode to show. Default is list, other is profile
 	 * @return void
 	 */
-	protected function showAll(string $viewmode = "list")
+	protected function showAll(string $viewmode = "list"): void
 	{
 		$user_id = ilCompetenceRecommenderAlgorithm::getUserObj()->getId();
 		$settings = new ilCompetenceRecommenderSettings();
@@ -237,7 +231,6 @@ class ilCompetenceRecommenderAllGUI
 		// set the actual content
 		$this->tpl->setContent($html);
 		$this->tpl->printToStdout();
-		return;
 	}
 
 	/**
@@ -247,7 +240,8 @@ class ilCompetenceRecommenderAllGUI
 	 * @return string the bar-html
 	 * @throws ilTemplateException
 	 */
-	private function showList(array $checked) {
+	private function showList(array $checked): string
+    {
 		$html = '';
 
 		// show head (title of columns)
@@ -277,7 +271,8 @@ class ilCompetenceRecommenderAllGUI
 	 * @return string the bar-html
 	 * @throws ilTemplateException
 	 */
-	private function showProfiles($profile_id, array $checked) {
+	private function showProfiles($profile_id, array $checked): string
+    {
 		$renderer = $this->ui->renderer();
 		$factory = $this->ui->factory();
 
@@ -315,7 +310,8 @@ class ilCompetenceRecommenderAllGUI
 	 * @return string
 	 * @throws ilTemplateException
 	 */
-	private function setBar($competence, string $profile_id = "") {
+	private function setBar($competence, string $profile_id = ""): string
+    {
 		$renderer = $this->ui->renderer();
 		$factory = $this->ui->factory();
 
@@ -427,15 +423,17 @@ class ilCompetenceRecommenderAllGUI
 	 * @param $base_skill_id
 	 * @return \ILIAS\UI\Component\Legacy\Legacy
 	 */
-	private function getModalContent($skill_id, $tref_id, $base_skill_id) {
+	private function getModalContent($skill_id, $tref_id, $base_skill_id): \ILIAS\UI\Component\Legacy\Legacy
+    {
 		$factory = $this->ui->factory();
 
+        // todo überprüfen
 		$this->ctrl->saveParameter($skill_id, "skill_id");
 		$this->ctrl->saveParameter($base_skill_id, "basic_skill_id");
 		$this->ctrl->saveParameter($tref_id, "tref_id");
 
 		// basic skill selection
-		$vtree = new ilVirtualSkillTree();
+		$vtree = new ilVirtualSkillTree();// todo parameter
 		$vtref_id = 0;
 		if (ilSkillTreeNode::_lookupType((int) $skill_id) == "sktr")
 		{
