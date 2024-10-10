@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use ILIAS\Skill\Profile\SkillProfileUserDBRepository;
+
 /**
  * Class ilCompetenceRecommenderAlgorithm
  *
@@ -12,7 +14,7 @@ declare(strict_types=1);
 
 class ilCompetenceRecommenderAlgorithm
 {
-	protected static ilCompetenceRecommenderAlgorithm $instance;
+	private static ?ilCompetenceRecommenderAlgorithm $instance = null;
 	protected ilDBInterface $db;
 	protected ilRbacSystem $access;
     private ilObjUser $user;
@@ -34,7 +36,7 @@ class ilCompetenceRecommenderAlgorithm
 	 */
 	protected static function getInstance(): ilCompetenceRecommenderAlgorithm
 	{
-		if (!self::$instance) {
+		if (is_null(self::$instance)) {
 			self::$instance = new self;
 		}
 		return self::$instance;
@@ -82,8 +84,9 @@ class ilCompetenceRecommenderAlgorithm
 
 		$skillsarray = [];
 
-		// get user profiles
-		$profiles = ilSkillProfile::getProfilesOfUser($user_id);
+		// todo get user profiles geändert. keine rollen mehr?
+		//$profiles = ilSkillProfile::getProfilesOfUser($user_id);
+		$profiles = (new SkillProfileUserDBRepository($db))->getProfilesOfUser($user_id);
 
 		$profile_settings = new ilCompetenceRecommenderSettings();
 		foreach ($profiles as $profile) {
@@ -115,8 +118,9 @@ class ilCompetenceRecommenderAlgorithm
 		$db = self::getDatabaseObj();
 		$user_id = self::getUserObj()->getId();
 
-		// get user profiles
-		$profiles = ilSkillProfile::getProfilesOfUser($user_id);
+		// todo get user profiles
+		// $profiles = ilSkillProfile::getProfilesOfUser($user_id);
+		$profiles = (new SkillProfileUserDBRepository($db))->getProfilesOfUser($user_id);
 
 		$profile_settings = new ilCompetenceRecommenderSettings();
 		foreach ($profiles as $profile) {
@@ -140,8 +144,9 @@ class ilCompetenceRecommenderAlgorithm
 
 		$profilearray = [];
 
-		// get user profiles
-		$profiles = ilSkillProfile::getProfilesOfUser($user_id);
+		// todo get user profiles
+		// $profiles = ilSkillProfile::getProfilesOfUser($user_id);
+		$profiles = (new SkillProfileUserDBRepository($db))->getProfilesOfUser($user_id);
 
 		$profile_settings = new ilCompetenceRecommenderSettings();
 		foreach ($profiles as $profile) {
@@ -163,8 +168,9 @@ class ilCompetenceRecommenderAlgorithm
 		$db = self::getDatabaseObj();
 		$user_id = self::getUserObj()->getId();
 
-		// get user profiles
-		$profiles = ilSkillProfile::getProfilesOfUser($user_id);
+		// todo get user profiles
+		// $profiles = ilSkillProfile::getProfilesOfUser($user_id);
+		$profiles = (new SkillProfileUserDBRepository($db))->getProfilesOfUser($user_id);
 
 		$profile_settings = new ilCompetenceRecommenderSettings();
 		foreach ($profiles as $profile) {
@@ -283,8 +289,9 @@ class ilCompetenceRecommenderAlgorithm
 		$db = self::getDatabaseObj();
 		$user_id = self::getUserObj()->getId();
 
-		// get user profiles
-		$profiles = ilSkillProfile::getProfilesOfUser($user_id);
+		// todo get user profiles
+		// $profiles = ilSkillProfile::getProfilesOfUser($user_id);
+		$profiles = (new SkillProfileUserDBRepository($db))->getProfilesOfUser($user_id);
 		$skillsToSort = [];
 
 		foreach ($profiles as $profile) {

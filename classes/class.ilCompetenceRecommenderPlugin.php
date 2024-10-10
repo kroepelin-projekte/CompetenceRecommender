@@ -13,7 +13,7 @@ class ilCompetenceRecommenderPlugin extends ilUserInterfaceHookPlugin
 {
     public const PLUGIN_ID = "comprec";
 
-	protected static ?ilCompetenceRecommenderPlugin $instance = null;
+	private static ?ilCompetenceRecommenderPlugin $instance = null;
 
 	/**
 	 * @return ilCompetenceRecommenderPlugin
