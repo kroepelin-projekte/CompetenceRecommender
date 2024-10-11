@@ -25,7 +25,7 @@ class ilCompetenceRecommenderInfoGUI
 		global $DIC;
 		$this->tpl = $DIC->ui()->mainTemplate();
 		$this->lng = $DIC->language();
-		$this->ctrl = $DIC->get('ctrl');
+		$this->ctrl = $DIC->ctrl();
 	}
 
 	/**

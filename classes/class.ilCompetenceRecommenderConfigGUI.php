@@ -18,7 +18,7 @@ use ILIAS\UI\Renderer;
 class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI
 {
 	protected ilCtrl $ctrl;
-	protected ilGlobalPageTemplate $tpl;
+	protected ilGlobalTemplateInterface $tpl;
 	protected ilLanguage $lng;
 	protected ilDBInterface $db;
 	protected Renderer $renderer;
@@ -33,8 +33,8 @@ class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI
 	{
 		global $DIC;
 
-		$this->tpl = $DIC['tpl'];
-		$this->lng = $DIC['lng'];
+		$this->tpl = $DIC->ui()->mainTemplate();
+		$this->lng = $DIC->language();
 		$this->ctrl = $DIC->ctrl();
 		$this->db = $DIC->database();
 		$this->renderer = $DIC->ui()->renderer();

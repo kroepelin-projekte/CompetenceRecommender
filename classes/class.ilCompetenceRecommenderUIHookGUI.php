@@ -84,8 +84,8 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI
 		// if data, show resources, else show init_obj or self-eval
 		if (!is_array($data)) {
 			foreach ($data as $row) {
-				$obj_id = ilObject::_lookupObjectId($row["id"]);
-				$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($row["id"])));
+				$obj_id = ilObject::_lookupObjectId((int) $row["id"]);
+				$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink((int) $row["id"])));
 				$image = $factory->image()->standard(ilObject::_getIcon($obj_id), "Icon");
 				$card = $factory->card()->standard($link, $image)->withSections(array($factory->legacy($row["title"])));
 				$allcards[] = $card;
@@ -98,8 +98,8 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI
 				$init_obj = \ilCompetenceRecommenderAlgorithm::getInitObjects();
 				if (!is_array($init_obj)) {
 					foreach ($init_obj as $object) {
-						$obj_id = ilObject::_lookupObjectId($object["id"]);
-						$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($object["id"])));
+						$obj_id = ilObject::_lookupObjectId((int) $object["id"]);
+						$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink((int) $object["id"])));
 						$image = $factory->image()->standard(ilObject::_getIcon($obj_id), "Icon");
 						$card = $factory->card()->standard($link, $image)->withSections(array($factory->legacy($object["title"])));
 						$allcards[] = $card;
@@ -126,8 +126,8 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI
 				$init_obj = \ilCompetenceRecommenderAlgorithm::getInitObjects();
 				if (!is_array($init_obj)) {
 					foreach ($init_obj as $object) {
-						$obj_id = ilObject::_lookupObjectId($object["id"]);
-						$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($object["id"])));
+						$obj_id = ilObject::_lookupObjectId((int) $object["id"]);
+						$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink((int) $object["id"])));
 						$image = $factory->image()->standard(ilObject::_getIcon($obj_id), "Icon");
 						$card = $factory->card()->standard($link, $image)->withSections(array($factory->legacy($object["title"])));
 						$allcards[] = $card;

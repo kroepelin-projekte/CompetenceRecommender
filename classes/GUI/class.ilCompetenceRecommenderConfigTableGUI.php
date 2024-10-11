@@ -53,7 +53,7 @@ class ilCompetenceRecommenderConfigTableGUI extends ilTable2GUI
 		$this->tpl->setVariable("INIT_OBJ", $a_set["init_obj"]);
 
 		$actions = $this->getActionMenuEntries($a_set);
-		$this->tpl->setVariable("ACTION_SELECTOR", $this->getActionMenu($actions, $a_set["id"]));
+		$this->tpl->setVariable("ACTION_SELECTOR", $this->getActionMenu($actions, (int) $a_set["id"]));
 	}
 
 	/**

@@ -347,8 +347,8 @@ class ilCompetenceRecommenderAllGUI
 			}
 			// find resources to show
 			foreach ($competence["resources"] as $resource) {
-				$obj_id = ilObject::_lookupObjectId($resource["id"]);
-				$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($resource["id"])));
+				$obj_id = ilObject::_lookupObjectId((int) $resource["id"]);
+				$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink((int) $resource["id"])));
 				$image = $factory->image()->standard(ilObject::_getIcon($obj_id), "Icon");
 				$card = $factory->card()->standard($link, $image);
 				if ($resource["level"] > $score) {
@@ -390,8 +390,8 @@ class ilCompetenceRecommenderAllGUI
 			$btpl->setVariable("OLDRESOURCETEXT", $this->lng->txt('ui_uihk_comprec_resources_hidden_text'));
 			// find resources to show
 			foreach ($competence["resources"] as $resource) {
-				$obj_id = ilObject::_lookupObjectId($resource["id"]);
-				$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink($resource["id"])));
+				$obj_id = ilObject::_lookupObjectId((int) $resource["id"]);
+				$link = $renderer->render($factory->link()->standard(ilObject::_lookupTitle($obj_id), ilLink::_getLink((int) $resource["id"])));
 				$image = $factory->image()->standard(ilObject::_getIcon($obj_id), "Icon");
 				$card = $factory->card()->standard($link, $image);
 				array_push($oldresourcearray, $card);
