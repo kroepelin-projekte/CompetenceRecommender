@@ -45,7 +45,7 @@ class ilCompetenceRecommenderSettings
 		}
 		$res = $this->db->query($query);
 		$row = $res->fetchAssoc();
-		return $row["value"];
+		return $row["value"] ?? '';
 	}
 
 	/**
