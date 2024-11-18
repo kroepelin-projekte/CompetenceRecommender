@@ -6,6 +6,7 @@ declare(strict_types=1);
 
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
+use ILIAS\UI\Implementation\Component\Input\Container\Form\Standard;
 
 /**
  * Class ilCompetenceRecommenderConfigGUI
@@ -33,6 +34,7 @@ class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI
 	{
 		global $DIC;
 
+        $this->dic = $DIC;
 		$this->tpl = $DIC->ui()->mainTemplate();
 		$this->lng = $DIC->language();
 		$this->ctrl = $DIC->ctrl();
@@ -96,14 +98,22 @@ class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI
 	 */
 	private function saveDropout(): void
     {
-		$value = $_POST["dropout_input"];
-		if (is_numeric($value) && $value >= 0) {
-			$save_settings = new ilCompetenceRecommenderSettings();
-			$save_settings->set("dropout_input", strval(floor($value)));
-            $this->tpl->setOnScreenMessage('info', $this->lng->txt("ui_uihk_comprec_dropout_save"));
-		} else {
-            $this->tpl->setOnScreenMessage('failure', $this->lng->txt("ui_uihk_comprec_dropout_failure"));
-		}
+        $form = $this->initConfigForm();
+        $form = $form->withRequest($this->dic->http()->request());
+        $form_data = $form->getData();
+
+        if ($form->getError()) {
+            $this->tpl->setOnScreenMessage(ilGlobalTemplateInterface::MESSAGE_TYPE_FAILURE, $this->lng->txt("ui_uihk_comprec_dropout_failure"));
+            $this->showConfig();
+            return;
+        }
+
+        $value = (int) $form_data['section']['dropout_input'];
+
+        $save_settings = new ilCompetenceRecommenderSettings();
+        $save_settings->set("dropout_input", strval(floor($value)));
+        $this->tpl->setOnScreenMessage('info', $this->lng->txt("ui_uihk_comprec_dropout_save"));
+
 		$this->showConfig();
 	}
 
@@ -112,7 +122,11 @@ class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI
 	 */
 	private function saveProfile(): void
     {
-		$selected_profile = $_GET["profile_id"];
+        $selected_profile = '';
+        if ($this->dic->http()->wrapper()->query()->has('profile_id')) {
+            $selected_profile = $this->dic->http()->wrapper()->query()->retrieve('profile_id', $this->dic->refinery()->kindlyTo()->string());
+        }
+
 		$save_settings = new ilCompetenceRecommenderSettings();
 		if ($save_settings->get("checked_profile_".$selected_profile) != $selected_profile) {
 			$save_settings->set("checked_profile_" . $selected_profile, $selected_profile);
@@ -175,7 +189,9 @@ class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI
 		// info text
 		$html .= $this->lng->txt("ui_uihk_comprec_config_info");
 
-		$form = new ilPropertyFormGUI();
+
+
+/*		$form = new ilPropertyFormGUI();
 		$form->setTitle($this->lng->txt('ui_uihk_comprec_config_dropout_title'));
 		$form->addCommandButton("save_dropout", $this->lng->txt('ui_uihk_comprec_config_save'));
 		$form->setFormAction($this->ctrl->getFormAction($this));
@@ -190,7 +206,9 @@ class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI
 		$form = new ilPropertyFormGUI();
 		$form->setTitle($this->lng->txt('ui_uihk_comprec_profile_config'));
 
-		$html .= $form->getHTML();
+		$html .= $form->getHTML();*/
+
+        $html .= $this->renderer->render($this->initConfigForm());
 
 		$tabledata = [];
 		foreach ($available_profiles as $profile) {
@@ -208,6 +226,39 @@ class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI
 
 		$this->tpl->setContent($html);
 	}
+
+    /**
+     * @return Standard
+     * @throws ilCtrlException
+     */
+    private function initConfigForm(): Standard
+    {
+        $old_data = new ilCompetenceRecommenderSettings();
+
+        $dropout_input = $this->factory->input()->field()->text($this->lng->txt('ui_uihk_comprec_dropout_input_label'), $this->lng->txt('ui_uihk_comprec_dropout_input_info'))
+                           ->withRequired(true)
+                           ->withAdditionalTransformation($this->dic->refinery()->custom()->constraint(
+                               fn($value) => is_numeric($value) && $value >= 0,
+                               $this->lng->txt("ui_uihk_comprec_dropout_failure")
+                           ))
+                           ->withValue($old_data->get("dropout_input"));
+
+        $section = $this->factory->input()->field()->section([
+            'dropout_input' => $dropout_input,
+        ], $this->lng->txt('ui_uihk_comprec_config_dropout_title'));
+
+        $form = $this->factory->input()->container()->form()->standard(
+            $this->ctrl->getFormActionByClass(self::class, 'save_dropout'),
+            ['section' => $section]
+        );
+
+        // Load $_POST data if available
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $form = $form->withRequest($this->dic->http()->request());
+        }
+
+        return $form;
+    }
 
 	/**
 	 * shows the repository object picker
