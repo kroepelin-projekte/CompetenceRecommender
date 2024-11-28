@@ -108,7 +108,7 @@ class ilCompetenceRecommenderUIHookGUI extends ilUIHookPluginGUI
 					$renderedobjects = $this->lng->txt('ui_uihk_comprec_no_formationdata_init_obj') . "<br />" .$renderer->render($deck);
 				} else {
 					$renderedobjects = $this->lng->txt('ui_uihk_comprec_no_formationdata')
-                        . " "
+                        . "<br>"
                         . $renderer->render($factory->button()->standard(
                             $this->lng->txt('ui_uihk_comprec_self_eval'),
 							$this->ctrl->getLinkTargetByClass([ilUIPluginRouterGUI::class, ilCompetenceRecommenderGUI::class], 'eval'))
