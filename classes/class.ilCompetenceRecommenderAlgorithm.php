@@ -631,7 +631,7 @@ class ilCompetenceRecommenderAlgorithm
 								AND suhl.".$use_id." ='" . $skill_id . "'
 								ORDER BY suhl.status_date DESC");
 
-		$date = $lastUsedDate->fetchAssoc()["status_date"];
+		$date = $lastUsedDate->fetchAssoc()["status_date"] ?? null;
 		if (!isset($date)) {
 			$date = 0;
 		}
