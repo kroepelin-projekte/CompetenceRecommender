@@ -617,7 +617,7 @@ class ilCompetenceRecommenderAlgorithm
      * @param bool $wo_template
      * @return string
      */
-	private static function getLastUsedDate(int $skill_id, bool $wo_template=false): string // todo string?
+	private static function getLastUsedDate(int $skill_id, bool $wo_template=false): string
     {
 		$db = self::getDatabaseObj();
 		$user_id = self::getUserObj()->getId();
@@ -633,7 +633,7 @@ class ilCompetenceRecommenderAlgorithm
 
 		$date = $lastUsedDate->fetchAssoc()["status_date"] ?? null;
 		if (!isset($date)) {
-			$date = 0;
+			$date = '0';
 		}
 
 		return $date;
