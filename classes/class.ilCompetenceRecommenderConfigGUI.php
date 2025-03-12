@@ -112,7 +112,7 @@ class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI
 
         $save_settings = new ilCompetenceRecommenderSettings();
         $save_settings->set("dropout_input", strval(floor($value)));
-        $this->tpl->setOnScreenMessage('info', $this->lng->txt("ui_uihk_comprec_dropout_save"));
+        $this->tpl->setOnScreenMessage(ilGlobalTemplateInterface::MESSAGE_TYPE_SUCCESS, $this->lng->txt("ui_uihk_comprec_dropout_save"));
 
 		$this->showConfig();
 	}
@@ -241,7 +241,7 @@ class ilCompetenceRecommenderConfigGUI extends ilPluginConfigGUI
                                fn($value) => is_numeric($value) && $value >= 0,
                                $this->lng->txt("ui_uihk_comprec_dropout_failure")
                            ))
-                           ->withValue($old_data->get("dropout_input"));
+                           ->withValue($old_data->get("dropout_input") ?? '');
 
         $section = $this->factory->input()->field()->section([
             'dropout_input' => $dropout_input,

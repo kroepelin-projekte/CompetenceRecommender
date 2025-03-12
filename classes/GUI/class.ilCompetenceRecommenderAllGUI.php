@@ -107,7 +107,7 @@ class ilCompetenceRecommenderAllGUI
 		$skill_id = $_GET["skill_id"];
 		$tref_id = $_GET["tref_id"];
 		$level_id = $_POST["se"];
-		ilPersonalSkill::saveSelfEvaluation($user, (int) $skill_id,
+		ilPersonalSkill::saveSelfEvaluation($user, (int) $skill_id,// todo...
 			(int) $tref_id, (int) $base_skill_id, (int) $level_id);
 		sleep(1);
         $this->tpl->setOnScreenMessage('success', $this->lng->txt("ui_uihk_comprec_self_eval_saved"), true);
@@ -136,7 +136,7 @@ class ilCompetenceRecommenderAllGUI
 		if (isset($_GET["selected_profile"])) {
 			$settings->set("selected_profile", $_GET["selected_profile"], $user_id);
 			$showprofile = $_GET["selected_profile"];
-		}  else if ($settings->get("selected_profile", $user_id) != null) {
+		}  elseif ($settings->get("selected_profile", $user_id) != null) {
 			$showprofile = $settings->get("selected_profile", $user_id);
 		} else {
 			$showprofile = -1;
@@ -157,7 +157,7 @@ class ilCompetenceRecommenderAllGUI
 		$options = array(-1 => $this->lng->txt("ui_uihk_comprec_selector_show_all"));
 		$profiles = ilCompetenceRecommenderAlgorithm::getUserProfiles();
 		foreach ($profiles as $profile) {
-			$options[$profile["id"]] = $profile["title"];
+			$options[$profile->getId()] = $profile->getTitle();
 		}
 		$selectprofiles->setOptions($options);
 		$selectprofiles->setValue($showprofile);
@@ -173,7 +173,7 @@ class ilCompetenceRecommenderAllGUI
 			$settings->set("sortation",$_GET["sortation"], $user_id);
 			$sortation = $_GET["sortation"];
 
-		} else if ($settings->get("sortation", $user_id) != null) {
+		} elseif ($settings->get("sortation", $user_id) != null) {
 			$sortation = $settings->get("sortation", $user_id);
 		} else {
 			$sortation = "diff";
@@ -186,7 +186,7 @@ class ilCompetenceRecommenderAllGUI
 			$settings->set("filter",$_GET["filter"], $user_id);
 			$filter = $_GET["filter"];
 
-		} else if ($settings->get("filter", $user_id) != null) {
+		} elseif ($settings->get("filter", $user_id) != null) {
 			$filter = $settings->get("filter", $user_id);
 		} else {
 			$filter = "showall";
@@ -273,7 +273,7 @@ class ilCompetenceRecommenderAllGUI
 		// get profiles the user has from algorithm
 		$profiles = ilCompetenceRecommenderAlgorithm::getUserProfiles();
 		foreach ($profiles as $profile) {
-			if ($profile["id"] == $profile_id || $profile_id == -1) {
+			if ($profile->getId() == $profile_id || $profile_id == -1) {
 				// get data from algorithm
 				$rawcontent = ilCompetenceRecommenderAlgorithm::getCompetencesToProfile($profile);
 				$sortedRaw = ilCompetenceRecommenderAlgorithm::sortCompetences($rawcontent);
@@ -284,10 +284,10 @@ class ilCompetenceRecommenderAllGUI
 						&& (($competence["resources"] != array() && $competence["score"] < $competence["goal"] && $competence["score"] > 0) || $checked["onlymaterial"] != 1)
 						&& ($competence["score"] >= $competence["goal"] || $checked["hasfinished"] != 1)
 					) {
-						$content .= $this->setBar($competence, $profile["id"]);
+						$content .= $this->setBar($competence, $profile->getId());
 					}
 				}
-				$panel = $factory->panel()->standard($profile["title"], $factory->legacy($content));
+				$panel = $factory->panel()->standard($profile->getTitle(), $factory->legacy($content));
 				$html .= $renderer->render($panel);
 			}
 		}
