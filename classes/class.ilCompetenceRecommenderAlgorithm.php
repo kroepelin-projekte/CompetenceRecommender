@@ -373,7 +373,7 @@ class ilCompetenceRecommenderAlgorithm
 		$profilegoal = $db->query("SELECT nr FROM skl_level WHERE skill_id = '" . $skill["base_skill_id"] . "' AND id = '" . $skill["level_id"] . "'");
 		$goal = $profilegoal->fetchAssoc();
 		if ($skill["tref_id"] != 0) {$score = self::computeScore($skill["tref_id"]);}
-		else {$score = self::computeScore($skill["base_skill_id"], true);}
+		else {$score = self::computeScore((string)$skill["base_skill_id"], true);}
 		if ($n == 0 || ($score != 0 && $score < $goal["nr"])) {
 			if ($skill["tref_id"] == 0) {
 				//set everything a step down (-1) for that the percentage of the lowest step is 0%
