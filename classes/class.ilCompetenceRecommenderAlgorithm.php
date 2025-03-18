@@ -98,7 +98,7 @@ class ilCompetenceRecommenderAlgorithm
 				foreach ($skills as $skill) {
 					$profilegoal = $db->query("SELECT nr FROM skl_level WHERE skill_id = '" . $skill["base_skill_id"] . "' AND id = '" . $skill["level_id"] . "'");
 					$goal = $profilegoal->fetchAssoc();
-					$score = self::computeScore($skill["tref_id"]);
+					$score = self::computeScore((string)$skill["tref_id"]);
 					if ($score < $goal["nr"] && $score > 0) {
 						$skillsarray[] = $skill;
 					}
@@ -376,6 +376,11 @@ class ilCompetenceRecommenderAlgorithm
 		else {$score = self::computeScore((string)$skill["base_skill_id"], true);}
 		if ($n == 0 || ($score != 0 && $score < $goal["nr"])) {
 			if ($skill["tref_id"] == 0) {
+                if($goal["nr"]-1 == 0) {
+                    $percentage = 0;
+                } else {
+                    $percentage = ($score-1) / ($goal["nr"]-1);
+                }
 				//set everything a step down (-1) for that the percentage of the lowest step is 0%
 				$skillsToSort[$skill["base_skill_id"]] = array(
 					"id" => $skill["tref_id"],
@@ -388,7 +393,7 @@ class ilCompetenceRecommenderAlgorithm
 					"score" => $score == 0 ? $score = 0 : $score = $score - 1,
 					"diff" => $score == 0 ? 1 - ($goal["nr"]-1) / ($levelcount-1) : ($score-1) / ($goal["nr"]-1),
 					"goal" => $goal["nr"] - 1,
-					"percentage" => ($score-1) / ($goal["nr"]-1),
+					"percentage" => $percentage,
 					"scale" => $levelcount-1,
 					"resources" => self::getResourcesForCompetence(intval($skill["base_skill_id"]), true));
 			} else if (!isset($skillsToSort[$skill["tref_id"]])) {

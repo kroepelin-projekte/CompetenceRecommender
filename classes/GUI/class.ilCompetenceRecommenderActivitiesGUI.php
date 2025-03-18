@@ -219,12 +219,6 @@ class ilCompetenceRecommenderActivitiesGUI
     {
 		$factory = $this->ui->factory();
 
-        // todo prüfen und wofür ist das?
-		$this->ctrl->saveParameter($skill_id, "skill_id");
-		$this->ctrl->saveParameter($base_skill_id, "basic_skill_id");
-		$this->ctrl->saveParameter($tref_id, "tref_id");
-
-		// basic skill selection
 		$vtree = new ilVirtualSkillTree($tref_id);// todo tree id fehlt
 		$vtref_id = 0;
 		if (ilSkillTreeNode::_lookupType((int) $skill_id) == "sktr") {
@@ -250,7 +244,6 @@ class ilCompetenceRecommenderActivitiesGUI
 		$this->ctrl->setParameter($this, "skill_id", $skill_id);
 		$this->ctrl->setParameter($this, "tref_id", $tref_id);
 
-		// table
 		$tab = new ilCompetenceRecommenderSelfEvalModalTableGUI(
             $this,
             "all",

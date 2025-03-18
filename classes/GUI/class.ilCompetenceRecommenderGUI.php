@@ -77,6 +77,9 @@ class ilCompetenceRecommenderGUI
 					case 'eval':
 						$this->forwardAll();
 						break;
+                    case 'saveSelfEvaluation':
+                        $this->forwardSaveSelfEvaluation();
+                        break;
 					default:
 						throw new Exception("ilCompetenceRecommenderGUI: Unknown command: ".$cmd);
 						break;
@@ -93,6 +96,12 @@ class ilCompetenceRecommenderGUI
 	{
 		return 'dashboard';
 	}
+    public function forwardSaveSelfEvaluation(): void
+    {
+        $this->tabs->activateTab("all");
+        $gui = new \ilCompetenceRecommenderAllGUI();
+        $this->ctrl->forwardCommand($gui);
+    }
 
 	/**
 	 * forwards to standard view, made by the activities gui
