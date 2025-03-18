@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use ILIAS\Skill\Personal\SelfEvaluationManager;
+
 /**
  * Class ilCompetenceRecommenderActivitiesGUI
  *
@@ -61,9 +63,13 @@ class ilCompetenceRecommenderActivitiesGUI
 		$skill_id = $_GET["skill_id"];
 		$tref_id = $_GET["tref_id"];
 		$level_id = $_POST["se"];
-		ilPersonalSkill::saveSelfEvaluation($user, (int) $skill_id,
-			(int) $tref_id, (int) $base_skill_id, (int) $level_id);
-		sleep(1);
+        $self_eval_manager = new SelfEvaluationManager();
+
+        $self_eval_manager->saveSelfEvaluation(
+            $user, (int) $skill_id,
+            (int) $tref_id, (int) $base_skill_id, (int) $level_id
+        );
+		//sleep(1);
         $this->tpl->setOnScreenMessage('success', $this->lng->txt("ui_uihk_comprec_self_eval_saved"), true);
 		$this->ctrl->clearParametersByClass(\ilCompetenceRecommenderActivitiesGUI::class);
 		$this->ctrl->redirect($this, "show");
