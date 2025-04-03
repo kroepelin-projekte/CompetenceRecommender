@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use ILIAS\Skill\Personal\SelfEvaluationManager;
+
 
 /**
  * Class ilCompetenceRecommenderAllGUI
@@ -114,13 +114,10 @@ class ilCompetenceRecommenderAllGUI
         $skill_id = $_GET["skill_id"];
         $tref_id = $_GET["tref_id"];
         $level_id = $_POST["se"];
-        $self_eval_manager = new SelfEvaluationManager();
 
-        $self_eval_manager->saveSelfEvaluation(
-            $user, (int) $skill_id,
-            (int) $tref_id, (int) $base_skill_id, (int) $level_id
-        );
-        //sleep(1);
+        ilPersonalSkill::saveSelfEvaluation($user, (int) $skill_id,
+            (int) $tref_id, (int) $base_skill_id, (int) $level_id);
+        sleep(1);
         $this->tpl->setOnScreenMessage('success', $this->lng->txt("ui_uihk_comprec_self_eval_saved"), true);
         $this->ctrl->clearParametersByClass(\ilCompetenceRecommenderAllGUI::class);
         $this->ctrl->redirect($this, "all");
@@ -176,7 +173,7 @@ class ilCompetenceRecommenderAllGUI
         $options = array(-1 => $this->lng->txt("ui_uihk_comprec_selector_show_all"));
         $profiles = ilCompetenceRecommenderAlgorithm::getUserProfiles();
         foreach ($profiles as $profile) {
-            $options[$profile->getId()] = $profile->getTitle();
+            $options[$profile['id']] = $profile['title'];
         }
         $selectprofiles->setOptions($options);
         $selectprofiles->setValue($showprofile);
@@ -309,7 +306,7 @@ class ilCompetenceRecommenderAllGUI
         // get profiles the user has from algorithm
         $profiles = ilCompetenceRecommenderAlgorithm::getUserProfiles();
         foreach ($profiles as $profile) {
-            if ($profile->getId() == $profile_id || $profile_id == -1) {
+            if ($profile['id'] == $profile_id || $profile_id == -1) {
                 // get data from algorithm
                 $rawcontent = ilCompetenceRecommenderAlgorithm::getCompetencesToProfile($profile);
                 $sortedRaw = ilCompetenceRecommenderAlgorithm::sortCompetences($rawcontent);
@@ -320,10 +317,10 @@ class ilCompetenceRecommenderAllGUI
                         && (($competence["resources"] != array() && $competence["score"] < $competence["goal"] && $competence["score"] > 0) || $checked["onlymaterial"] != 1)
                         && ($competence["score"] >= $competence["goal"] || $checked["hasfinished"] != 1)
                     ) {
-                        $content .= $this->setBar($competence, (string) $profile->getId());
+                        $content .= $this->setBar($competence, (string) $profile['id']);
                     }
                 }
-                $panel = $factory->panel()->standard($profile->getTitle(), $factory->legacy($content));
+                $panel = $factory->panel()->standard($profile['title'], $factory->legacy($content));
                 $html .= $renderer->render($panel);
             }
         }
@@ -494,7 +491,7 @@ class ilCompetenceRecommenderAllGUI
         $this->ctrl->saveParameter($this, (string) $tref_id);
 
         // basic skill selection
-        $vtree = new ilVirtualSkillTree($tref_id);// todo parameter
+        $vtree = new ilVirtualSkillTree((int)$tref_id);// todo parameter
         $vtref_id = 0;
         if (ilSkillTreeNode::_lookupType((int) $skill_id) == "sktr") {
             $vtref_id = $skill_id;

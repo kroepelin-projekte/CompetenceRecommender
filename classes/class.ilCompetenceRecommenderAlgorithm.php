@@ -90,10 +90,10 @@ class ilCompetenceRecommenderAlgorithm
 
 		$profile_settings = new ilCompetenceRecommenderSettings();
 		foreach ($profiles as $profile) {
-			if ($profile_settings->get("checked_profile_" . $profile->getId()) == $profile->getId()) {
+			if ($profile_settings->get("checked_profile_" . $profile['id']) == $profile['id']) {
 				$result = $db->query("SELECT spl.level_id, spl.base_skill_id, spl.tref_id
 									FROM skl_profile_level AS spl
-									WHERE spl.profile_id = '" . $profile->getId() . "'");
+									WHERE spl.profile_id = '" . $profile['id']. "'");
 				$skills = $db->fetchAll($result);
 				foreach ($skills as $skill) {
 					$profilegoal = $db->query("SELECT nr FROM skl_level WHERE skill_id = '" . $skill["base_skill_id"] . "' AND id = '" . $skill["level_id"] . "'");
@@ -124,7 +124,7 @@ class ilCompetenceRecommenderAlgorithm
 
 		$profile_settings = new ilCompetenceRecommenderSettings();
 		foreach ($profiles as $profile) {
-			if ($profile_settings->get("checked_profile_".$profile->getId()) == $profile->getId()) {
+			if ($profile_settings->get("checked_profile_".$profile['id']) == $profile['id']) {
 				return true;
 			}
 		}
@@ -150,7 +150,7 @@ class ilCompetenceRecommenderAlgorithm
 
 		$profile_settings = new ilCompetenceRecommenderSettings();
 		foreach ($profiles as $profile) {
-			if ($profile_settings->get("checked_profile_".$profile->getId()) == $profile->getId()) {
+			if ($profile_settings->get("checked_profile_".$profile['id']) == $profile['id']) {
 				$profilearray[] = $profile;
 			}
 		}
@@ -242,10 +242,10 @@ class ilCompetenceRecommenderAlgorithm
 		$ref_ids = [];
 
 		foreach ($profiles as $profile) {
-			if ($profile_id == -1 || $profile_id == $profile->getId()) {
-				$ref_id = $settings->get("init_obj_" . $profile->getId());
+			if ($profile_id == -1 || $profile_id == $profile['id']) {
+				$ref_id = $settings->get("init_obj_" . $profile['id']);
 				if (is_numeric($ref_id)) {
-					$ref_ids[] = array("id" => $ref_id, "title" => $profile->getTitle());
+					$ref_ids[] = array("id" => $ref_id, "title" => $profile['title']);
 				}
 			}
 		}
@@ -320,16 +320,16 @@ class ilCompetenceRecommenderAlgorithm
 
 		$profile_settings = new ilCompetenceRecommenderSettings();
 
-		if ($profile_settings->get("checked_profile_".$profile->getId()) == $profile->getId()) {
+		if ($profile_settings->get("checked_profile_".$profile['id']) == $profile['id']) {
 			$result = $db->query("SELECT spl.tref_id,spl.base_skill_id,spl.level_id,stn.title
 									FROM skl_profile_level AS spl
 									JOIN skl_tree_node AS stn ON spl.tref_id = stn.obj_id
-									WHERE spl.profile_id = '" . $profile->getId() . "'");
+									WHERE spl.profile_id = '" . $profile['id'] . "'");
 			$skills = $db->fetchAll($result);
 			$result_wo_template = $db->query("SELECT spl.tref_id,spl.base_skill_id,spl.level_id,stn.title
 									FROM skl_profile_level AS spl
 									JOIN skl_tree_node AS stn ON spl.base_skill_id = stn.obj_id
-									WHERE spl.profile_id = '" . $profile->getId() . "'");
+									WHERE spl.profile_id = '" . $profile['id'] . "'");
 			$skills_wo_template = $db->fetchAll($result_wo_template);
 			foreach ($skills as $skill) {
 				$skillsToSort = self::getSkillData($skill, $skillsToSort, $n);
@@ -676,7 +676,7 @@ class ilCompetenceRecommenderAlgorithm
 								FROM skl_level
 								WHERE id ='".$value["level_id"]."'");
 			$levelnumber = $level->fetchAssoc();
-			if ($access->checkAccessOfUser($user, 'read', $value["rep_ref_id"])) {
+			if ($access->checkAccessOfUser((int)$user, 'read', (int)$value["rep_ref_id"])) {
 				$refIds[] = array("id" => $value["rep_ref_id"], "title" => $value["title"], "level" => ($levelnumber["nr"] - 1));
 			}
 		}

@@ -225,7 +225,7 @@ class ilCompetenceRecommenderActivitiesGUI
     {
 		$factory = $this->ui->factory();
 
-		$vtree = new ilVirtualSkillTree($tref_id);// todo tree id fehlt
+		$vtree = new ilVirtualSkillTree((int)$tref_id);
 		$vtref_id = 0;
 		if (ilSkillTreeNode::_lookupType((int) $skill_id) == "sktr") {
 			$vtref_id = $skill_id;

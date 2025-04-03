@@ -49,19 +49,16 @@ class ilCompetenceRecommenderSelfEvalModalTableGUI extends ilTable2GUI
         $this->tref_id = (int) $a_tref_id;
         $this->basic_skill_id = $a_basic_skill_id;
         $this->parent_obj = $a_parent_obj;
-        $self_eval_manager = new SelfEvaluationManager();
 
-        $this->cur_level_id = $self_eval_manager->getSelfEvaluation(
-            $ilUser->getId(),
-            $this->top_skill_id, $this->tref_id, $this->basic_skill_id
-        );
+        $this->cur_level_id = ilPersonalSkill::getSelfEvaluation($ilUser->getId(),
+            (int)$this->top_skill_id, (int)$this->tref_id, (int)$this->basic_skill_id);
 
         // build title
         $stree = new ilSkillTree();
         if ($this->tref_id != 0) {
             $path = $stree->getPathFull($this->tref_id);
         } else {
-            $path = $stree->getPathFull($this->basic_skill_id);
+            $path = $stree->getPathFull((int)$this->basic_skill_id);
         }
         $title = $path[count($path) - 1]["title"] ?? "";
 
@@ -103,7 +100,7 @@ class ilCompetenceRecommenderSelfEvalModalTableGUI extends ilTable2GUI
      */
     public function getLevels(): array
     {
-        $this->skill = ilSkillTreeNodeFactory::getInstance($this->basic_skill_id);
+        $this->skill = ilSkillTreeNodeFactory::getInstance((int)$this->basic_skill_id);
         $levels[] = array(
             "id" => 0,
             "title" => $this->lng->txt("ui_uihk_comprec_skmg_no_skills"),
