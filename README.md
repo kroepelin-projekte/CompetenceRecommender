@@ -20,7 +20,7 @@ Run the following commands:
 ```bash
 mkdir -p Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/
 cd Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/
-git clone https://github.com/fluxapps/CompetenceRecommender.git
+git clone https://github.com/kroepelin-projekte/CompetenceRecommender.git
 ```
 
 Update and activate the plugin in the ILIAS Plugin Administration
