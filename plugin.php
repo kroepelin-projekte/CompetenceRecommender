@@ -8,7 +8,8 @@
 
 $id = "comprec";
 $version = "1.1.3";
-$ilias_min_version = "8.0";
+$ilias_min_version = "9.0";
 $ilias_max_version = "9.99";
-$responsible = "fluxlabs ag";
-$responsible_mail = "support@fluxlabs.ch";
+
+$responsible = "Kröpelin Projekt GmbH";
+$responsible_mail = "info@kroepelin-projekte.de";
