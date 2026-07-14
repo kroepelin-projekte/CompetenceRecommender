@@ -7,9 +7,9 @@
  */
 
 $id = "comprec";
-$version = "1.1.3";
-$ilias_min_version = "9.0";
-$ilias_max_version = "9.99";
+$version = "2.1";
+$ilias_min_version = "10.0";
+$ilias_max_version = "10.99";
 
 $responsible = "Kröpelin Projekt GmbH";
 $responsible_mail = "info@kroepelin-projekte.de";

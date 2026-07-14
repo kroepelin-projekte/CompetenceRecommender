@@ -13,27 +13,27 @@ class ilCompetenceRecommenderPlugin extends ilUserInterfaceHookPlugin
 {
     public const PLUGIN_ID = "comprec";
 
-	private static ?ilCompetenceRecommenderPlugin $instance = null;
+    private static ?ilCompetenceRecommenderPlugin $instance = null;
 
-	/**
-	 * @return ilCompetenceRecommenderPlugin
-	 */
-	public static function getInstance(): ilCompetenceRecommenderPlugin
+    /**
+     * @return ilCompetenceRecommenderPlugin
+     */
+    public static function getInstance(): ilCompetenceRecommenderPlugin
     {
-		if (is_null(self::$instance)) {
+        if (is_null(self::$instance)) {
             global $DIC;
-			self::$instance = new self($DIC->database(), $DIC['component.repository'], self::PLUGIN_ID);
-		}
+            self::$instance = new self($DIC->database(), $DIC['component.repository'], self::PLUGIN_ID);
+        }
 
-		return self::$instance;
-	}
+        return self::$instance;
+    }
 
-	/**
-	 * @inheritdoc
-	 */
-	protected function afterUninstall(): void
+    /**
+     * @inheritdoc
+     */
+    protected function afterUninstall(): void
     {
-		global $DIC;
-		$DIC->database()->dropTable("ui_uihk_comprec_config");
-	}
+        global $DIC;
+        $DIC->database()->dropTable("ui_uihk_comprec_config");
+    }
 }

@@ -18,19 +18,10 @@ Start at your ILIAS root directory.
 
 Run the following commands:
 ```bash
-mkdir -p Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/
-cd Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/
+mkdir -p public/Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/
+cd public/Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/
 git clone https://github.com/kroepelin-projekte/CompetenceRecommender.git
 ```
-
-Update and activate the plugin in the ILIAS Plugin Administration
-
-### Dependencies (Already exists in `vendor`)
-* ILIAS 8/9
-* compRoles patch of Leifos
-* PHP >=7.4
-* [composer](https://getcomposer.org)
-* PHPUnit ^7
 
 ## Usage
 The plugin recommends resources to the learners for their progress, depending on which profile they have and their skill-level.
@@ -53,7 +44,7 @@ The plugin recommends resources to the learners for their progress, depending on
 
 ## Development information
 The plugin was developed by Leonie Feldbusch at the University of Freiburg in her thesis 2019 and is 
-now maintained by fluxlabs ag. 
+now maintained by Kröpelin Projekt GmbH. 
 
 ## Maintenance
-fluxlabs ag, support@fluxlabs.ch
+Kröpelin Projekt GmbH, inti@kroepelin-projekt.de

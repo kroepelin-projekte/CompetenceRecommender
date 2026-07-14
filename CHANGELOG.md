@@ -1,5 +1,6 @@
 # Changelog
-
+## 2.1
+- Uprade to ilias version 10
 ## [1.1.2]
 - fix: show on dashboard
 

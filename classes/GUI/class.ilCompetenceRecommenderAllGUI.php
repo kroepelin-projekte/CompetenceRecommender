@@ -53,7 +53,9 @@ class ilCompetenceRecommenderAllGUI
         }
         if ($_GET["sortation"] == null) {
             $this->ctrl->setParameterByClass(
-                \ilCompetenceRecommenderAllGUI::class, "sortation", $settings->get('sortation', $user_id)
+                \ilCompetenceRecommenderAllGUI::class,
+                "sortation",
+                $settings->get('sortation', $user_id)
             );
         }
         switch ($cmd) {
@@ -117,8 +119,11 @@ class ilCompetenceRecommenderAllGUI
         $self_eval_manager = new SelfEvaluationManager();
 
         $self_eval_manager->saveSelfEvaluation(
-            $user, (int) $skill_id,
-            (int) $tref_id, (int) $base_skill_id, (int) $level_id
+            $user,
+            (int) $skill_id,
+            (int) $tref_id,
+            (int) $base_skill_id,
+            (int) $level_id
         );
         //sleep(1);
         $this->tpl->setOnScreenMessage('success', $this->lng->txt("ui_uihk_comprec_self_eval_saved"), true);
@@ -157,10 +162,12 @@ class ilCompetenceRecommenderAllGUI
         // set the viewmode-control
         $actions = array(
             $this->lng->txt('ui_uihk_comprec_list') => $this->ctrl->getLinkTargetByClass(
-                \ilCompetenceRecommenderAllGUI::class, "listnew"
+                \ilCompetenceRecommenderAllGUI::class,
+                "listnew"
             ),
             $this->lng->txt('ui_uihk_comprec_profiles') => $this->ctrl->getLinkTargetByClass(
-                \ilCompetenceRecommenderAllGUI::class, "profiles"
+                \ilCompetenceRecommenderAllGUI::class,
+                "profiles"
             )
         );
         $aria_label = "change_the_currently_displayed_mode";
@@ -170,7 +177,7 @@ class ilCompetenceRecommenderAllGUI
 
         // add the selector of profiles and set selected profile
         $this->tpl->addJavaScript(
-            "./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/ProfileSelector.js"
+            "public/Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/ProfileSelector.js"
         );
         $selectprofiles = new ilSelectInputGUI($this->lng->txt("profile"), "selected_profile");
         $options = array(-1 => $this->lng->txt("ui_uihk_comprec_selector_show_all"));
@@ -196,11 +203,10 @@ class ilCompetenceRecommenderAllGUI
         } else {
             $sortation = "diff";
         }
-        $sorter = $factory->viewControl()->sortation($sortoptions)
+        $sorter = $factory->viewControl()
+                          ->sortation($sortoptions, (string) $sortation)
                           ->withTargetURL($this->http->request()->getRequestTarget(), 'sortation')
-                          ->withLabel(
-                              $this->lng->txt('ui_uihk_comprec_sortation_label') . ": " . $sortoptions[$sortation]
-                          );
+                          ->withLabelPrefix($this->lng->txt('ui_uihk_comprec_sortation_label') . ': ');
 
         if (isset($_GET["filter"])) {
             $settings->set("filter", $_GET["filter"], $user_id);
@@ -212,16 +218,20 @@ class ilCompetenceRecommenderAllGUI
         }
         $actions = array(
             $this->lng->txt("ui_uihk_comprec_showall") => $this->ctrl->getLinkTargetByClass(
-                \ilCompetenceRecommenderAllGUI::class, 'filter_showall'
+                \ilCompetenceRecommenderAllGUI::class,
+                'filter_showall'
             ),
             $this->lng->txt("ui_uihk_comprec_onlymaterial") => $this->ctrl->getLinkTargetByClass(
-                \ilCompetenceRecommenderAllGUI::class, 'filter_onlymaterial'
+                \ilCompetenceRecommenderAllGUI::class,
+                'filter_onlymaterial'
             ),
             $this->lng->txt("ui_uihk_comprec_withoutdata") => $this->ctrl->getLinkTargetByClass(
-                \ilCompetenceRecommenderAllGUI::class, 'filter_withoutdata'
+                \ilCompetenceRecommenderAllGUI::class,
+                'filter_withoutdata'
             ),
             $this->lng->txt("ui_uihk_comprec_hasfinished") => $this->ctrl->getLinkTargetByClass(
-                \ilCompetenceRecommenderAllGUI::class, 'filter_hasfinished'
+                \ilCompetenceRecommenderAllGUI::class,
+                'filter_hasfinished'
             ),
         );
         $aria_label = "filter";
@@ -271,8 +281,9 @@ class ilCompetenceRecommenderAllGUI
 
         // show head (title of columns)
         $atpl = new ilTemplate(
-            "./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/tpl.comprecBarColumnTitle.html",
-            true, true
+            "public/Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/tpl.comprecBarColumnTitle.html",
+            true,
+            true
         );
         $atpl->setVariable("NAME_HEAD", $this->lng->txt('ui_uihk_comprec_competence'));
         $atpl->setVariable("BAR_HEAD", $this->lng->txt('ui_uihk_comprec_progress'));
@@ -360,8 +371,9 @@ class ilCompetenceRecommenderAllGUI
 
         // show bars
         $btpl = new ilTemplate(
-            "./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/tpl.comprecBar.html",
-            true, true
+            "public/Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/tpl.comprecBar.html",
+            true,
+            true
         );
         $btpl->setVariable("TITLE", $competence["title"]);
         if ($competence["id"] == 0) {
@@ -382,9 +394,12 @@ class ilCompetenceRecommenderAllGUI
             $btpl->setVariable("SELFEVALTEXT", ". " . $this->lng->txt('ui_uihk_comprec_selfevaltext'));
             $modal = $factory->modal()
                              ->roundtrip(
-                                 $this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent(
-                                 $competence["parent"], $competence["id"], $competence["base_skill"]
-                             )
+                                 $this->lng->txt('ui_uihk_comprec_self_eval'),
+                                 $this->getModalContent(
+                                     $competence["parent"],
+                                     $competence["id"],
+                                     $competence["base_skill"]
+                                 )
                              );
             $modalbutton = $factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'), "")->withOnClick(
                 $modal->getShowSignal()
@@ -423,12 +438,16 @@ class ilCompetenceRecommenderAllGUI
                     $text = $this->lng->txt('ui_uihk_comprec_no_resources');
                     $modal = $factory->modal()
                                      ->roundtrip(
-                                         $this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent(
-                                         $competence["parent"], $competence["id"], $competence["base_skill"]
-                                     )
+                                         $this->lng->txt('ui_uihk_comprec_self_eval'),
+                                         $this->getModalContent(
+                                             $competence["parent"],
+                                             $competence["id"],
+                                             $competence["base_skill"]
+                                         )
                                      );
                     $modalbutton = $factory->button()->standard(
-                        $this->lng->txt('ui_uihk_comprec_self_eval'), ""
+                        $this->lng->txt('ui_uihk_comprec_self_eval'),
+                        ""
                     )->withOnClick($modal->getShowSignal());
                     $btpl->setVariable("RESOURCES", $text . " " . $renderer->render([$modalbutton, $modal]));
                 }
@@ -446,9 +465,12 @@ class ilCompetenceRecommenderAllGUI
             $text = $this->lng->txt('ui_uihk_comprec_no_formationdata');
             $modal = $factory->modal()
                              ->roundtrip(
-                                 $this->lng->txt('ui_uihk_comprec_self_eval'), $this->getModalContent(
-                                 $competence["parent"], $competence["id"], $competence["base_skill"]
-                             )
+                                 $this->lng->txt('ui_uihk_comprec_self_eval'),
+                                 $this->getModalContent(
+                                     $competence["parent"],
+                                     $competence["id"],
+                                     $competence["base_skill"]
+                                 )
                              );
             $modalbutton = $factory->button()->standard($this->lng->txt('ui_uihk_comprec_self_eval'), "")->withOnClick(
                 $modal->getShowSignal()
@@ -522,8 +544,11 @@ class ilCompetenceRecommenderAllGUI
 
         // table
         $tab = new ilCompetenceRecommenderSelfEvalModalTableGUI(
-            $this, "all",
-            (int) $skill_id, (int) $tref_id, $cur_basic_skill_id
+            $this,
+            "all",
+            (int) $skill_id,
+            (int) $tref_id,
+            $cur_basic_skill_id
         );
         $html = $tab->getHTML();
 

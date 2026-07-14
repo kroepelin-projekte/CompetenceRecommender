@@ -53,7 +53,9 @@ class ilCompetenceRecommenderSelfEvalModalTableGUI extends ilTable2GUI
 
         $this->cur_level_id = $self_eval_manager->getSelfEvaluation(
             $ilUser->getId(),
-            $this->top_skill_id, $this->tref_id, $this->basic_skill_id
+            $this->top_skill_id,
+            $this->tref_id,
+            $this->basic_skill_id
         );
 
         // build title
@@ -79,7 +81,7 @@ class ilCompetenceRecommenderSelfEvalModalTableGUI extends ilTable2GUI
 
         $this->setEnableHeader(true);
         $this->setRowTemplate(
-            "Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/tpl.simple_self_eval.html"
+            "public/Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CompetenceRecommender/templates/tpl.simple_self_eval.html"
         );
         $this->disable("footer");
         $this->setEnableTitle(true);
@@ -87,9 +89,9 @@ class ilCompetenceRecommenderSelfEvalModalTableGUI extends ilTable2GUI
         $this->addCommandButton("saveSelfEvaluation", $this->lng->txt("ui_uihk_comprec_save"));
         $form_action = $this->ctrl->getLinkTargetByClass(ilCompetenceRecommenderGUI::class, "saveSelfEvaluation");
 
-        $form_action .= "&basic_skill_id=".$a_basic_skill_id;
-        $form_action .= "&skill_id=".$a_top_skill_id;
-        $form_action .= "&tref_id=".$a_tref_id;
+        $form_action .= "&basic_skill_id=" . $a_basic_skill_id;
+        $form_action .= "&skill_id=" . $a_top_skill_id;
+        $form_action .= "&tref_id=" . $a_tref_id;
 
         $this->setFormAction($form_action);
 
